@@ -1,0 +1,100 @@
+# ========================================
+# Football Agent Python 依赖清单
+# 版本号基于 conda 环境实际安装版本
+# ========================================
+
+# ---- Web 框架 ----
+fastapi==0.128.0
+uvicorn==0.40.0
+starlette==0.50.0
+python-multipart==0.0.21
+sse-starlette==2.1.0                     # SSE流式输出（需额外安装）
+
+# ---- LangChain / LangGraph ----
+langchain==0.3.27
+langchain-core==0.3.81
+langchain-community==0.3.21
+langchain-openai==0.3.35
+langchain-deepseek==0.1.3
+langchain-neo4j==0.4.0
+langchain-ollama==0.3.0
+langchain-text-splitters==0.3.11
+langgraph==0.3.25
+langgraph-checkpoint==2.1.2
+langgraph-checkpoint-sqlite==2.0.6
+langgraph-prebuilt==0.1.8
+langgraph-sdk==0.1.74
+langsmith==0.3.45
+
+# ---- 大模型 SDK ----
+openai==1.109.1
+ollama==0.6.1
+
+# ---- 数据库 ----
+sqlalchemy==2.0.45
+aiomysql==0.3.2
+pymysql==1.1.2
+alembic==1.13.0                          # 数据库迁移（需额外安装）
+neo4j==5.28.2
+neo4j-graphrag==1.5.0
+faiss-cpu==1.13.2
+lancedb==0.17.0
+
+# ---- Redis ----
+redis==7.1.0
+
+# ---- 数据处理 ----
+pandas==2.3.3
+numpy==1.26.4
+pyarrow==15.0.2
+
+# ---- NLP / 向量嵌入 ----
+sentence-transformers==5.2.0
+transformers==4.57.3
+tokenizers==0.22.2
+tiktoken==0.8.0
+spacy==3.8.11
+
+# ---- 机器学习 / 统计模型 ----
+torch==2.9.1
+scikit-learn==1.8.0
+scipy==1.16.3
+statsmodels==0.14.6
+
+# ---- 可视化 ----
+matplotlib==3.10.1
+seaborn==0.13.2
+
+# ---- 定时任务 ----
+apscheduler==3.10.4                      # 需额外安装
+
+# ---- 安全认证 ----
+python-jose==3.5.0
+passlib==1.7.4
+bcrypt==4.0.1
+pyjwt==2.10.1
+
+# ---- 日志 ----
+loguru==0.7.2
+rich==13.9.4
+
+# ---- HTTP 客户端 ----
+httpx==0.28.1
+aiohttp==3.13.3
+
+# ---- 配置管理 ----
+pydantic==2.12.5
+pydantic-settings==2.12.0
+python-dotenv==1.2.1
+
+# ---- 可观测性 ----
+langfuse==2.40.0                         # 需额外安装
+
+# ---- 测试 ----
+pytest==8.3.0                            # 需额外安装
+pytest-asyncio==0.24.0                   # 需额外安装
+
+# ---- 工具 ----
+tqdm==4.67.1
+pyyaml==6.0.3
+jinja2==3.1.6

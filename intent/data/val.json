@@ -1,0 +1,752 @@
+[    
+    {
+    "id": 601,
+    "text": "阿森纳这周末打维拉，萨卡如果上不了，你觉得他们还有戏赢吗？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 602,
+    "text": "拜仁最近状态这么拉胯，下轮踢莱比锡会不会连败？预测个比分呗",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 603,
+    "text": "皇马打马竞的马德里德比，看好出大球还是小球？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 604,
+    "text": "国米现在的积分优势很大，周末客场打罗马会不会苟个平局保底？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 605,
+    "text": "大巴黎欧冠客场让平半，姆巴佩首发的话能打穿这个盘口吗？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 606,
+    "text": "切尔西这神经刀属性，下场碰曼联是不是又要整活了？预测下胜负",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 607,
+    "text": "纽卡斯尔联主场挺猛的，这场打曼城能不能爆冷拿分？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 608,
+    "text": "尤文图斯这防守太铁了，周末打佛罗伦萨预测个1-0赢球的概率有多大？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 609,
+    "text": "勒沃库森距离夺冠就差两场了，这轮主场肯定大胜吧，让两球怎么看？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 610,
+    "text": "巴萨下周三去客场踢那不勒斯，你看好谁能最终晋级？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 611,
+    "text": "这场保级大战谢菲联主场打伯恩利，平手盘是不是倾向于主队不败？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 612,
+    "text": "多特蒙德现在前场缺人，去客场打沃尔夫斯堡进球数应该不会超过2个吧？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 613,
+    "text": "利物浦如果在安菲尔德开局抢攻，半场能赢下富勒姆吗？预测下半全场",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 614,
+    "text": "AC米兰这场让步太浅了，感觉是个大坑啊，客场打萨索洛会不会翻车？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 615,
+    "text": "马赛最近连胜势头很猛，这轮法甲面对里尔还能延续胜绩吗？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 616,
+    "text": "这场国王杯半决赛，毕尔巴鄂主场迎战马竞，看好谁能挺进决赛？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 617,
+    "text": "布莱顿的海鸥军团最近有点飞不动了，主场打热刺还会踢得那么大开大合吗？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 618,
+    "text": "诺丁汉森林换帅后防守稳多了，这周末去打阿斯顿维拉能不能守住盘口？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 619,
+    "text": "塞维利亚虽然保级无忧，但面对志在夺冠的皇马，主场大概率要缴械了吧？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 620,
+    "text": "帮我分析一下斯图加特对阵法兰克福的欧赔走势，主胜好像在持续降水",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 621,
+    "text": "狼队这赛季专杀强队，周末去伊蒂哈德挑战曼城，有没有机会偷一个？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 622,
+    "text": "这场意甲早场恩波利打莱切，菜鸡互啄是不是闭着眼睛买小球？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 623,
+    "text": "柏林联合双线作战体能透支，这轮德甲面对霍芬海姆是不是要出下盘了？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 624,
+    "text": "摩纳哥的锋线最近大杀四方，下场去客场打朗斯预测能进几个？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 625,
+    "text": "西汉姆联铁锤帮主场作战很硬，打阿森纳我觉得能逼平，你分析下可行性",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 626,
+    "text": "瓦伦西亚如果摆大巴，能在客场逼平巴萨吗？求比分预测",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 627,
+    "text": "拉齐奥周中拼了欧冠，联赛肯定要留力了，这场打乌迪内斯不看好他们大胜",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 628,
+    "text": "埃弗顿的主场向来火爆，周末打水晶宫能全取三分早日保级吗？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 629,
+    "text": "拜仁的图赫尔如果还不下课，下周三的欧冠生死战大概率要凉了吧？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 630,
+    "text": "皇家社会的核心奥亚萨瓦尔复出了，对他们周末联赛的胜率有多大提升？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 631,
+    "text": "里尔这赛季主场还没输过球，这轮迎战大巴黎能保住金身吗？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 632,
+    "text": "波鸿这支球队太神奇了，主场连拜仁都能赢，下场打多特会不会再造冷门？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 633,
+    "text": "曼联现在的防线简直是灾难，去客场打伯恩茅斯预测要被索兰克进球",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 634,
+    "text": "赫罗纳这匹黑马后劲不足了，周末面对贝蒂斯感觉要输盘，你怎么看？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 635,
+    "text": "罗马的德罗西上任后进攻变好了，这场打蒙扎大3球能打出吗？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 636,
+    "text": "水晶宫换帅之后战术挺明确的，这轮打卢顿必须拿下吧，预测个比分",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 637,
+    "text": "今晚法甲斯特拉斯堡打南特，这种中游球队的比赛是不是很容易出平局？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 638,
+    "text": "阿斯顿维拉主场的连胜纪录被终结了，下场反弹的概率高不高？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 639,
+    "text": "弗赖堡的定位球战术很有一套，周末打美因茨看好他们利用角球破门",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 640,
+    "text": "如果曼城半场落后，下半场逆转的盘口赔率现在是多少，值得搏一下吗？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 641,
+    "text": "亚特兰大这真蓝黑进攻属性拉满，打博洛尼亚肯定是一场对攻大战吧？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 642,
+    "text": "奥萨苏纳主场踢球很硬朗，皇马去客场估计最多也就赢一个球",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 643,
+    "text": "卢顿现在的保级形势不容乐观，这轮去客场拼死防守能逼平热刺吗？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 644,
+    "text": "里昂这半个赛季疯狂抢分，这周末打雷恩看好他们继续高歌猛进吗？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 645,
+    "text": "这场比赛的水位在临场前疯狂震荡，是不是有资金在介入？预测下最终结果",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 646,
+    "text": "马略卡这赛季的防守反击打得很坚决，国王杯决赛碰上毕尔巴鄂谁胜算大？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 647,
+    "text": "切尔西这锋线把握机会能力太差，周末打谢菲联如果是小球我也觉得正常",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 648,
+    "text": "尤文现在的阿莱格里只会龟缩防守，打热那亚肯定又是场沉闷的比赛吧",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 649,
+    "text": "云达不莱梅的客场战绩一塌糊涂，这轮去打勒沃库森是不是去送惨案的？",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 650,
+    "text": "英超最后一轮如果阿森纳和曼城同分，净胜球谁占优？算算夺冠概率",
+    "label_name": "predicted_agent"
+    },
+    {
+    "id": 651,
+    "text": "梅西当年在巴萨单自然年打进91球的神迹是发生在哪一年？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 652,
+    "text": "曼联1999年三冠王阵容里，主力双前锋是谁和谁的黑风双煞组合？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 653,
+    "text": "拜仁慕尼黑历史上有几位外籍主教练带领球队拿过欧冠冠军？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 654,
+    "text": "尤文图斯上个赛季因为财务造假风波，总共被扣了多少个联赛积分？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 655,
+    "text": "查一下2018年欧冠决赛皇家马德里对阵利物浦的具体比分是多少？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 656,
+    "text": "阿森纳在搬到现在的酋长球场之前，他们的老主场叫什么名字？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 657,
+    "text": "穆里尼奥带领波尔图拿到欧洲冠军联赛冠军是在哪一年的事情？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 658,
+    "text": "切尔西在阿布拉莫维奇入主的时代里，一共拿了多少座英超冠军奖杯？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 659,
+    "text": "上个赛季意甲联赛里，吃到红牌数量最多的球队是哪一支？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 660,
+    "text": "巴黎圣日耳曼的主场王子公园球场大概能容纳多少名观众？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 661,
+    "text": "马德里竞技队史转会费最贵的球员是谁？当时花了多少钱买来的？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 662,
+    "text": "国际��兰名宿萨内蒂整个职业生涯都在国米效力吗，他穿几号球衣？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 663,
+    "text": "帮我看看现在德甲历史总射手榜排名第二的球员是谁，进了多少球？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 664,
+    "text": "利物浦名宿杰拉德在英超赛场上拿过联赛冠军吗？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 665,
+    "text": "曼城现在的队徽是哪一年更换的，上面的那艘船代表了什么？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 666,
+    "text": "西甲规定如果两支球队赛季末同分，是先看净胜球还是先看相互交手战绩？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 667,
+    "text": "多特蒙德在2013年杀入欧冠决赛，当时他们的主教练是克洛普吗？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 668,
+    "text": "热刺这支球队在伦敦的哪个区域，他们的死敌是谁？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 669,
+    "text": "查一下上轮法甲摩纳哥客场的比赛，南野拓实首发了吗？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 670,
+    "text": "AC米兰历史上的荷兰三剑客分别是哪三位球员？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 671,
+    "text": "罗马的队徽上有一只狼和两个婴儿，这个图案出自什么历史典故？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 672,
+    "text": "勒沃库森这支球队的背后主要赞助商是哪家著名企业？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 673,
+    "text": "莱斯特城夺冠赛季的中场核心坎特，后来转会去了哪家英超俱乐部？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 674,
+    "text": "那不勒斯除了马拉多纳，队史上还有哪些阿根廷球星效力过？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 675,
+    "text": "帮我查查西甲历史最快进球纪录是多少秒，由谁保持的？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 676,
+    "text": "阿斯顿维拉现任主教练埃梅里之前在阿森纳执教了多长时间？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 677,
+    "text": "塞维利亚的主场皮斯胡安球场是不是举办过1982年世界杯的半决赛？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 678,
+    "text": "纽卡斯尔联队现在的幕后老板是哪个国家的公共投资基金？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 679,
+    "text": "上周末德甲拜仁对阵不莱梅的比赛里，凯恩有进球或者助攻吗？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 680,
+    "text": "弗格森执教曼联的最后一场比赛，比分是疯狂的5比5吗，对手是谁？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 681,
+    "text": "皇马的银河战舰一期，齐达内是哪一年从尤文图斯转会过来的？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 682,
+    "text": "法甲里尔队历史上拿过几次法国顶级联赛的冠军？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 683,
+    "text": "意甲佛罗伦萨的老板是不是美国人，叫什么名字？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 684,
+    "text": "毕尔巴鄂竞技在西甲历史上有没有降过级？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 685,
+    "text": "曼城的京多安在加盟曼城之前，在德甲的哪支球队效力？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 686,
+    "text": "查一下最近十年切尔西和阿森纳在杯赛决赛里碰面了几次？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 687,
+    "text": "马赛这支球队在法国南部的死敌俱乐部是哪一支？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 688,
+    "text": "拉齐奥在1999-2000赛季夺得意甲冠军时，队内的头号射手是谁？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 689,
+    "text": "沙尔克04现在是在德甲还是德乙，上赛季的排名是多少？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 690,
+    "text": "瓦伦西亚的现任主教练是谁，他以前是瓦伦西亚的名宿吗？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 691,
+    "text": "诺丁汉森林在2022年重返英超之前，阔别顶级联赛多少年了？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 692,
+    "text": "巴塞罗那现在的诺坎普球场因为翻新，球队暂时搬到了哪个球场踢主场？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 693,
+    "text": "英超金手套奖上个赛季颁给了哪个守门员？他保持了多少场零封？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 694,
+    "text": "尤文图斯的传奇门将布冯一共在尤文效力了多少个赛季？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 695,
+    "text": "上周日英超西汉姆联的比赛，鲍文有没有出现在大名单里？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 696,
+    "text": "拜仁慕尼黑的队歌《Stern des Südens》翻译成中文是什么意思？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 697,
+    "text": "国际米兰在穆里尼奥执教期间，欧冠半决赛淘汰巴萨那两回合的比分是多少？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 698,
+    "text": "皇家社会这赛季的欧冠小组赛是和哪几支球队分在一个组的？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 699,
+    "text": "法甲单赛季不败夺冠的纪录是由哪支球队保持的，还是说没有球队做到过？",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 700,
+    "text": "帮我列出目前英超历史上助攻榜排名前三的球员名字",
+    "label_name": "information_agent"
+    },
+    {
+    "id": 701,
+    "text": "帮我写一段快手短视频的搞笑文案，要有反转的",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 702,
+    "text": "为什么天上的星星会一闪一闪的？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 703,
+    "text": "深圳这两天冷不冷，出门穿短袖行不行？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 704,
+    "text": "怎么用 Python 里的 pandas 库合并两个 Excel 表格？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 705,
+    "text": "英雄联盟的 Faker 选手一共拿了几个 S赛总冠军了？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 706,
+    "text": "晚上总是翻来覆去睡不着觉，有什么听了能助眠的白噪音推荐吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 707,
+    "text": "家里的小猫打喷嚏是不是感冒了，需要给它喂什么药比较好？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 708,
+    "text": "周杰伦今年的演唱会门票怎么那么难抢啊，有什么抢票攻略吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 709,
+    "text": "你能不能帮我翻译一下“Long time no see”在地道英语里的各种说法？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 710,
+    "text": "给我推荐几个适合大学生用的平价护肤品套装吧",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 711,
+    "text": "用 C# 写一个实现二叉树前序遍历的算法",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 712,
+    "text": "你觉得苹果手机和安卓手机哪个更好用，分别有什么优缺点？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 713,
+    "text": "红楼梦里的林黛玉最后是怎么死的？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 714,
+    "text": "今天下班好累啊，感觉整个人都被掏空了",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 715,
+    "text": "怎么快速去除水壶里的水垢，用醋管用吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 716,
+    "text": "帮我写一封给房东的信，要求他帮忙修一下漏水的洗衣机",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 717,
+    "text": "诺贝尔化学奖居里夫人一共得过几次诺贝尔奖？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 718,
+    "text": "什么是马太效应，在经济学里是怎么应用的？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 719,
+    "text": "你会唱流行歌曲吗，能给我发一段周深《大鱼》的歌词吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 720,
+    "text": "电脑键盘上的 F1 到 F12 键分别都有什么快捷功能？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 721,
+    "text": "我想在家自己做爆米花，没有微波炉用铁锅可以做吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 722,
+    "text": "地球到月球的距离大概是多少公里？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 723,
+    "text": "帮我润色一下我的个人简历，主要是针对前端开发工程师的岗位",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 724,
+    "text": "今年过年高速公路哪几天是免费的？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 725,
+    "text": "如何评价电影《奥本海默》，它的历史还原度高吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 726,
+    "text": "去日本旅游需要提前办签证吗，签证好不好下？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 727,
+    "text": "用 Vue3 写一个简单的双向数据绑定的表单例子",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 728,
+    "text": "吃什么水果含维生素C最高，是橘子还是猕猴桃？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 729,
+    "text": "如果我在深山老林里迷路了没有手机信号，怎么辨别方向？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 730,
+    "text": "考公务员和去私企上班哪个发展前景更好一点？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 731,
+    "text": "什么是沉没成本，为什么人们总是不愿意及时止损？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 732,
+    "text": "你能模仿鲁迅的语气给我写一段讽刺现代人玩手机的话吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 733,
+    "text": "我想买个平板电脑主要是用来画画和看剧，iPad Air 够用吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 734,
+    "text": "你知道刘慈欣除了《三体》还写过哪些好看的科幻小说吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 735,
+    "text": "帮我查一下杭州西湖现在不需要收门票了吧？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 736,
+    "text": "我准备下周去健身房锻炼，新手应该从哪些器械开始练起？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 737,
+    "text": "股票跌停了是不是就不能卖出了？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 738,
+    "text": "怎么才能把拍糊的照片用修图软件变清晰一点？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 739,
+    "text": "太阳系八大行星里面哪一个是气态行星？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 740,
+    "text": "用 Java 写一个读取指定文件夹下所有文件名的函数",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 741,
+    "text": "遇到地震的时候住在高层应该怎么自救？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 742,
+    "text": "我跟朋友吵架了冷战了三天，我应该主动去道歉吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 743,
+    "text": "蓝牙耳机的降噪原理是什么，为什么戴上就听不到外面的声音了？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 744,
+    "text": "什么是 AIGC，它和传统的人工智能有什么区别？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 745,
+    "text": "去成都必吃的几道特色川菜有哪些，不要推荐火锅了",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 746,
+    "text": "你能用一句话证明你是一个拥有高智商的 AI 吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 747,
+    "text": "家里Wi-Fi信号在卧室很弱，买个信号放大器有用吗？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 748,
+    "text": "帮我写一篇以“坚持”为主题的初中生800字作文",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 749,
+    "text": "这件羽绒服起球了怎么办，有什么好办法处理一下？",
+    "label_name": "otherchat_agent"
+    },
+    {
+    "id": 750,
+    "text": "哈喽，今天是你工作的第几天啦？",
+    "label_name": "otherchat_agent"
+    }
+]

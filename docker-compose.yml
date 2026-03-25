@@ -1,0 +1,63 @@
+# ⚽ Football Agent - Docker Compose 编排文件
+# 启动命令: docker-compose up -d
+
+version: '3.8'
+
+services:
+  # ---------- MySQL 关系数据库 ----------
+  mysql:
+    image: mysql:8.0
+    container_name: football_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-football123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-football_agent}
+      MYSQL_CHARSET: utf8mb4
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./configs/mysql_schema.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # ---------- Neo4j 图数据库 ----------
+  neo4j:
+    image: neo4j:5.26-community
+    container_name: football_neo4j
+    restart: always
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-football123}
+    ports:
+      - "7474:7474"   # Web 管理界面
+      - "7687:7687"   # Bolt 协议
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+
+  # ---------- Redis 缓存 ----------
+  redis:
+    image: redis:7-alpine
+    container_name: football_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  # ---------- Milvus 向量数据库（可选，按需启用） ----------
+  # milvus:
+  #   image: milvusdb/milvus:v2.4.0
+  #   container_name: football_milvus
+  #   ports:
+  #     - "19530:19530"
+  #   volumes:
+  #     - milvus_data:/var/lib/milvus
+
+volumes:
+  mysql_data:
+  neo4j_data:
+  neo4j_logs:
+  redis_data:
+  # milvus_data:
+

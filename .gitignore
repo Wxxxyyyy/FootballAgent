@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# 虚拟环境
+venv/
+.venv/
+env/
+
+# 环境变量（含密钥，不要提交）
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志
+logs/*.log
+*.log
+
+# Node（前端）
+node_modules/
+frontend/dist/
+
+# 数据库本地文件
+*.db
+*.sqlite3
+
+# ChromaDB 持久化（可从向量导入脚本重建）
+data/chroma_db/
+
+# BERT 预训练模型权重（太大，从 HuggingFace 下载）
+intent/bert-base-chinese/
+intent/output/
+
+# ML 模型保存文件
+agents/predicted_agent/models/saved/*.pkl
+agents/predicted_agent/models/saved/*.joblib
+
+# bge-m3 Embedding 模型（太大，从 HuggingFace 下载）
+bge-m3/
+
+# OpenClaw 接收的原始数据（日志性质）
+data/openclaw_received/*.json
+
+# 后端日志
+backend/logs/
+
+# 面试文档（私人资料，不公开）
+docs/
+
+# Alembic 自动生成的迁移（按需取消注释）
+# backend/migrations/versions/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/

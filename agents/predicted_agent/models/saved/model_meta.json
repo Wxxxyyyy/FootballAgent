@@ -1,0 +1,20 @@
+{
+  "train_samples": 8445,
+  "feature_count": 12,
+  "features": [
+    "B365H",
+    "B365D",
+    "B365A",
+    "B365>2.5",
+    "B365<2.5",
+    "AHh",
+    "prob_h",
+    "prob_d",
+    "prob_a",
+    "prob_over",
+    "prob_under",
+    "overround"
+  ],
+  "wdl_cv_accuracy": 0.4963,
+  "ou_cv_accuracy": 0.5761
+}
