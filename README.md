@@ -11,8 +11,8 @@
                  ▼                  ▼                  ▼
           预测 Agent          信息查询 Agent         闲聊 Agent
           │                   │                      │
-          ├─ OpenClaw 赔率    ├─ Text2SQL (MySQL)    └─ Ollama 本地
-          ├─ ML 赔率模型      ├─ Text2Cypher (Neo4j)
+          ├─ OpenClaw 赔率    ├─ Text2SQL (MySQL)    └─ qwen3-coder-next
+          ├─ ML 赔率模型      │   (qwen3-coder-next)
           ├─ Neo4j 交锋       └─ 向量检索 (ChromaDB)
           ├─ 爆冷信号检测
           └─ Kimi 2.5 分析
@@ -20,7 +20,8 @@
                  └──────────────────┼──────────────────┘
                                     ▼
                             Summary Agent
-                         LLM 润色 + 安全检查
+                          (kimi-k2.5 润色)
+                           + 安全检查
                                     ▼
                               最终回复
 ```
@@ -35,13 +36,15 @@
 - **OpenClaw 三级网络链路**：服务器 ↔ SSH 隧道 ↔ 本地中继 ↔ WiFi ↔ 爬虫端
 - **ML 赔率基座模型**：RandomForest 12 维特征（Bet365 赔率 + 隐含概率），WDL 准确率 52.1%
 - **Neo4j 历史交锋**：图谱查询两队近 5 次交锋
-- **5 维爆冷信号检测**：近况反差 / 状态断崖 / 交锋克制 / 赛程疲劳 / 火力冲击
+- **Text2Cypher 四道防线**：读写隔离 → 关系类型+节点标签校验 → EXPLAIN 语法验证 → Probe Query 值映射校验（实体是否存在）
+- **6 维爆冷信号检测**：近况反差 / 状态断崖 / 交锋克制 / 赛程疲劳 / 火力冲击 / 伤员预警
 - **Kimi 2.5 综合分析**：输出结构化 JSON（胜平负 + 大小球 + 比分 + 爆冷预警）
 
 ### 📊 数据查询
-- **Text2SQL** + **Text2Cypher** + **向量检索** 三通道
-- 每条通道四道安全防线（读写隔离 → Schema 校验 → EXPLAIN 语法 → 强制 LIMIT）
-- 失败自动重试纠错，Text2SQL 命中率 78% → 92%
+- **Text2SQL** + **Text2Cypher** + **向量检索** 三通道并行，Planner 智能分发
+- **Text2SQL 四道防线**：读写隔离 → Schema 幻觉校验（表名+列名白名单）→ EXPLAIN 语法验证 → 强制 LIMIT 30
+- **向量检索防线**：bge-m3 Embedding + 余弦距离阈值过滤 + Top-K=3
+- 失败自动重试纠错（最多 3 次），Text2SQL 准确率 78% → 重试后 92%，向量检索 Top-3 召回率 91%
 
 ### 🗄️ 三层数据存储
 - **MySQL**：结构化比赛数据（比分、赔率、技术统计）
@@ -50,7 +53,6 @@
 
 ### 🛡️ 工程化实践
 - **Redis**：预测缓存（命中率 34%）、会话缓存、滑动窗口限流、入库消息队列
-- **Docker Compose**：MySQL / Neo4j / Redis 一键编排
 - **LLM 多模型调度 + 熔断降级**：5 个远程模型可切换，失败自动降级本地 Ollama
 - **LangFuse**：全链路追踪（Agent 调用链 / Token 用量 / 延迟分布）
 - **安全合规**：敏感词拦截 + 赌博风险检测 + 预测免责声明自动注入
@@ -117,7 +119,7 @@ footballAgent/
 │   └── English2Chinese/        #   中英文对照表
 ├── docs/                       # 项目文档
 ├── tests/                      # 测试
-├── docker-compose.yml          # 容器编排
+├── docker-compose.yml          # 容器编排（待完善）
 ├── requirements.txt            # Python 依赖
 ├── Makefile                    # 常用命令
 └── .env.example                # 环境变量模板
@@ -133,7 +135,7 @@ git clone https://github.com/yourname/footballAgent.git
 cd footballAgent
 
 # 创建 conda 环境
-conda create -n football python=3.11
+conda create -n football python=3.12
 conda activate football
 pip install -r requirements.txt
 
@@ -144,9 +146,8 @@ cp .env.example .env
 
 ### 2. 启动中间件
 
-```bash
-docker-compose up -d   # 拉起 MySQL / Neo4j / Redis
-```
+> MySQL / Neo4j / Redis 需提前安装并启动，在 `.env` 中配置连接信息。
+> Docker Compose 编排方案待开发（见 `docker-compose.yml`）。
 
 ### 3. 初始化数据
 
@@ -177,7 +178,7 @@ python api/server_api.py
 | 缓存 | Redis 7 |
 | Web 框架 | FastAPI |
 | Embedding | bge-m3 (BAAI) |
-| 容器 | Docker Compose |
+| 容器 | Docker Compose（待完善） |
 | 可观测性 | LangFuse |
 
 ## 数据覆盖
