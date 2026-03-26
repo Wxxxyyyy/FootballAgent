@@ -96,22 +96,41 @@ def _classify_tool_by_keywords(question: str) -> str:
     return "mysql"
 
 
-def _extract_history_text(messages: Sequence[BaseMessage]) -> str:
+def _extract_history_text(messages: Sequence[BaseMessage], user_msg: str = "") -> str:
     """
-    从 state.messages 中提取最近几轮对话，格式化为纯文本。
-    排除最后一条（即当前用户输入），只取历史。
+    从 state.messages 中提取近期对话历史 + 条件触发长期记忆检索。
+
+    策略：
+      1. 取最近 HISTORY_LIMIT 条作为近期上下文
+      2. 如果用户输入包含回指/代词且窗口内消解失败，检索 ChromaDB 长期记忆
+      3. 返回: [历史记忆]\n[近期对话]
 
     Returns:
-        str: 格式化的历史对话文本，如 "用户: xxx\n助手: yyy\n..."
+        str: 格式化的历史上下文文本
     """
     # 排除最后一条（当前用户消息）
     history = messages[:-1] if len(messages) > 1 else []
     if not history:
         return ""
 
-    # 只取最近 HISTORY_LIMIT 条
     recent = history[-HISTORY_LIMIT:]
 
+    parts = []
+
+    # ── 条件触发长期记忆检索 ──
+    if user_msg:
+        try:
+            from agents.memory_manager.retriever import maybe_retrieve_memory
+            memory_context = maybe_retrieve_memory(
+                user_msg=user_msg,
+                recent_messages=recent,
+            )
+            if memory_context:
+                parts.append(memory_context)
+        except Exception as e:
+            print(f"[Planner] 长期记忆检索异常（不影响主流程）: {e}")
+
+    # ── 近期对话历史 ──
     lines = []
     for msg in recent:
         msg_type = getattr(msg, 'type', '')
@@ -119,7 +138,11 @@ def _extract_history_text(messages: Sequence[BaseMessage]) -> str:
             lines.append(f"用户: {msg.content}")
         elif msg_type == 'ai':
             lines.append(f"助手: {msg.content}")
-    return "\n".join(lines)
+
+    if lines:
+        parts.append("\n".join(lines))
+
+    return "\n\n".join(parts)
 
 
 def _parse_planner_response(content: str) -> list[dict] | None:
@@ -218,8 +241,8 @@ def plan(user_msg: str, messages: Sequence[BaseMessage]) -> list[dict]:
     # ── 需要 LLM Planner ──
     print("[Planner] 检测到代词/多问题信号，启动 LLM Planner...")
 
-    # 提取对话历史
-    history_text = _extract_history_text(messages)
+    # 提取对话历史（含条件触发的长期记忆检索）
+    history_text = _extract_history_text(messages, user_msg=user_msg)
 
     # 组装消息
     system_prompt = get_planner_prompt(history_text)

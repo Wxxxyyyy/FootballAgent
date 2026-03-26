@@ -32,7 +32,16 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from langgraph.graph import StateGraph, END
-from langgraph.checkpoint.memory import MemorySaver
+
+# 短期记忆持久化：RedisSaver（Redis AOF 持久化，服务重启不丢失）
+# 如果 Redis 不可用则降级到 MemorySaver
+try:
+    from langgraph.checkpoint.redis import RedisSaver
+    _USE_REDIS_SAVER = True
+except ImportError:
+    from langgraph.checkpoint.memory import MemorySaver
+    _USE_REDIS_SAVER = False
+    print("[⚠️ 警告] langgraph-checkpoint-redis 未安装，降级到 MemorySaver（重启会丢失会话）")
 
 # ─── 全局状态 ───────────────────────────────────────────────────
 from agents.states import AgentState
@@ -45,6 +54,7 @@ from agents.predicted_agent.node import predicted_agent_node
 from agents.information_agent.node import information_agent_node
 from agents.otherchat_agent.node import otherchat_agent_node
 from agents.summary_agent.node import summary_agent_node
+from agents.memory_manager.node import memory_manager_node
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -144,6 +154,7 @@ def build_graph():
     workflow.add_node("information_agent", information_agent_node)
     workflow.add_node("otherchat_agent", otherchat_agent_node)
     workflow.add_node("summary_agent", summary_agent_node)
+    workflow.add_node("memory_manager", memory_manager_node)
 
     # ── 设置入口节点 ──
     workflow.set_entry_point("intent_node")
@@ -164,11 +175,20 @@ def build_graph():
     workflow.add_edge("information_agent", "summary_agent")
     workflow.add_edge("otherchat_agent", "summary_agent")
 
-    # ── summary_agent → END ──
-    workflow.add_edge("summary_agent", END)
+    # ── summary_agent → memory_manager → END ──
+    workflow.add_edge("summary_agent", "memory_manager")
+    workflow.add_edge("memory_manager", END)
 
-    # ── 使用 MemorySaver 做本地记忆，编译图 ──
-    memory = MemorySaver()
+    # ── 使用 RedisSaver 做持久化记忆（降级 MemorySaver） ──
+    if _USE_REDIS_SAVER:
+        import os
+        redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+        memory = RedisSaver.from_conn_string(redis_url)
+        print(f"[✓] 使用 RedisSaver 持久化（{redis_url}）")
+    else:
+        memory = MemorySaver()
+        print("[⚠️] 使用 MemorySaver（内存，重启丢失）")
+
     graph = workflow.compile(checkpointer=memory)
 
     print("[✓] LangGraph 主图构建完成！")

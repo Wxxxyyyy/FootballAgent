@@ -21,6 +21,9 @@ BGE_M3_MODEL_PATH = os.path.join(PROJECT_ROOT, "bge-m3")
 # ─── Collection 名称（必须与 vector_loader.py 写入时一致） ────
 COLLECTION_NAME = "team_profiles"
 
+# 对话记忆向量库（长期记忆 Compaction 后的摘要存储）
+MEMORY_COLLECTION = "conversation_memory"
+
 # ─── 防线1: 距离阈值拦截（Chroma 默认 L2 距离） ──────────────
 #     大于此值的结果视为"无关"，直接丢弃，防止向量检索强行匹配
 DISTANCE_THRESHOLD = 0.6

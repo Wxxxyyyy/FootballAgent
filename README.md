@@ -23,6 +23,9 @@
                           (kimi-k2.5 润色)
                            + 安全检查
                                     ▼
+                          Memory Manager
+                    (超20轮触发Compaction→ChromaDB)
+                                    ▼
                               最终回复
 ```
 
@@ -51,8 +54,13 @@
 - **Neo4j**：球队关系图谱（96 节点 + 9500 PLAYED_AGAINST 关系）
 - **ChromaDB**：球队底蕴向量知识库（bge-m3 Embedding）
 
+### 🧠 记忆管理
+- **短期记忆**：RedisSaver 持久化 Checkpointer，按 `thread_id` 隔离会话，服务重启不丢失
+- **长期记忆**：对话超 20 轮触发 Compaction——Memory Flush 提取关键信息（实体/事实/偏好）→ LLM 生成摘要 → bge-m3 Embedding 存入 ChromaDB
+- **条件触发检索**：检测到代词/回指表达且窗口内消解失败时，才从 ChromaDB 语义检索 Top-3 历史摘要注入 Prompt，90%+ 请求无检索开销
+
 ### 🛡️ 工程化实践
-- **Redis**：预测缓存（命中率 34%）、会话缓存、滑动窗口限流、入库消息队列
+- **Redis**：会话持久化（RedisSaver）+ 预测结果缓存 + 滑动窗口限流
 - **LLM 多模型调度 + 熔断降级**：5 个远程模型可切换，失败自动降级本地 Ollama
 - **LangFuse**：全链路追踪（Agent 调用链 / Token 用量 / 延迟分布）
 - **安全合规**：敏感词拦截 + 赌博风险检测 + 预测免责声明自动注入
@@ -69,6 +77,7 @@ footballAgent/
 │   ├── information_agent/      #   数据查询（Planner → 三通道工具调度）
 │   ├── otherchat_agent/        #   智能闲聊
 │   ├── summary_agent/          #   总结输出 + 安全检查
+│   ├── memory_manager/         #   记忆管理（Compaction + 向量化 + 条件检索）
 │   └── tools/                  #   工具集
 │       ├── mysql_tools/        #     Text2SQL + 四道安全防线
 │       ├── neo4j_tools/        #     Text2Cypher + 四道安全防线

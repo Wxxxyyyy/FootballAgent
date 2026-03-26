@@ -22,6 +22,7 @@ langchain-text-splitters==0.3.11
 langgraph==0.3.25
 langgraph-checkpoint==2.1.2
 langgraph-checkpoint-sqlite==2.0.6
+langgraph-checkpoint-redis==0.1.0           # Redis 持久化 Checkpointer
 langgraph-prebuilt==0.1.8
 langgraph-sdk==0.1.74
 langsmith==0.3.45
