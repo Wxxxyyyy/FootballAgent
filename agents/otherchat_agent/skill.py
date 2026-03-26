@@ -19,6 +19,19 @@ from common.llm_select import llm_call, LLM_MODEL_QWEN_SIMPLE_NAME
 # 对话历史最大保留条数（避免 token 过多）
 HISTORY_LIMIT = 6
 
+# 长期记忆：条件触发检索（检测到回指/代词且窗口内消解失败时）
+def _get_memory_context(user_msg: str, recent_messages: Sequence[BaseMessage]) -> str:
+    """条件触发长期记忆检索，不需要 Planner，直接在 skill 层做。"""
+    try:
+        from agents.memory_manager.retriever import maybe_retrieve_memory
+        return maybe_retrieve_memory(
+            user_msg=user_msg,
+            recent_messages=recent_messages,
+        )
+    except Exception as e:
+        print(f"[otherchat_skill] 长期记忆检索异常（不影响主流程）: {e}")
+        return ""
+
 # LLM 全部不可用时的兜底回复
 _FALLBACK_REPLY = (
     "抱歉，我现在遇到了一些技术问题，暂时无法回复。"
@@ -47,10 +60,17 @@ def _build_chat_messages(
     """
     # 获取系统提示词
     system_prompt = get_chat_system_prompt(is_fallback)
-    chat_messages = [SystemMessage(content=system_prompt)]
 
     # 提取最近的对话历史
     recent = messages[-HISTORY_LIMIT:] if len(messages) > HISTORY_LIMIT else messages
+
+    # 条件触发长期记忆检索（不需要 Planner，直接检测代词/回指）
+    user_msg = messages[-1].content if messages else ""
+    memory_context = _get_memory_context(user_msg, recent)
+    if memory_context:
+        system_prompt += f"\n\n{memory_context}"
+
+    chat_messages = [SystemMessage(content=system_prompt)]
 
     for msg in recent:
         if hasattr(msg, "type"):
@@ -58,7 +78,6 @@ def _build_chat_messages(
                 chat_messages.append(HumanMessage(content=msg.content))
             elif msg.type == "ai":
                 chat_messages.append(AIMessage(content=msg.content))
-        # 跳过 system 类型等其他消息
 
     return chat_messages
 
