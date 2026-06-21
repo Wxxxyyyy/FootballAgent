@@ -2,7 +2,8 @@
 """
 信息查询 Agent · LangGraph 节点
 - 职责单一：读 state → 调 skill → 写 state
-- 所有操作逻辑（Planner 拆分 + 工具调度 + 结果聚合）都在 skill.py 中
+- 查询逻辑在 skill.py：节点内 **ReAct**（局部 messages + mysql / RAG 工具循环），
+  不污染全局 messages
 """
 
 from agents.states import AgentState
@@ -15,8 +16,7 @@ def information_agent_node(state: AgentState) -> dict:
 
     职责：
       1. 从 state 中读取 messages（对话历史 + 当前用户输入）
-      2. 调用 skill.query() 执行完整的查询操作链
-         （Planner 拆分 → 工具调度 → 结果聚合）
+      2. 调用 skill.query()：ReAct 多轮工具调用 → 聚合 → raw_agent_response
       3. 将聚合后的查询结果写入 raw_agent_response，供 summary_agent 消费
     """
     messages = state.get("messages", [])

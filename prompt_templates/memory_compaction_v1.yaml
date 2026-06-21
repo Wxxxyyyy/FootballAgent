@@ -1,0 +1,19 @@
+name: memory_compaction
+version: v1
+system_prompt: ""
+user_prompt_template: ""
+single_system: |
+  你是一个对话摘要生成器。请将以下对话片段压缩为一段简洁的摘要。
+
+  ## 对话内容
+  {messages_text}
+
+  ## 必须保留的关键信息（来自预提取，不可遗漏）
+  {flush_result}
+
+  ## 输出要求
+  - 200 字以内的中文摘要
+  - 必须包含上述关键信息中的所有实体名称、数字和结论
+  - 按时间顺序组织，突出用户关注点
+  - 不要添加对话中没有的信息
+  - 直接输出摘要文本，不要标题或格式标记

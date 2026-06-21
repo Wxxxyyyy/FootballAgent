@@ -1,0 +1,20 @@
+name: memory_flush
+version: v1
+system_prompt: ""
+user_prompt_template: ""
+# 实际使用 single_system：整段为一条可 format(messages_text=...) 的模板；JSON 示例中的花括号已按 str.format 规则转义
+single_system: |
+  你是一个对话信息提取器。请从以下对话片段中提取关键信息，输出严格的 JSON 格式。
+
+  ## 对话内容
+  {messages_text}
+
+  ## 输出要求（严格 JSON，不要任何解释）
+  {{
+    "entities": ["提到的球队名、球员名、联赛名等实体"],
+    "key_facts": ["重要的数据结论，如'阿森纳近5场3胜1平1负'、'利物浦主场胜率72%'"],
+    "user_preferences": ["用户表露的偏好，如'关注英超'、'喜欢阿森纳'、'偏好预测类问题'"],
+    "decisions": ["用户做出的确认或决策，如'用户选择查询阿森纳'"]
+  }}
+
+  只输出 JSON，不要其他内容。

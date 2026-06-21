@@ -11,19 +11,29 @@
   - 若用户输入 **无代词 + 无多问题信号**，则跳过 LLM Planner，
     直接使用关键词规则分类工具，节省一次 LLM 调用。
 
+LLM 路径（需 Planner 时）：
+  - 使用 **Function Calling**（bind_tools）：模型在 mysql_query 与
+    search_knowledge_base 间自主选择（Text2SQL vs RAG）。
+  - 仅解析 AIMessage.tool_calls 得到子问题列表，**不在此阶段执行真实工具**。
+
 兜底机制：
-  - LLM 返回的 JSON 解析失败时，降级为单问题（原始输入），
-    工具默认走 mysql。
+  - tool_calls 为空时，尝试解析旧版 JSON 文本；
+  - 仍失败则降级为单问题 + 关键词分类。
 """
 
 import re
 import json
 from typing import Sequence
 
-from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage
+from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 
-from agents.information_agent.prompts import get_planner_prompt
-from common.llm_select import llm_call, LLM_MODEL_QWEN_SIMPLE_NAME
+from agents.information_agent.prompts import get_planner_prompt_fc
+from agents.tools.mysql_tools.tool_entry import mysql_query
+from agents.tools.vector_tools.tool_entry import search_knowledge_base
+from common.llm_select import llm_invoke_with_tools, LLM_MODEL_QWEN_SIMPLE_NAME
+
+# Planner 仅用于路由说明与 schema，不在此处 invoke 执行查询
+PLANNER_TOOLS = [mysql_query, search_knowledge_base]
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -209,6 +219,47 @@ def _parse_planner_response(content: str) -> list[dict] | None:
     return None  # 解析失败 → 调用方触发兜底
 
 
+def _parse_tool_calls_to_plan(response: AIMessage) -> list[dict] | None:
+    """
+    从 AIMessage.tool_calls 解析子问题列表（不执行真实工具）。
+
+    工具名约定：
+      - mysql_query          → tool: "mysql"
+      - search_knowledge_base → tool: "vector"
+    """
+    calls = list(getattr(response, "tool_calls", None) or [])
+    if not calls:
+        return None
+
+    out: list[dict] = []
+    for tc in calls:
+        if isinstance(tc, dict):
+            name = (tc.get("name") or "").strip()
+            args = tc.get("args") or {}
+        else:
+            name = (getattr(tc, "name", None) or "").strip()
+            args = getattr(tc, "args", None) or {}
+        if isinstance(args, str):
+            try:
+                args = json.loads(args)
+            except (json.JSONDecodeError, TypeError):
+                args = {}
+        if not isinstance(args, dict):
+            args = {}
+        q = str(args.get("question", "")).strip()
+        if not q:
+            continue
+        if name == "mysql_query":
+            out.append({"question": q, "tool": "mysql"})
+        elif name == "search_knowledge_base":
+            out.append({"question": q, "tool": "vector"})
+        else:
+            # 未知工具名：按 mysql 兜底，避免丢问题
+            out.append({"question": q, "tool": "mysql"})
+
+    return out if out else None
+
+
 # ═══════════════════════════════════════════════════════════════
 #  对外接口
 # ═══════════════════════════════════════════════════════════════
@@ -220,8 +271,9 @@ def plan(user_msg: str, messages: Sequence[BaseMessage]) -> list[dict]:
     流程：
       1. 判断是否需要 LLM Planner（代词 / 多问题）
       2a. 不需要 → 关键词快速路径分类，返回单问题列表
-      2b. 需要   → 调 LLM Planner，解析 JSON 响应
-      3. LLM 解析失败 → 兜底为单问题 + 关键词分类
+      2b. 需要   → bind_tools(Function Calling) → 解析 tool_calls；
+                  若无 tool_calls，再尝试 JSON 文本兜底
+      3. 仍失败 → 单问题 + 关键词分类
 
     Args:
         user_msg:  用户最新输入（已从 state.messages[-1] 提取）
@@ -238,39 +290,50 @@ def plan(user_msg: str, messages: Sequence[BaseMessage]) -> list[dict]:
         print(f"[Planner] 快速路径: 单问题，工具={tool}")
         return [{"question": user_msg, "tool": tool}]
 
-    # ── 需要 LLM Planner ──
-    print("[Planner] 检测到代词/多问题信号，启动 LLM Planner...")
+    # ── 需要 LLM Planner：Function Calling（mysql_query vs search_knowledge_base）──
+    print("[Planner] 检测到代词/多问题信号，启动 LLM Planner (bind_tools)...")
 
     # 提取对话历史（含条件触发的长期记忆检索）
     history_text = _extract_history_text(messages, user_msg=user_msg)
 
-    # 组装消息
-    system_prompt = get_planner_prompt(history_text)
+    system_prompt = get_planner_prompt_fc(history_text)
     llm_messages = [
         SystemMessage(content=system_prompt),
         HumanMessage(content=user_msg),
     ]
 
-    # 调用轻量模型
     try:
-        response = llm_call(llm_messages, model=LLM_MODEL_QWEN_SIMPLE_NAME)
-        raw_content = response.content
-        print(f"[Planner] LLM 响应: {raw_content[:200]}...")
+        response = llm_invoke_with_tools(
+            llm_messages,
+            PLANNER_TOOLS,
+            model=LLM_MODEL_QWEN_SIMPLE_NAME,
+            temperature=0.2,
+        )
     except Exception as e:
-        print(f"[Planner] ❌ LLM 调用失败: {e}，启用兜底")
+        print(f"[Planner] ❌ LLM+Tools 调用失败: {e}，启用兜底")
         tool = _classify_tool_by_keywords(user_msg)
         return [{"question": user_msg, "tool": tool}]
 
-    # 解析 JSON 响应
+    if not isinstance(response, AIMessage):
+        response = AIMessage(content=str(response))
+
+    # 优先：tool_calls（不在此执行工具，仅取路由）
+    parsed = _parse_tool_calls_to_plan(response)
+    if parsed is not None:
+        print(f"[Planner] Function Calling 规划完成: {len(parsed)} 个子问题")
+        for i, item in enumerate(parsed, 1):
+            print(f"  [{i}] {item['tool']}: {item['question']}")
+        return parsed
+
+    # 兜底：部分模型仍输出 JSON
+    raw_content = response.content or ""
+    print(f"[Planner] 无 tool_calls，尝试解析文本: {raw_content[:200]}...")
     parsed = _parse_planner_response(raw_content)
-    if parsed is None:
-        print("[Planner] ⚠️ JSON 解析失败，启用兜底: 原始输入作为单问题")
-        tool = _classify_tool_by_keywords(user_msg)
-        return [{"question": user_msg, "tool": tool}]
+    if parsed is not None:
+        print(f"[Planner] JSON 兜底成功: {len(parsed)} 个子问题")
+        return parsed
 
-    print(f"[Planner] 规划完成: {len(parsed)} 个子问题")
-    for i, item in enumerate(parsed, 1):
-        print(f"  [{i}] {item['tool']}: {item['question']}")
-
-    return parsed
+    print("[Planner] ⚠️ FC 与 JSON 均失败，启用关键词兜底")
+    tool = _classify_tool_by_keywords(user_msg)
+    return [{"question": user_msg, "tool": tool}]
 

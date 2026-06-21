@@ -217,6 +217,61 @@ def llm_call(
 
 
 # ═══════════════════════════════════════════════════════════════
+#  核心接口：llm_invoke_with_tools() — Function Calling（bind_tools）
+# ═══════════════════════════════════════════════════════════════
+
+def llm_invoke_with_tools(
+    messages: list,
+    tools: list,
+    *,
+    model: str = LLM_MODEL_QWEN_SIMPLE_NAME,
+    temperature: float = 0.2,
+    force_fallback: bool = False,
+) -> AIMessage:
+    """
+    使用 bind_tools 调用模型，返回带 tool_calls 的 AIMessage（用于 Planner 路由等）。
+
+    与 llm_call 一致：远程优先，失败则降级 Ollama。
+    注意：本函数只负责发起请求；是否执行工具由调用方决定。
+    """
+    if not tools:
+        raise ValueError("tools 不能为空")
+
+    def _bind_and_invoke(llm: BaseChatModel) -> AIMessage:
+        runnable = llm.bind(temperature=temperature).bind_tools(tools)
+        return runnable.invoke(messages)
+
+    if force_fallback:
+        print(f"[LLM+Tools] 强制使用备用模型: Ollama ({OLLAMA_CHAT_MODEL})")
+        return _bind_and_invoke(_get_fallback_llm())
+
+    try:
+        print(f"[LLM+Tools] 正在调用远程模型: {model} (bind_tools)...")
+        start = time.time()
+        response = _bind_and_invoke(_get_remote_llm(model))
+        elapsed = time.time() - start
+        print(f"[LLM+Tools] 远程模型 {model} 响应成功 ({elapsed:.2f}s)")
+        return response
+
+    except Exception as e:
+        print(f"[LLM+Tools] ⚠️ 远程模型 {model} 调用失败: {type(e).__name__}: {e}")
+        print(f"[LLM+Tools] 正在降级到备用模型: Ollama ({OLLAMA_CHAT_MODEL})...")
+        try:
+            start = time.time()
+            response = _bind_and_invoke(_get_fallback_llm())
+            elapsed = time.time() - start
+            print(f"[LLM+Tools] 备用模型响应成功 ({elapsed:.2f}s)")
+            return response
+        except Exception as fallback_err:
+            print(f"[LLM+Tools] ❌ 备用模型也失败: {type(fallback_err).__name__}: {fallback_err}")
+            raise RuntimeError(
+                f"远程模型({model})与备用模型(Ollama {OLLAMA_CHAT_MODEL})在 bind_tools 下均不可用。\n"
+                f"远程错误: {e}\n"
+                f"备用错误: {fallback_err}"
+            ) from fallback_err
+
+
+# ═══════════════════════════════════════════════════════════════
 #  辅助接口：检测模型可用性
 # ═══════════════════════════════════════════════════════════════
 
