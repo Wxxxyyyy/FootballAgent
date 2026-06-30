@@ -23,9 +23,20 @@ users_table = Table(
     Column("hashed_password", String(255), nullable=False),
     Column("email", String(128), nullable=True),
 )
-_database_url = os.getenv(
-    "DATABASE_URL", "mysql+aiomysql://root@localhost:3306/football_agent"
-)
+# 优先使用 DATABASE_URL，否则从独立环境变量拼接
+def _build_database_url() -> str:
+    url = os.getenv("DATABASE_URL")
+    if url:
+        return url
+    from urllib.parse import quote_plus
+    _host = os.getenv("MYSQL_HOST", "127.0.0.1")
+    _port = os.getenv("MYSQL_PORT", "3306")
+    _user = quote_plus(os.getenv("MYSQL_USER", "root"))
+    _pwd = quote_plus(os.getenv("MYSQL_PASSWORD", ""))
+    _db = os.getenv("MYSQL_DATABASE", "football_agent")
+    return f"mysql+aiomysql://{_user}:{_pwd}@{_host}:{_port}/{_db}"
+
+_database_url = _build_database_url()
 _engine = create_async_engine(_database_url, echo=False, pool_pre_ping=True)
 async_session_maker = async_sessionmaker(
     _engine, expire_on_commit=False, class_=AsyncSession

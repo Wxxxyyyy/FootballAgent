@@ -35,7 +35,7 @@ from neo4j import GraphDatabase
 #  配置
 # ═══════════════════════════════════════════════════════════════
 
-RELAY_URL = "http://localhost:15000"
+OPENCLAW_API_URL = os.getenv("OPENCLAW_API_URL", "http://localhost:9000")
 OPENCLAW_TIMEOUT = 120
 
 NEO4J_URI = os.getenv("NEO4J_URL", "bolt://localhost:7687")
@@ -76,7 +76,8 @@ class PreMatchPredictor:
     #  主流程
     # ═══════════════════════════════════════════════════════════════
 
-    def predict(self, home_team: str, away_team: str, date: str = None) -> dict:
+    def predict(self, home_team: str, away_team: str, date: str = None,
+                match_id: str = None, kickoff_time: str = None) -> dict:
         """
         完整赛前预测
 
@@ -84,6 +85,8 @@ class PreMatchPredictor:
             home_team: 主队英文名 (如 "Arsenal")
             away_team: 客队英文名 (如 "Chelsea")
             date: 比赛日期 YYYY-MM-DD (可选)
+            match_id: titan007 比赛 ID（可选，用于请求 OpenClaw）
+            kickoff_time: 开赛时间 ISO 格式（可选，如 "2026-06-26T04:00:00"）
 
         Returns:
             结构化预测结果
@@ -95,23 +98,33 @@ class PreMatchPredictor:
 
         # ── Step 1: 请求 OpenClaw 赛前数据 ──
         print("\n[1/4] 向 OpenClaw 请求赛前分析数据...")
-        openclaw_data = self._request_openclaw(home_team, away_team, date)
+        openclaw_data = self._request_openclaw(home_team, away_team, date, match_id=match_id)
 
         # ── Step 2: ML 模型预测 ──
         print("\n[2/4] 运行 ML 模型...")
         ml_result = self._run_ml_model(openclaw_data, home_team, away_team)
 
         # ── Step 3: Neo4j 历史交锋 ──
-        print("\n[3/5] 查询 Neo4j 历史交锋...")
+        print("\n[3/6] 查询 Neo4j 历史交锋...")
         h2h_records = self._query_h2h(home_team, away_team)
 
-        # ── Step 4: 爆冷信号分析 ──
-        print("\n[4/5] 分析爆冷信号...")
-        home_last_5, away_last_5 = [], []
-        if openclaw_data:
+        # ── Step 4: 赛前情报采集（伤停/首发/新闻/教练风格）──
+        print("\n[4/6] 采集赛前情报...")
+        pre_match_intel = self._gather_pre_match_intel(home_team, away_team, date, kickoff_time=kickoff_time)
+
+        # ── Step 5: 爆冷信号分析 ──
+        print("\n[5/6] 分析爆冷信号...")
+
+        # 近5场优先从 Neo4j 查询（11v11数据），OpenClaw 数据作为备选
+        home_last_5 = self._query_recent_matches(home_team, limit=5)
+        away_last_5 = self._query_recent_matches(away_team, limit=5)
+
+        # 如果 Neo4j 没有数据，回退到 OpenClaw
+        if not home_last_5 and openclaw_data:
             hs = openclaw_data.get("home_last_5", {})
             if hs.get("found"):
                 home_last_5 = hs.get("last_5", [])
+        if not away_last_5 and openclaw_data:
             aws = openclaw_data.get("away_last_5", {})
             if aws.get("found"):
                 away_last_5 = aws.get("last_5", [])
@@ -119,14 +132,16 @@ class PreMatchPredictor:
         upset_signals = self._analyze_upset_signals(
             ml_result, home_team, away_team,
             home_last_5, away_last_5, h2h_records,
+            pre_match_intel=pre_match_intel,
         )
 
-        # ── Step 5: LLM 综合分析 ──
-        print("\n[5/5] 调用 LLM 进行综合分析...")
+        # ── Step 6: LLM 综合分析 ──
+        print("\n[6/6] 调用 LLM 进行综合分析...")
         llm_result = self._call_llm(
             home_team, away_team, date,
             ml_result, openclaw_data, h2h_records,
             upset_signals,
+            pre_match_intel=pre_match_intel,
         )
 
         elapsed = time.time() - ts_start
@@ -140,15 +155,78 @@ class PreMatchPredictor:
             "h2h_records": h2h_records,
             "upset_signals": upset_signals,
             "llm_analysis": llm_result,
+            "pre_match_intel": pre_match_intel,
             "openclaw_summary": self._summarize_openclaw(openclaw_data),
             "elapsed_seconds": round(elapsed, 1),
         }
 
     # ═══════════════════════════════════════════════════════════════
-    #  Step 1: 请求 OpenClaw 数据
+    #  Step 1: 请求 OpenClaw 赛前数据
     # ═══════════════════════════════════════════════════════════════
 
-    def _request_openclaw(self, home_team: str, away_team: str, date: str) -> Optional[dict]:
+    def _query_recent_matches(self, team_name: str, limit: int = 5) -> list[dict]:
+        """
+        从 MySQL 查询某支球队最近的比赛记录
+
+        数据来源: 11v11.com 近10年历史 + 每日更新追加世界杯比赛
+        MySQL 存单队全部比赛，Neo4j 存两队交锋记录
+
+        Returns: [{"date", "home", "away", "home_goals", "away_goals",
+                   "result", "competition"}, ...]
+        """
+        try:
+            import pymysql
+
+            conn = pymysql.connect(
+                host=os.getenv("MYSQL_HOST", "127.0.0.1"),
+                port=int(os.getenv("MYSQL_PORT", "3306")),
+                user=os.getenv("MYSQL_USER", "root"),
+                password=os.getenv("MYSQL_PASSWORD", "football123"),
+                database=os.getenv("MYSQL_DATABASE", "football_agent"),
+                charset="utf8mb4",
+            )
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+            cursor.execute(
+                """SELECT match_date, home_team, away_team, home_goals, away_goals,
+                          result, competition
+                   FROM intl_matches
+                   WHERE home_team = %s OR away_team = %s
+                   ORDER BY match_date_sorted DESC
+                   LIMIT %s""",
+                (team_name, team_name, limit),
+            )
+            rows = cursor.fetchall()
+
+            matches = []
+            for r in rows:
+                matches.append({
+                    "date": str(r["match_date"]),
+                    "home_team": r["home_team"],
+                    "away_team": r["away_team"],
+                    "home_goals": r["home_goals"],
+                    "away_goals": r["away_goals"],
+                    "result": r["result"],
+                    "competition": r["competition"],
+                })
+
+            cursor.close()
+            conn.close()
+
+            if matches:
+                print(f"  [MySQL] {team_name} 最近 {len(matches)} 场:")
+                for m in matches:
+                    print(f"    {m['date']} | {m['home_team']} {m['home_goals']}-{m['away_goals']} {m['away_team']} | {m['competition']}")
+            else:
+                print(f"  [MySQL] {team_name} 无历史比赛记录")
+
+            return matches
+        except Exception as e:
+            print(f"  [MySQL] 查询近5场失败: {e}")
+            return []
+
+    def _request_openclaw(self, home_team: str, away_team: str, date: str,
+                          match_id: str = None) -> Optional[dict]:
         """
         向 OpenClaw 请求赛前分析数据
 
@@ -163,6 +241,7 @@ class PreMatchPredictor:
             "params": {
                 "home_team": home_team,
                 "away_team": away_team,
+                "match_id": match_id or "",
             },
             "async_mode": False,
             "timestamp": datetime.now().isoformat(),
@@ -173,7 +252,7 @@ class PreMatchPredictor:
         # 发送请求到 OpenClaw
         try:
             with httpx.Client(timeout=10.0) as client:
-                resp = client.post(f"{RELAY_URL}/relay_to_openclaw", json=payload)
+                resp = client.post(f"{OPENCLAW_API_URL}/task", json=payload)
                 direct = resp.json()
                 print(f"  [OpenClaw] 直接响应: {direct.get('status', 'unknown')}")
 
@@ -210,24 +289,25 @@ class PreMatchPredictor:
         if odds is None:
             return {"error": "无法提取有效赔率"}
 
-        print(f"  [ML] 赔率: H={odds['B365H']}, D={odds['B365D']}, A={odds['B365A']}")
-        print(f"       Over={odds.get('B365>2.5', 'N/A')}, "
-              f"Under={odds.get('B365<2.5', 'N/A')}, AHh={odds.get('AHh', 0)}")
+        # 提取初盘和终盘赔率（OpenClaw 推送的当前赔率视为终盘）
+        b365h = odds.get("B365H_open", odds["B365H"])   # 初盘（若有）
+        b365d = odds.get("B365D_open", odds["B365D"])
+        b365a = odds.get("B365A_open", odds["B365A"])
+        b365ch = odds["B365H"]                          # 终盘（当前赔率）
+        b365cd = odds["B365D"]
+        b365ca = odds["B365A"]
+
+        print(f"  [ML] 初盘: H={b365h}, D={b365d}, A={b365a}")
+        print(f"  [ML] 终盘: H={b365ch}, D={b365cd}, A={b365ca}")
 
         try:
             result = self.model.predict_from_odds(
-                b365h=odds["B365H"],
-                b365d=odds["B365D"],
-                b365a=odds["B365A"],
-                b365_over25=odds.get("B365>2.5", 1.90),
-                b365_under25=odds.get("B365<2.5", 1.90),
-                ahh=odds.get("AHh", 0.0),
+                b365h=b365h, b365d=b365d, b365a=b365a,
+                b365ch=b365ch, b365cd=b365cd, b365ca=b365ca,
             )
             result["odds_source"] = odds.get("_source", "unknown")
             print(f"  [ML] WDL: 主胜={result['home_win_prob']:.1%}, "
                   f"平={result['draw_prob']:.1%}, 客胜={result['away_win_prob']:.1%}")
-            print(f"  [ML] OU : 大球={result['over25_prob']:.1%}, "
-                  f"小球={result['under25_prob']:.1%}")
             return result
         except Exception as e:
             print(f"  [ML] 预测失败: {e}")
@@ -375,15 +455,19 @@ class PreMatchPredictor:
     # ═══════════════════════════════════════════════════════════════
 
     def _query_h2h(self, home_team: str, away_team: str, limit: int = 5) -> list[dict]:
-        """查询两队历史交锋记录"""
+        """查询两队历史交锋记录（同时支持俱乐部 Team 和国家队 NationalTeam）"""
         cypher = """
-        MATCH (a:Team {name: $team_a})-[r:PLAYED_AGAINST]-(b:Team {name: $team_b})
+        MATCH (a)-[r:PLAYED_AGAINST]-(b)
+        WHERE a:NationalTeam
+          AND b:NationalTeam
+          AND a.name = $team_a
+          AND b.name = $team_b
         RETURN r.match_date       AS date,
                r.season           AS season,
                r.match_result     AS result,
+               r.result_desc      AS result_desc,
                r.total_goals      AS total_goals,
-               r.odds_info        AS odds,
-               r.over_under_odds  AS over_under
+               r.competition      AS competition
         ORDER BY r.match_date DESC
         LIMIT $limit
         """
@@ -396,7 +480,7 @@ class PreMatchPredictor:
             if records:
                 print(f"  [Neo4j] 找到 {len(records)} 条交锋记录")
                 for r in records[:3]:
-                    print(f"    {r.get('date', '?')} | {r.get('result', '?')}")
+                    print(f"    {r.get('date', '?')} | {r.get('result', '?')} | {r.get('competition', '')}")
             else:
                 print("  [Neo4j] 未找到交锋记录")
             return records
@@ -411,6 +495,7 @@ class PreMatchPredictor:
     def _analyze_upset_signals(
         self, ml_result: dict, home_team: str, away_team: str,
         home_last_5: list, away_last_5: list, h2h_records: list,
+        pre_match_intel: dict = None,
     ) -> dict:
         """
         基于多维数据分析爆冷可能性
@@ -524,6 +609,13 @@ class PreMatchPredictor:
                          f"而热门方 {fav_name} 近5场丢 {fav_form['goals_conceded']} 球"),
                 "severity": "中",
             })
+
+        # ── 维度 6: 伤员预警 — 核心球员缺阵影响 ──
+        if pre_match_intel:
+            injury_signals = self._analyze_injury_impact(
+                pre_match_intel, fav_name, und_name, fav_side,
+            )
+            signals.extend(injury_signals)
 
         has_risk = len(signals) > 0
         if has_risk:
@@ -639,7 +731,7 @@ class PreMatchPredictor:
         has_european = False
         for m in matches:
             d = m.get("date", "")
-            lg = m.get("league", "")
+            lg = m.get("competition", m.get("league", ""))
             if d:
                 try:
                     dates.append(datetime.strptime(d, "%Y-%m-%d"))
@@ -678,21 +770,26 @@ class PreMatchPredictor:
 
     def _call_llm(self, home_team, away_team, date,
                   ml_result, openclaw_data, h2h_records,
-                  upset_signals=None) -> dict:
+                  upset_signals=None, pre_match_intel=None) -> dict:
         """调用 LLM 综合分析"""
         from agents.predicted_agent.models.llm_predictor import predict_with_llm
 
-        home_last_5, away_last_5 = [], []
+        # 近5场优先从 Neo4j 查询，OpenClaw 作为备选
+        home_last_5 = self._query_recent_matches(home_team, limit=5)
+        away_last_5 = self._query_recent_matches(away_team, limit=5)
         odds_info = {}
 
         if openclaw_data:
-            home_sec = openclaw_data.get("home_last_5", {})
-            if home_sec.get("found"):
-                home_last_5 = home_sec.get("last_5", [])
+            # OpenClaw 仍用于获取赔率
+            if not home_last_5:
+                home_sec = openclaw_data.get("home_last_5", {})
+                if home_sec.get("found"):
+                    home_last_5 = home_sec.get("last_5", [])
 
-            away_sec = openclaw_data.get("away_last_5", {})
-            if away_sec.get("found"):
-                away_last_5 = away_sec.get("last_5", [])
+            if not away_last_5:
+                away_sec = openclaw_data.get("away_last_5", {})
+                if away_sec.get("found"):
+                    away_last_5 = away_sec.get("last_5", [])
 
             odds_sec = openclaw_data.get("odds", {})
             if odds_sec.get("bookmakers"):
@@ -702,6 +799,24 @@ class PreMatchPredictor:
                 odds_info = {"bookmakers": top}
             elif odds_sec.get("odds"):
                 odds_info = odds_sec["odds"]
+
+        # 提取赛前情报摘要（伤停/首发/新闻/教练风格）
+        intel_summary = ""
+        if pre_match_intel:
+            intel_summary = pre_match_intel.get("summary", "")
+
+        # 蒙特卡洛模拟（从赔率反推比分分布）
+        monte_carlo_result = None
+        try:
+            from agents.predicted_agent.models.monte_carlo_simulator import MonteCarloSimulator
+            sim = MonteCarloSimulator(n_simulations=10000)
+            input_odds = ml_result.get("input_odds", {}) if ml_result else {}
+            b365h = input_odds.get("B365H", 2.0)
+            b365d = input_odds.get("B365D", 3.2)
+            b365a = input_odds.get("B365A", 3.0)
+            monte_carlo_result = sim.simulate(b365h, b365d, b365a)
+        except Exception as e:
+            print(f"  [LLM] 蒙特卡洛模拟失败: {e}")
 
         return predict_with_llm(
             home_team=home_team,
@@ -713,7 +828,125 @@ class PreMatchPredictor:
             h2h_records=h2h_records,
             odds_info=odds_info,
             upset_signals=upset_signals,
+            pre_match_intel_summary=intel_summary,
+            monte_carlo_result=monte_carlo_result,
         )
+
+    # ═══════════════════════════════════════════════════════════════
+    #  赛前情报采集（伤停/首发/新闻/教练风格）
+    # ═══════════════════════════════════════════════════════════════
+
+    def _gather_pre_match_intel(self, home_team: str, away_team: str,
+                                 date: str = None, kickoff_time: str = None) -> dict:
+        """
+        采集赛前情报（伤停/首发/新闻/教练风格）
+
+        从 scouters 模块获取结构化情报，用于:
+          1. 爆冷信号分析中的伤员预警维度
+          2. LLM prompt 注入情报摘要
+        """
+        try:
+            from agents.predicted_agent.scouters import PreMatchIntel
+
+            intel = PreMatchIntel()
+
+            # 根据比赛时间判断距开赛时间，决定阵容档位
+            # 优先用 kickoff_time（含具体时间），否则用 date
+            hours_to_kickoff = 24  # 默认24小时后（第一档）
+            time_str = kickoff_time or date
+            if time_str:
+                try:
+                    if 'T' in time_str:
+                        # ISO 格式（如 2026-06-26T04:00:00）
+                        match_dt = datetime.fromisoformat(time_str)
+                    else:
+                        match_dt = datetime.strptime(time_str, "%Y-%m-%d")
+                    hours_to_kickoff = max(0, (match_dt - datetime.now()).total_seconds() / 3600)
+                except (ValueError, TypeError):
+                    pass
+
+            return intel.gather(home_team, away_team, date,
+                                hours_to_kickoff=hours_to_kickoff)
+        except Exception as e:
+            print(f"  [情报] 采集失败: {e}")
+            import traceback
+            traceback.print_exc()
+            return {
+                "summary": "",
+                "lineup_intel": {},
+                "coach_style": {},
+                "news": {},
+            }
+
+    # ═══════════════════════════════════════════════════════════════
+    #  伤员预警分析（爆冷信号维度6）
+    # ═══════════════════════════════════════════════════════════════
+
+    def _analyze_injury_impact(self, pre_match_intel: dict,
+                                fav_name: str, und_name: str,
+                                fav_side: str) -> list[dict]:
+        """
+        分析伤员/停赛对爆冷的影响
+
+        检测:
+          1. 热门方核心球员缺阵 → 高危信号
+          2. 热门方多名主力缺阵 → 中危信号
+          3. 冷门方阵容完整 + 热门方有缺阵 → 加重爆冷可能
+          4. 赛前新闻中的软信号（队内冲突等）
+        """
+        signals = []
+        lineup_intel = pre_match_intel.get("lineup_intel", {})
+
+        fav_key = "home" if fav_side == "home" else "away"
+        und_key = "away" if fav_side == "home" else "home"
+
+        fav_data = lineup_intel.get(fav_key, {})
+        und_data = lineup_intel.get(und_key, {})
+
+        fav_absences = fav_data.get("key_absences", [])
+        und_absences = und_data.get("key_absences", [])
+
+        # 统计热门方核心/主力缺阵
+        fav_core_out = [a for a in fav_absences if a.get("importance") == "核心"]
+        fav_main_out = [a for a in fav_absences if a.get("importance") == "主力"]
+
+        if fav_core_out:
+            names = "、".join(a["player"] for a in fav_core_out)
+            signals.append({
+                "type": "伤员预警",
+                "desc": f"热门方 {fav_name} 核心球员 {names} 缺阵，实力受损明显",
+                "severity": "高",
+            })
+        elif len(fav_main_out) >= 2:
+            names = "、".join(a["player"] for a in fav_main_out[:3])
+            signals.append({
+                "type": "伤员预警",
+                "desc": f"热门方 {fav_name} 多名主力缺阵（{names}），阵容深度受影响",
+                "severity": "中",
+            })
+
+        # 冷门方阵容完整 + 热门方有缺阵 → 加重爆冷信号
+        if not und_absences and fav_absences:
+            signals.append({
+                "type": "伤员预警",
+                "desc": f"冷门方 {und_name} 阵容完整，而热门方 {fav_name} 有球员缺阵，实力差距缩小",
+                "severity": "中",
+            })
+
+        # 赛前新闻中的软信号（队内冲突/教练危机等）
+        news_data = pre_match_intel.get("news", {})
+        for side, team_name in [(fav_key, fav_name), (und_key, und_name)]:
+            side_news = news_data.get(side, {})
+            soft_signals = side_news.get("soft_signals", [])
+            for sig in soft_signals:
+                if sig.get("severity") in ("高", "中"):
+                    signals.append({
+                        "type": f"场外信号-{sig['type']}",
+                        "desc": f"{team_name}: {sig['desc']}",
+                        "severity": sig["severity"],
+                    })
+
+        return signals
 
     # ═══════════════════════════════════════════════════════════════
     #  辅助

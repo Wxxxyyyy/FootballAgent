@@ -1,0 +1,174 @@
+{
+  "status": "ok",
+  "match_id": "2906974",
+  "home_team": "哥伦比亚",
+  "away_team": "葡萄牙",
+  "tier": 2,
+  "prediction_time": "2026-06-28T07:00:08.937208",
+  "ml_prediction": {
+    "home_win_prob": 0.1984,
+    "draw_prob": 0.2459,
+    "away_win_prob": 0.5558,
+    "wdl_prediction": "A",
+    "input_odds": {
+      "B365H": 3.4,
+      "B365D": 3.25,
+      "B365A": 2.15,
+      "B365CH": 3.9,
+      "B365CD": 3.9,
+      "B365CA": 1.85
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.2421,
+    "draw_prob": 0.2383,
+    "away_win_prob": 0.5196,
+    "wdl_prediction": "A",
+    "expected_goals_home": 1.068,
+    "expected_goals_away": 1.665,
+    "most_likely_score": "1:1",
+    "score_distribution": {
+      "1:1": 0.1123,
+      "0:1": 0.1119,
+      "1:2": 0.1008,
+      "0:2": 0.0886,
+      "1:0": 0.0674
+    },
+    "lambda_home": 1.068,
+    "lambda_away": 1.665,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Colombia",
+        "away_team": "DR Congo",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-24 10:00"
+      },
+      {
+        "home_team": "Colombia",
+        "away_team": "DR Congo",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "23 Jun 2026"
+      },
+      {
+        "home_team": "Uzbekistan",
+        "away_team": "Colombia",
+        "home_goals": 1,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-18 10:00"
+      },
+      {
+        "home_team": "Uzbekistan",
+        "away_team": "Colombia",
+        "home_goals": 1,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "FIFA World Cup",
+        "date": "17 Jun 2026"
+      },
+      {
+        "home_team": "Jordan",
+        "away_team": "Colombia",
+        "home_goals": 0,
+        "away_goals": 2,
+        "result": "A",
+        "competition": "International Friendly",
+        "date": "07 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Portugal",
+        "away_team": "Uzbekistan",
+        "home_goals": 5,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-24 01:00"
+      },
+      {
+        "home_team": "Portugal",
+        "away_team": "Uzbekistan",
+        "home_goals": 5,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "23 Jun 2026"
+      },
+      {
+        "home_team": "Portugal",
+        "away_team": "DR Congo",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-18 01:00"
+      },
+      {
+        "home_team": "Portugal",
+        "away_team": "DR Congo",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "17 Jun 2026"
+      },
+      {
+        "home_team": "Portugal",
+        "away_team": "Nigeria",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "International Friendly",
+        "date": "10 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [],
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "A",
+      "confidence": "中",
+      "reason": "ML模型客胜概率55.58%最高，平局24.59%，主胜仅19.84%，倾向客队取胜。"
+    },
+    "monte_carlo_prediction": {
+      "result": "A",
+      "most_likely_score": "1:1",
+      "reason": "模拟客胜概率51.96%，最可能比分虽为1:1，但预期进球客队1.665远高于主队1.068，客队整体占优。"
+    },
+    "score_predictions": [
+      {
+        "score": "1:2",
+        "prob": 0.101,
+        "reason": "蒙特卡洛第三高概率比分，反映客队攻击力更强。"
+      },
+      {
+        "score": "1:1",
+        "prob": 0.112,
+        "reason": "蒙特卡洛最可能比分，双方都有进球，平局概率不低。"
+      },
+      {
+        "score": "0:2",
+        "prob": 0.089,
+        "reason": "客队零封主队的较高概率比分，葡萄牙防线近期表现稳健。"
+      }
+    ],
+    "upset_prediction": {
+      "result": "H",
+      "score": "2:1",
+      "reason": "虽然客队占优，但主胜概率19.84%>15%，存在爆冷空间。哥伦比亚近期三连胜一球未失，若主场爆发可能2-1逆转。"
+    },
+    "overall_analysis": "综合模型与近期状态，葡萄牙实力占优，ML模型客胜概率55.6%，蒙特卡洛客胜51.9%，赔率客胜2.15也给予支持。葡萄牙进攻端近两场打入6球，哥伦比亚防守虽连续零封但对手偏弱。最可能比分1-2或1-1，若哥伦比亚延续防守强度有机会守平，但整体倾向葡萄牙小胜。需注意双方战意不明，若轮换可能增加平局概率。",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"A\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型客胜概率55.58%最高，平局24.59%，主胜仅19.84%，倾向客队取胜。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"A\",\n    \"most_likely_score\": \"1:1\",\n    \"reason\": \"模拟客胜概率51.96%，最可能比分虽为1:1，但预期进球客队1.665远高于主队1.068，客队整体占优。\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"1:2\",\n      \"prob\": 0.101,\n      \"reason\": \"蒙特卡洛第三高概率比分，反映客队攻击力更强。\"\n    },\n    {\n      \"score\": \"1:1\",\n      \"prob\": 0.112,\n      \"reason\": \"蒙特卡洛最可能比分，双方都有进球，平局概率不低。\"\n    },\n    {\n      \"score\": \"0:2\",\n      \"prob\": 0.089,\n      \"reason\": \"客队零封主队的较高概率比分，葡萄牙防线近期表现稳健。\"\n    }\n  ],\n  \"upset_prediction\": {\n    \"result\": \"H\",\n    \"score\": \"2:1\",\n    \"reason\": \"虽然客队占优，但主胜概率19.84%>15%，存在爆冷空间。哥伦比亚近期三连胜一球未失，若主场爆发可能2-1逆转。\"\n  },\n  \"overall_analysis\": \"综合模型与近期状态，葡萄牙实力占优，ML模型客胜概率55.6%，蒙特卡洛客胜51.9%，赔率客胜2.15也给予支持。葡萄牙进攻端近两场打入6球，哥伦比亚防守虽连续零封但对手偏弱。最可能比分1-2或1-1，若哥伦比亚延续防守强度有机会守平，但整体倾向葡萄牙小胜。需注意双方战意不明，若轮换可能增加平局概率。\"\n}"
+  }
+}

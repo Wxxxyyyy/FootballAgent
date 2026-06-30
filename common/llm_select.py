@@ -8,10 +8,10 @@ LLM 统一调度工具
 - 提供 get_llm() 和 llm_call() 两个统一接口
 
 使用方式：
-    from common.llm_select import llm_call, LLM_MODEL_QWEN_SIMPLE_NAME
+    from common.llm_select import llm_call, LLM_MODEL_KIMI_NAME
 
     # 直接指定模型名
-    response = llm_call("你好", model=LLM_MODEL_QWEN_SIMPLE_NAME)
+    response = llm_call("你好", model=LLM_MODEL_KIMI_NAME)
 
     # 换个模型也行
     from common.llm_select import LLM_MODEL_GLM_NAME
@@ -41,16 +41,16 @@ LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://coding.dashscope.aliyuncs.com/
 #  可用模型列表（平级，从 .env 读取，调用方按需选择）
 # ═══════════════════════════════════════════════════════════════
 
-LLM_MODEL_QWEN_NAME = os.getenv("LLM_MODEL_QWEN_NAME", "qwen3.5-plus")
-LLM_MODEL_QWEN_SIMPLE_NAME = os.getenv("LLM_MODEL_QWEN_SIMPLE_NAME", "qwen3-coder-next")
-LLM_MODEL_GLM_NAME = os.getenv("LLM_MODEL_GLM_NAME", "glm-5")
+LLM_MODEL_DEEPSEEK_FLASH = os.getenv("LLM_MODEL_DEEPSEEK_FLASH", "deepseek-v4-flash-202605")
+LLM_MODEL_DEEPSEEK_PRO = os.getenv("LLM_MODEL_DEEPSEEK_PRO", "deepseek-v4-pro-202606")
+LLM_MODEL_GLM_NAME = os.getenv("LLM_MODEL_GLM_NAME", "glm-5.1")
 LLM_MODEL_KIMI_NAME = os.getenv("LLM_MODEL_KIMI_NAME", "kimi-k2.5")
-LLM_MODEL_MINIMAX_NAME = os.getenv("LLM_MODEL_MINIMAX_NAME", "MiniMax-M2.5")
+LLM_MODEL_MINIMAX_NAME = os.getenv("LLM_MODEL_MINIMAX_NAME", "minimax-m2.7")
 
 # 所有远程模型变量名 → 值的映射（方便遍历 & 测试）
 ALL_REMOTE_MODELS: dict[str, str] = {
-    "LLM_MODEL_QWEN_NAME": LLM_MODEL_QWEN_NAME,
-    "LLM_MODEL_QWEN_SIMPLE_NAME": LLM_MODEL_QWEN_SIMPLE_NAME,
+    "LLM_MODEL_DEEPSEEK_FLASH": LLM_MODEL_DEEPSEEK_FLASH,
+    "LLM_MODEL_DEEPSEEK_PRO": LLM_MODEL_DEEPSEEK_PRO,
     "LLM_MODEL_GLM_NAME": LLM_MODEL_GLM_NAME,
     "LLM_MODEL_KIMI_NAME": LLM_MODEL_KIMI_NAME,
     "LLM_MODEL_MINIMAX_NAME": LLM_MODEL_MINIMAX_NAME,
@@ -124,14 +124,14 @@ def _get_fallback_llm() -> BaseChatModel:
 # ═══════════════════════════════════════════════════════════════
 
 def get_llm(
-    model: str = LLM_MODEL_QWEN_SIMPLE_NAME,
+    model: str = LLM_MODEL_KIMI_NAME,
     force_fallback: bool = False,
 ) -> BaseChatModel:
     """
     获取 LLM 实例（统一入口）。
 
     Args:
-        model:          模型名称（直接传 .env 中的变量值，如 LLM_MODEL_QWEN_SIMPLE_NAME）
+        model:          模型名称（直接传 .env 中的变量值，如 LLM_MODEL_KIMI_NAME）
         force_fallback: 是否强制使用本地 Ollama 备用模型
 
     Returns:
@@ -151,7 +151,7 @@ def get_llm(
 
 def llm_call(
     prompt: str | list,
-    model: str = LLM_MODEL_QWEN_SIMPLE_NAME,
+    model: str = LLM_MODEL_KIMI_NAME,
     temperature: float | None = None,
     force_fallback: bool = False,
 ) -> AIMessage:
@@ -224,7 +224,7 @@ def llm_invoke_with_tools(
     messages: list,
     tools: list,
     *,
-    model: str = LLM_MODEL_QWEN_SIMPLE_NAME,
+    model: str = LLM_MODEL_KIMI_NAME,
     temperature: float = 0.2,
     force_fallback: bool = False,
 ) -> AIMessage:

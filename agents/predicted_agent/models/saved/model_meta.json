@@ -1,20 +1,36 @@
 {
-  "train_samples": 8445,
-  "feature_count": 12,
+  "train_samples": 6694,
+  "val_samples": 1752,
+  "feature_count": 19,
   "features": [
     "B365H",
     "B365D",
     "B365A",
-    "B365>2.5",
-    "B365<2.5",
-    "AHh",
     "prob_h",
     "prob_d",
     "prob_a",
-    "prob_over",
-    "prob_under",
-    "overround"
+    "overround",
+    "odds_move_h",
+    "odds_move_d",
+    "odds_move_a",
+    "prob_h_c",
+    "prob_d_c",
+    "prob_a_c",
+    "odds_spread",
+    "odds_cv",
+    "top2_gap",
+    "move_x_prob_h",
+    "move_x_prob_d",
+    "move_x_prob_a"
   ],
-  "wdl_cv_accuracy": 0.4963,
-  "ou_cv_accuracy": 0.5761
+  "train_accuracy": 0.5751,
+  "cv_accuracy": 0.4789,
+  "val_accuracy": 0.5434,
+  "val_log_loss": 0.964,
+  "mix_weight": 0.4,
+  "wc2022_test": {
+    "samples": 64,
+    "accuracy": 0.5625,
+    "log_loss": 1.0084
+  }
 }

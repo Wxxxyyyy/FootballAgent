@@ -22,9 +22,18 @@ class RedisCacheService:
 
     @classmethod
     def from_url(cls, url: str | None = None) -> "RedisCacheService":
-        """从 REDIS_URL 或默认本机地址创建客户端。"""
-        u = url or os.getenv("REDIS_URL", "redis://localhost:6379/0")
-        return cls(redis.from_url(u, decode_responses=True))
+        """从 REDIS_URL 或环境变量拼接的地址创建客户端。"""
+        if url is None:
+            url = os.getenv("REDIS_URL")
+        if url is None:
+            # 从独立环境变量拼接
+            _host = os.getenv("REDIS_HOST", "127.0.0.1")
+            _port = os.getenv("REDIS_PORT", "6379")
+            _pwd = os.getenv("REDIS_PASSWORD", "")
+            _db = os.getenv("REDIS_DB", "0")
+            _auth = f":{_pwd}@" if _pwd else ""
+            url = f"redis://{_auth}{_host}:{_port}/{_db}"
+        return cls(redis.from_url(url, decode_responses=True))
 
     async def get(self, key: str) -> Optional[Any]:
         raw = await self._r.get(key)

@@ -33,7 +33,13 @@ def daily_openclaw_sync() -> None:
 def cache_cleanup() -> None:
     """每小时：清理/整理应用侧 Redis 缓存键（无 TTL 的键补 TTL，避免长期堆积）"""
     load_dotenv()
-    url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    # 从各独立环境变量拼接 Redis URL，兼容 REDIS_URL 直接配置
+    _redis_host = os.getenv("REDIS_HOST", "127.0.0.1")
+    _redis_port = os.getenv("REDIS_PORT", "6379")
+    _redis_password = os.getenv("REDIS_PASSWORD", "")
+    _redis_db = os.getenv("REDIS_DB", "0")
+    _redis_auth = f":{_redis_password}@" if _redis_password else ""
+    url = os.getenv("REDIS_URL", f"redis://{_redis_auth}{_redis_host}:{_redis_port}/{_redis_db}")
     try:
         import redis
 
@@ -75,6 +81,23 @@ def start_scheduler() -> BackgroundScheduler:
         id="cache_cleanup",
         replace_existing=True,
     )
+
+    # 预测调度已统一由 Docker OpenClaw 侧的 prediction_trigger.py 负责
+    # 主应用侧不再独立调度预测，避免两套系统同时触发导致重复推送
+    # 如需恢复主应用侧调度，取消以下注释:
+    # try:
+    #     from pipeline.prediction_scheduler import prediction_loop_tick
+    #     sched.add_job(
+    #         prediction_loop_tick,
+    #         IntervalTrigger(hours=1),
+    #         id="prediction_loop",
+    #         replace_existing=True,
+    #     )
+    #     logger.info("已注册预测调度: prediction_loop 每小时检查比赛")
+    # except ImportError:
+    #     logger.warning("prediction_scheduler 未安装，跳过预测调度")
+    logger.info("预测调度由 Docker OpenClaw 侧统一管理")
+
     sched.start()
     _scheduler = sched
     logger.info("APScheduler 已启动: daily_openclaw_sync 每天 09:00, cache_cleanup 每小时")

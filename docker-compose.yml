@@ -1,7 +1,6 @@
 # ⚽ Football Agent - Docker Compose 编排文件
 # 启动命令: docker-compose up -d
-
-version: '3.8'
+# 所有服务通过内部网络 football_net 互联，外部仅暴露必要端口
 
 services:
   # ---------- MySQL 关系数据库 ----------
@@ -14,11 +13,18 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-football_agent}
       MYSQL_CHARSET: utf8mb4
     ports:
-      - "3306:3306"
+      - "127.0.0.1:${MYSQL_PORT:-3306}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./configs/mysql_schema.sql:/docker-entrypoint-initdb.d/init.sql
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - football_net
 
   # ---------- Neo4j 图数据库 ----------
   neo4j:
@@ -27,12 +33,21 @@ services:
     restart: always
     environment:
       NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-football123}
+      NEO4J_server_memory_heap_initial__size: "256m"
+      NEO4J_server_memory_heap_max__size: "512m"
     ports:
-      - "7474:7474"   # Web 管理界面
-      - "7687:7687"   # Bolt 协议
+      - "127.0.0.1:7474:7474"   # Web 管理界面
+      - "127.0.0.1:7687:7687"   # Bolt 协议
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
+    healthcheck:
+      test: ["CMD", "neo4j", "status"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - football_net
 
   # ---------- Redis 缓存 ----------
   redis:
@@ -40,24 +55,98 @@ services:
     container_name: football_redis
     restart: always
     ports:
-      - "6379:6379"
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes
+    command: redis-server --appendonly yes ${REDIS_PASSWORD:+--requirepass ${REDIS_PASSWORD}}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - football_net
+
+  # ---------- OpenClaw 爬虫服务 ----------
+  openclaw:
+    build:
+      context: ./docker/openclaw
+      dockerfile: Dockerfile
+    container_name: football_openclaw
+    restart: always
+    environment:
+      - OPENCLAW_PORT=9000
+      - OPENCLAW_API_KEY=${OPENCLAW_API_KEY:-}
+      - ODDS_LOOP_INTERVAL=${ODDS_LOOP_INTERVAL:-900}
+      - WORLDCUP_SCORE_URL=${WORLDCUP_SCORE_URL:-https://2026.titan007.com/}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - TZ=Asia/Shanghai
+      - BARK_ENABLED=${BARK_ENABLED:-true}
+      - BARK_KEY=${BARK_KEY:-}
+      # 容器间通过 football_net 网络的服务名访问数据库
+      - MYSQL_HOST=football_mysql
+      - NEO4J_URL=bolt://football_neo4j:7687
+      - MYSQL_USER=${MYSQL_USER:-root}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-football123}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-football_agent}
+      - NEO4J_USERNAME=${NEO4J_USERNAME:-neo4j}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-football123}
+    ports:
+      - "127.0.0.1:${OPENCLAW_PORT:-9000}:9000"
+    # Linux 下让容器能用 host.docker.internal 访问主机的预测服务(8000)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - openclaw_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - football_net
 
   # ---------- Milvus 向量数据库（可选，按需启用） ----------
   # milvus:
   #   image: milvusdb/milvus:v2.4.0
   #   container_name: football_milvus
   #   ports:
-  #     - "19530:19530"
+  #     - "127.0.0.1:19530:19530"
   #   volumes:
   #     - milvus_data:/var/lib/milvus
+  #   networks:
+  #     - football_net
+
+  # ---------- RabbitMQ 消息队列（后期按需启用） ----------
+  # rabbitmq:
+  #   image: rabbitmq:3-management-alpine
+  #   container_name: football_rabbitmq
+  #   restart: always
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: ${MQ_USER:-football}
+  #     RABBITMQ_DEFAULT_PASS: ${MQ_PASSWORD:-football123}
+  #   ports:
+  #     - "127.0.0.1:5672:5672"    # AMQP 协议
+  #     - "127.0.0.1:15672:15672"  # 管理界面
+  #   volumes:
+  #     - rabbitmq_data:/var/lib/rabbitmq
+  #   healthcheck:
+  #     test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+  #     interval: 15s
+  #     timeout: 10s
+  #     retries: 5
+  #   networks:
+  #     - football_net
+
+networks:
+  football_net:
+    driver: bridge
 
 volumes:
   mysql_data:
   neo4j_data:
   neo4j_logs:
   redis_data:
+  openclaw_data:
   # milvus_data:
-
+  # rabbitmq_data:

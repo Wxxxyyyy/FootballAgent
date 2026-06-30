@@ -1,0 +1,179 @@
+{
+  "status": "ok",
+  "match_id": "2906968",
+  "home_team": "挪威",
+  "away_team": "法国",
+  "tier": 1,
+  "prediction_time": "2026-06-26T23:30:00.954155",
+  "ml_prediction": {
+    "home_win_prob": 0.1713,
+    "draw_prob": 0.2832,
+    "away_win_prob": 0.5454,
+    "wdl_prediction": "A",
+    "input_odds": {
+      "B365H": 4.75,
+      "B365D": 3.6,
+      "B365A": 1.7,
+      "B365CH": 4.75,
+      "B365CD": 4.5,
+      "B365CA": 1.62
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.1982,
+    "draw_prob": 0.2155,
+    "away_win_prob": 0.5863,
+    "wdl_prediction": "A",
+    "expected_goals_home": 1.101,
+    "expected_goals_away": 2.028,
+    "most_likely_score": "1:2",
+    "score_distribution": {
+      "1:2": 0.103,
+      "1:1": 0.0984,
+      "0:2": 0.0881,
+      "0:1": 0.0858,
+      "1:3": 0.0649
+    },
+    "lambda_home": 1.101,
+    "lambda_away": 2.028,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Norway",
+        "away_team": "Senegal",
+        "home_goals": 3,
+        "away_goals": 2,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-23 08:00"
+      },
+      {
+        "home_team": "Norway",
+        "away_team": "Senegal",
+        "home_goals": 3,
+        "away_goals": 2,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "22 Jun 2026"
+      },
+      {
+        "home_team": "Iraq",
+        "away_team": "Norway",
+        "home_goals": 1,
+        "away_goals": 4,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-17 06:00"
+      },
+      {
+        "home_team": "Iraq",
+        "away_team": "Norway",
+        "home_goals": 1,
+        "away_goals": 4,
+        "result": "A",
+        "competition": "FIFA World Cup",
+        "date": "16 Jun 2026"
+      },
+      {
+        "home_team": "Morocco",
+        "away_team": "Norway",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "International Friendly",
+        "date": "07 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "France",
+        "away_team": "Iraq",
+        "home_goals": 3,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-23 05:00"
+      },
+      {
+        "home_team": "France",
+        "away_team": "Senegal",
+        "home_goals": 3,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-17 03:00"
+      },
+      {
+        "home_team": "France",
+        "away_team": "Senegal",
+        "home_goals": 3,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "16 Jun 2026"
+      },
+      {
+        "home_team": "France",
+        "away_team": "Northern Ireland",
+        "home_goals": 3,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "International Friendly",
+        "date": "08 Jun 2026"
+      },
+      {
+        "home_team": "France",
+        "away_team": "Ivory Coast",
+        "home_goals": 1,
+        "away_goals": 2,
+        "result": "A",
+        "competition": "International Friendly",
+        "date": "04 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [],
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "A",
+      "confidence": "中",
+      "reason": "ML模型客胜概率54.5%，高于主胜17.1%和平局28.3%，倾向法国取胜"
+    },
+    "monte_carlo_prediction": {
+      "result": "A",
+      "most_likely_score": "1:2",
+      "reason": "蒙特卡洛模拟客胜概率58.6%，最可能比分1:2，预期进球主队1.1客队2.0"
+    },
+    "score_predictions": [
+      {
+        "score": "1:2",
+        "prob": 0.103,
+        "reason": "蒙特卡洛最可能比分，反映两队攻防差异"
+      },
+      {
+        "score": "1:1",
+        "prob": 0.098,
+        "reason": "平局最高概率比分，双方均有进球可能"
+      },
+      {
+        "score": "0:2",
+        "prob": 0.088,
+        "reason": "法国零封对手的较高概率比分"
+      },
+      {
+        "score": "2:1",
+        "prob": 0.06,
+        "reason": "冷门主胜可能比分，挪威若高效反击有望爆冷"
+      }
+    ],
+    "upset_prediction": {
+      "result": "D",
+      "score": "1:1",
+      "reason": "挪威近期友谊赛状态不俗，法国有过不敌科特迪瓦的冷门，平局概率21.5%不容忽视，赔率3.6也留有空间"
+    },
+    "overall_analysis": "ML模型和蒙特卡洛模拟均倾斜客胜，概率约55%-59%，市场赔率客胜1.70也体现法国优势。挪威近期友谊赛3胜1平，但对手多为伊拉克、塞内加尔等，含金量一般；法国最近一场3:0大胜伊拉克，整体实力和大赛经验占优。缺少出线形势、战意及伤停情报，只能依赖数据。客胜是正路选择，但需注意平局冷门可能，因挪威主场作战或能顽强逼平。建议关注客胜及防平，比分倾向1:2、1:1。",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"A\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型客胜概率54.5%，高于主胜17.1%和平局28.3%，倾向法国取胜\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"A\",\n    \"most_likely_score\": \"1:2\",\n    \"reason\": \"蒙特卡洛模拟客胜概率58.6%，最可能比分1:2，预期进球主队1.1客队2.0\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"1:2\",\n      \"prob\": 0.103,\n      \"reason\": \"蒙特卡洛最可能比分，反映两队攻防差异\"\n    },\n    {\n      \"score\": \"1:1\",\n      \"prob\": 0.098,\n      \"reason\": \"平局最高概率比分，双方均有进球可能\"\n    },\n    {\n      \"score\": \"0:2\",\n      \"prob\": 0.088,\n      \"reason\": \"法国零封对手的较高概率比分\"\n    },\n    {\n      \"score\": \"2:1\",\n      \"prob\": 0.06,\n      \"reason\": \"冷门主胜可能比分，挪威若高效反击有望爆冷\"\n    }\n  ],\n  \"upset_prediction\": {\n    \"result\": \"D\",\n    \"score\": \"1:1\",\n    \"reason\": \"挪威近期友谊赛状态不俗，法国有过不敌科特迪瓦的冷门，平局概率21.5%不容忽视，赔率3.6也留有空间\"\n  },\n  \"overall_analysis\": \"ML模型和蒙特卡洛模拟均倾斜客胜，概率约55%-59%，市场赔率客胜1.70也体现法国优势。挪威近期友谊赛3胜1平，但对手多为伊拉克、塞内加尔等，含金量一般；法国最近一场3:0大胜伊拉克，整体实力和大赛经验占优。缺少出线形势、战意及伤停情报，只能依赖数据。客胜是正路选择，但需注意平局冷门可能，因挪威主场作战或能顽强逼平。建议关注客胜及防平，比分倾向1:2、1:1。\"\n}"
+  }
+}

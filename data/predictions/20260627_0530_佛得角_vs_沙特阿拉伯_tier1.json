@@ -1,0 +1,143 @@
+{
+  "status": "ok",
+  "match_id": "2906965",
+  "home_team": "佛得角",
+  "away_team": "沙特阿拉伯",
+  "tier": 1,
+  "prediction_time": "2026-06-27T05:29:56.881077",
+  "ml_prediction": {
+    "home_win_prob": 0.2838,
+    "draw_prob": 0.3939,
+    "away_win_prob": 0.3223,
+    "wdl_prediction": "D",
+    "input_odds": {
+      "B365H": 3.3,
+      "B365D": 3.4,
+      "B365A": 2.1,
+      "B365CH": 2.63,
+      "B365CD": 3.3,
+      "B365CA": 2.7
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.3597,
+    "draw_prob": 0.2873,
+    "away_win_prob": 0.353,
+    "wdl_prediction": "H",
+    "expected_goals_home": 1.133,
+    "expected_goals_away": 1.114,
+    "most_likely_score": "1:1",
+    "score_distribution": {
+      "1:1": 0.1358,
+      "0:1": 0.1198,
+      "1:0": 0.1194,
+      "0:0": 0.1006,
+      "2:1": 0.0745
+    },
+    "lambda_home": 1.133,
+    "lambda_away": 1.114,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Uruguay",
+        "away_team": "Cape Verde",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-22 06:00"
+      },
+      {
+        "home_team": "Uruguay",
+        "away_team": "Cape Verde",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "21 Jun 2026"
+      },
+      {
+        "home_team": "Spain",
+        "away_team": "Cape Verde",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-16 00:00"
+      },
+      {
+        "home_team": "Spain",
+        "away_team": "Cape Verde",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "15 Jun 2026"
+      },
+      {
+        "home_team": "Bermuda",
+        "away_team": "Cape Verde",
+        "home_goals": 0,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "International Friendly",
+        "date": "06 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Spain",
+        "away_team": "Saudi Arabia",
+        "home_goals": 4,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-22 00:00"
+      },
+      {
+        "home_team": "Spain",
+        "away_team": "Saudi Arabia",
+        "home_goals": 4,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "21 Jun 2026"
+      },
+      {
+        "home_team": "Saudi Arabia",
+        "away_team": "Uruguay",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-16 06:00"
+      },
+      {
+        "home_team": "Saudi Arabia",
+        "away_team": "Uruguay",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "15 Jun 2026"
+      },
+      {
+        "home_team": "Saudi Arabia",
+        "away_team": "Senegal",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "International Friendly",
+        "date": "09 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [],
+  "llm_analysis": {
+    "parse_error": "无法解析 LLM JSON 输出",
+    "overall_analysis": "{\n  \"ml_prediction\": {\n    \"result\": \"D\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型平局概率最高(39.4%)，分布较均匀，倾向平局。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"H\",\n    \"most_likely_score\":",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"D\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型平局概率最高(39.4%)，分布较均匀，倾向平局。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"H\",\n    \"most_likely_score\":"
+  }
+}

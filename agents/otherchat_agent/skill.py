@@ -14,7 +14,7 @@ from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, Base
 from typing import Sequence
 
 from agents.otherchat_agent.prompts import get_chat_system_prompt
-from common.llm_select import llm_call, LLM_MODEL_QWEN_SIMPLE_NAME
+from common.llm_select import llm_call, LLM_MODEL_KIMI_NAME
 
 # 对话历史最大保留条数（避免 token 过多）
 HISTORY_LIMIT = 6
@@ -106,7 +106,7 @@ def chat(messages: Sequence[BaseMessage], is_fallback: bool) -> dict:
     # ── 步骤2: 调用轻量模型 ──
     print("[otherchat_skill] 正在调用轻量模型生成闲聊回复...")
     try:
-        response = llm_call(chat_messages, model=LLM_MODEL_QWEN_SIMPLE_NAME)
+        response = llm_call(chat_messages, model=LLM_MODEL_KIMI_NAME)
         reply = response.content
         print(f"[otherchat_skill] 回复成功，长度: {len(reply)} 字符")
     except Exception as e:

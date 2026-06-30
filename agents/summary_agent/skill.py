@@ -27,7 +27,7 @@ def summarize(raw_agent_response: str, intent: str) -> dict:
       1. 通过 prompts.py 组装 System Prompt（根据意图动态选择模板）
       2. 根据意图选择合适的模型进行话术润色
          - information_agent / predicted_agent：数据量大、需要整理排版
-           → 使用远程模型（LLM_MODEL_QWEN_SIMPLE_NAME），处理能力更强
+           → 使用远程模型（LLM_MODEL_KIMI_NAME），处理能力更强
          - otherchat_agent 等简单任务
            → 使用本地 Ollama 7b，省时省钱
       3. 执行 safety_check 安全检查（敏感词过滤 / 赌博免责 / 预测免责）

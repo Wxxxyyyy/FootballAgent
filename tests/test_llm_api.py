@@ -28,8 +28,8 @@ from common.llm_select import (
     OLLAMA_BASE_URL,
     OLLAMA_CHAT_MODEL,
     # 所有可用远程模型（平级，按需选用）
-    LLM_MODEL_QWEN_NAME,
-    LLM_MODEL_QWEN_SIMPLE_NAME,
+    LLM_MODEL_DEEPSEEK_FLASH,
+    LLM_MODEL_DEEPSEEK_PRO,
     LLM_MODEL_GLM_NAME,
     LLM_MODEL_KIMI_NAME,
     LLM_MODEL_MINIMAX_NAME,
@@ -46,11 +46,11 @@ from common.llm_select import (
 # ═══════════════════════════════════════════════════════════════
 
 TEST_MODELS = [
-    # LLM_MODEL_QWEN_SIMPLE_NAME,   # qwen3-coder-next
-    LLM_MODEL_QWEN_NAME,        # qwen3.5-plus（取消注释即可测试）
-    # LLM_MODEL_GLM_NAME,         # glm-5
-    # LLM_MODEL_KIMI_NAME,        # kimi-k2.5
-    # LLM_MODEL_MINIMAX_NAME,     # MiniMax-M2.5
+    # LLM_MODEL_DEEPSEEK_FLASH,  # deepseek-v4-flash-202605
+    # LLM_MODEL_DEEPSEEK_PRO,    # deepseek-v4-pro-202606
+    LLM_MODEL_KIMI_NAME,         # kimi-k2.5（取消注释即可测试）
+    # LLM_MODEL_GLM_NAME,        # glm-5.1
+    # LLM_MODEL_MINIMAX_NAME,      # minimax-m2.7
 ]
 
 # 是否也测试 Ollama 本地备用模型

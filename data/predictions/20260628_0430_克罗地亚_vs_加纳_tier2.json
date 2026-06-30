@@ -1,0 +1,143 @@
+{
+  "status": "ok",
+  "match_id": "2906977",
+  "home_team": "克罗地亚",
+  "away_team": "加纳",
+  "tier": 2,
+  "prediction_time": "2026-06-28T04:29:54.886551",
+  "ml_prediction": {
+    "home_win_prob": 0.4485,
+    "draw_prob": 0.3774,
+    "away_win_prob": 0.1741,
+    "wdl_prediction": "H",
+    "input_odds": {
+      "B365H": 1.73,
+      "B365D": 3.6,
+      "B365A": 4.5,
+      "B365CH": 1.8,
+      "B365CD": 3.2,
+      "B365CA": 5.5
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.535,
+    "draw_prob": 0.2937,
+    "away_win_prob": 0.1713,
+    "wdl_prediction": "H",
+    "expected_goals_home": 1.261,
+    "expected_goals_away": 0.587,
+    "most_likely_score": "1:0",
+    "score_distribution": {
+      "1:0": 0.1999,
+      "0:0": 0.1613,
+      "2:0": 0.1272,
+      "1:1": 0.1115,
+      "0:1": 0.0913
+    },
+    "lambda_home": 1.261,
+    "lambda_away": 0.587,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Panama",
+        "away_team": "Croatia",
+        "home_goals": 0,
+        "away_goals": 1,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-24 07:00"
+      },
+      {
+        "home_team": "Panama",
+        "away_team": "Croatia",
+        "home_goals": 0,
+        "away_goals": 1,
+        "result": "A",
+        "competition": "FIFA World Cup",
+        "date": "23 Jun 2026"
+      },
+      {
+        "home_team": "England",
+        "away_team": "Croatia",
+        "home_goals": 4,
+        "away_goals": 2,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-18 04:00"
+      },
+      {
+        "home_team": "England",
+        "away_team": "Croatia",
+        "home_goals": 4,
+        "away_goals": 2,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "17 Jun 2026"
+      },
+      {
+        "home_team": "Croatia",
+        "away_team": "Slovenia",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "International Friendly",
+        "date": "07 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "England",
+        "away_team": "Ghana",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-24 04:00"
+      },
+      {
+        "home_team": "England",
+        "away_team": "Ghana",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "23 Jun 2026"
+      },
+      {
+        "home_team": "Ghana",
+        "away_team": "Panama",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-18 07:00"
+      },
+      {
+        "home_team": "Ghana",
+        "away_team": "Panama",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "17 Jun 2026"
+      },
+      {
+        "home_team": "Wales",
+        "away_team": "Ghana",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "International Friendly",
+        "date": "02 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [],
+  "llm_analysis": {
+    "parse_error": "无法解析 LLM JSON 输出",
+    "overall_analysis": "{\n  \"ml_prediction\": {\n    \"result\": \"H\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型倾向主胜（44.85%），结合战意克罗地亚必须赢球出线，战意加持支撑主胜。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"H\",\n    \"most_likely_score\": \"1:0\",\n    \"reason\": \"蒙特卡洛模拟主胜概率53.5%，最可能比分1:0出现率20%，反映克罗地亚进攻优势与加纳防守硬度。\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"1:0\",\n      \"prob\": 0.20,\n      \"reason\": \"蒙特卡洛最高概率比分，符合克罗地亚小胜格局\"\n    },\n    {\n      \"score\": \"0:0\",\n      \"prob\": 0.161,\n      \"reason\": \"加纳打平即可",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"H\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型倾向主胜（44.85%），结合战意克罗地亚必须赢球出线，战意加持支撑主胜。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"H\",\n    \"most_likely_score\": \"1:0\",\n    \"reason\": \"蒙特卡洛模拟主胜概率53.5%，最可能比分1:0出现率20%，反映克罗地亚进攻优势与加纳防守硬度。\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"1:0\",\n      \"prob\": 0.20,\n      \"reason\": \"蒙特卡洛最高概率比分，符合克罗地亚小胜格局\"\n    },\n    {\n      \"score\": \"0:0\",\n      \"prob\": 0.161,\n      \"reason\": \"加纳打平即可"
+  }
+}

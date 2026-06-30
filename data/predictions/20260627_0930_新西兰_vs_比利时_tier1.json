@@ -1,0 +1,165 @@
+{
+  "status": "ok",
+  "match_id": "2906962",
+  "home_team": "新西兰",
+  "away_team": "比利时",
+  "tier": 1,
+  "prediction_time": "2026-06-27T09:30:14.264077",
+  "ml_prediction": {
+    "home_win_prob": 0.0686,
+    "draw_prob": 0.1154,
+    "away_win_prob": 0.816,
+    "wdl_prediction": "A",
+    "input_odds": {
+      "B365H": 9.0,
+      "B365D": 5.75,
+      "B365A": 1.27,
+      "B365CH": 13.0,
+      "B365CD": 7.5,
+      "B365CA": 1.18
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.0724,
+    "draw_prob": 0.1266,
+    "away_win_prob": 0.801,
+    "wdl_prediction": "A",
+    "expected_goals_home": 0.775,
+    "expected_goals_away": 2.865,
+    "most_likely_score": "0:2",
+    "score_distribution": {
+      "0:2": 0.1077,
+      "0:3": 0.0987,
+      "1:2": 0.0876,
+      "1:3": 0.0784,
+      "0:4": 0.0761
+    },
+    "lambda_home": 0.775,
+    "lambda_away": 2.865,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "New Zealand",
+        "away_team": "Egypt",
+        "home_goals": 1,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-22 09:00"
+      },
+      {
+        "home_team": "New Zealand",
+        "away_team": "Egypt",
+        "home_goals": 1,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "FIFA World Cup",
+        "date": "21 Jun 2026"
+      },
+      {
+        "home_team": "Iran",
+        "away_team": "New Zealand",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-16 09:00"
+      },
+      {
+        "home_team": "Iran",
+        "away_team": "New Zealand",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "15 Jun 2026"
+      },
+      {
+        "home_team": "England",
+        "away_team": "New Zealand",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "International Friendly",
+        "date": "06 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Belgium",
+        "away_team": "Iran",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-22 03:00"
+      },
+      {
+        "home_team": "Belgium",
+        "away_team": "Iran",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "21 Jun 2026"
+      },
+      {
+        "home_team": "Belgium",
+        "away_team": "Egypt",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-16 03:00"
+      },
+      {
+        "home_team": "Belgium",
+        "away_team": "Egypt",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "15 Jun 2026"
+      },
+      {
+        "home_team": "Belgium",
+        "away_team": "Tunisia",
+        "home_goals": 5,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "International Friendly",
+        "date": "06 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [],
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "A",
+      "confidence": "高",
+      "reason": "ML模型客胜概率81.6%，大幅领先，无战意或伤病因素干扰，倾向于客胜。"
+    },
+    "monte_carlo_prediction": {
+      "result": "A",
+      "most_likely_score": "0:2",
+      "reason": "蒙特卡洛模拟客胜概率80.1%，最可能比分0:2（10.8%），客队预期进球2.865远高于主队。"
+    },
+    "score_predictions": [
+      {
+        "score": "0:2",
+        "prob": 0.108,
+        "reason": "蒙特卡洛最高概率比分，客队进攻强势，主队进球能力有限。"
+      },
+      {
+        "score": "0:3",
+        "prob": 0.099,
+        "reason": "蒙特卡洛第二高概率比分，客队可能全面压制。"
+      }
+    ],
+    "upset_prediction": null,
+    "overall_analysis": "新西兰与比利时实力差距明显，ML模型与蒙特卡洛模拟均给出超过80%的客胜概率，赔率也极度倾向客胜（1.27）。新西兰近期防守不稳，面对强敌常丢多球；比利时虽近两场平局，但对手实力较强，整体控制力远在新西兰之上。若无意外，比利时将轻松取胜，最可能比分0:2或0:3。冷门可能性极低。",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"A\",\n    \"confidence\": \"高\",\n    \"reason\": \"ML模型客胜概率81.6%，大幅领先，无战意或伤病因素干扰，倾向于客胜。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"A\",\n    \"most_likely_score\": \"0:2\",\n    \"reason\": \"蒙特卡洛模拟客胜概率80.1%，最可能比分0:2（10.8%），客队预期进球2.865远高于主队。\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"0:2\",\n      \"prob\": 0.108,\n      \"reason\": \"蒙特卡洛最高概率比分，客队进攻强势，主队进球能力有限。\"\n    },\n    {\n      \"score\": \"0:3\",\n      \"prob\": 0.099,\n      \"reason\": \"蒙特卡洛第二高概率比分，客队可能全面压制。\"\n    }\n  ],\n  \"upset_prediction\": null,\n  \"overall_analysis\": \"新西兰与比利时实力差距明显，ML模型与蒙特卡洛模拟均给出超过80%的客胜概率，赔率也极度倾向客胜（1.27）。新西兰近期防守不稳，面对强敌常丢多球；比利时虽近两场平局，但对手实力较强，整体控制力远在新西兰之上。若无意外，比利时将轻松取胜，最可能比分0:2或0:3。冷门可能性极低。\"\n}"
+  }
+}

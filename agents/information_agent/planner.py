@@ -30,7 +30,7 @@ from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AI
 from agents.information_agent.prompts import get_planner_prompt_fc
 from agents.tools.mysql_tools.tool_entry import mysql_query
 from agents.tools.vector_tools.tool_entry import search_knowledge_base
-from common.llm_select import llm_invoke_with_tools, LLM_MODEL_QWEN_SIMPLE_NAME
+from common.llm_select import llm_invoke_with_tools, LLM_MODEL_KIMI_NAME
 
 # Planner 仅用于路由说明与 schema，不在此处 invoke 执行查询
 PLANNER_TOOLS = [mysql_query, search_knowledge_base]
@@ -306,7 +306,7 @@ def plan(user_msg: str, messages: Sequence[BaseMessage]) -> list[dict]:
         response = llm_invoke_with_tools(
             llm_messages,
             PLANNER_TOOLS,
-            model=LLM_MODEL_QWEN_SIMPLE_NAME,
+            model=LLM_MODEL_KIMI_NAME,
             temperature=0.2,
         )
     except Exception as e:

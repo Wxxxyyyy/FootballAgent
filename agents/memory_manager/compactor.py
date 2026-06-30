@@ -15,7 +15,7 @@ from datetime import datetime
 
 from langchain_core.messages import BaseMessage
 
-from common.llm_select import llm_call, LLM_MODEL_QWEN_SIMPLE_NAME
+from common.llm_select import llm_call, LLM_MODEL_KIMI_NAME
 from agents.memory_manager.prompts import get_flush_prompt, get_compaction_prompt
 from agents.tools.vector_tools.config import (
     MEMORY_COLLECTION,
@@ -82,7 +82,7 @@ def _flush_key_info(messages_text: str) -> dict:
     """
     prompt = get_flush_prompt(messages_text)
     try:
-        response = llm_call(prompt, model=LLM_MODEL_QWEN_SIMPLE_NAME, force_fallback=True)
+        response = llm_call(prompt, model=LLM_MODEL_KIMI_NAME, force_fallback=True)
         raw = response.content.strip()
         if "```" in raw:
             import re
@@ -100,7 +100,7 @@ def _generate_summary(messages_text: str, flush_result: dict) -> str:
     flush_json = json.dumps(flush_result, ensure_ascii=False, indent=2)
     prompt = get_compaction_prompt(messages_text, flush_json)
     try:
-        response = llm_call(prompt, model=LLM_MODEL_QWEN_SIMPLE_NAME, force_fallback=True)
+        response = llm_call(prompt, model=LLM_MODEL_KIMI_NAME, force_fallback=True)
         return response.content.strip()
     except Exception as e:
         print(f"[MemoryManager] 摘要生成失败: {e}，使用原文截断兜底")

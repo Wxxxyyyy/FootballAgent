@@ -12,7 +12,7 @@ Text2Cypher · LLM 生成 Cypher + 纠错重试回环
 import re
 from langchain_core.messages import SystemMessage, HumanMessage
 
-from common.llm_select import llm_call, LLM_MODEL_QWEN_SIMPLE_NAME
+from common.llm_select import llm_call, LLM_MODEL_KIMI_NAME
 from agents.tools.neo4j_tools.security import (
     run_all_defenses,
     CypherSecurityError,
@@ -211,7 +211,7 @@ def generate_cypher(
 
         # ── 调用 LLM 生成 Cypher ──
         try:
-            response = llm_call(messages, model=LLM_MODEL_QWEN_SIMPLE_NAME)
+            response = llm_call(messages, model=LLM_MODEL_KIMI_NAME)
             raw_cypher = _extract_cypher(response.content)
         except Exception as e:
             last_error = f"LLM 调用失败: {type(e).__name__}: {e}"

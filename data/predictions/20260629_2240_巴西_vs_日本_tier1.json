@@ -1,0 +1,209 @@
+{
+  "status": "ok",
+  "match_id": "2907377",
+  "home_team": "巴西",
+  "away_team": "日本",
+  "tier": 1,
+  "prediction_time": "2026-06-29T22:40:07.208997",
+  "ml_prediction": {
+    "home_win_prob": 0.6217,
+    "draw_prob": 0.2109,
+    "away_win_prob": 0.1673,
+    "wdl_prediction": "H",
+    "input_odds": {
+      "B365H": 1.75,
+      "B365D": 3.6,
+      "B365A": 4.75,
+      "B365CH": 1.7,
+      "B365CD": 3.7,
+      "B365CA": 5.25
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.5515,
+    "draw_prob": 0.2608,
+    "away_win_prob": 0.1877,
+    "wdl_prediction": "H",
+    "expected_goals_home": 1.532,
+    "expected_goals_away": 0.746,
+    "most_likely_score": "1:0",
+    "score_distribution": {
+      "1:0": 0.1512,
+      "1:1": 0.1211,
+      "2:0": 0.1194,
+      "0:0": 0.1002,
+      "2:1": 0.0888
+    },
+    "lambda_home": 1.532,
+    "lambda_away": 0.746,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Scotland",
+        "away_team": "Brazil",
+        "home_goals": 0,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-25 06:00"
+      },
+      {
+        "home_team": "Brazil",
+        "away_team": "Haiti",
+        "home_goals": 3,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-20 08:30"
+      },
+      {
+        "home_team": "Brazil",
+        "away_team": "Haiti",
+        "home_goals": 3,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "19 Jun 2026"
+      },
+      {
+        "home_team": "Brazil",
+        "away_team": "Morocco",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-14 06:00"
+      },
+      {
+        "home_team": "Brazil",
+        "away_team": "Morocco",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "13 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Japan",
+        "away_team": "Sweden",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-26 07:00"
+      },
+      {
+        "home_team": "Tunisia",
+        "away_team": "Japan",
+        "home_goals": 0,
+        "away_goals": 4,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-21 12:00"
+      },
+      {
+        "home_team": "Tunisia",
+        "away_team": "Japan",
+        "home_goals": 0,
+        "away_goals": 4,
+        "result": "A",
+        "competition": "FIFA World Cup",
+        "date": "20 Jun 2026"
+      },
+      {
+        "home_team": "Netherlands",
+        "away_team": "Japan",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-15 04:00"
+      },
+      {
+        "home_team": "Netherlands",
+        "away_team": "Japan",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "14 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [
+    {
+      "date": "14 Oct 2025",
+      "season": "2026",
+      "result": "3-2",
+      "comp": "Kirin Challenge Cup",
+      "hg": 3,
+      "ag": 2
+    },
+    {
+      "date": "10 Nov 2017",
+      "season": "2018",
+      "result": "1-3",
+      "comp": "International Friendly",
+      "hg": 1,
+      "ag": 3
+    },
+    {
+      "date": "06 Jun 2022",
+      "season": "2022",
+      "result": "0-1",
+      "comp": "Kirin Challenge Cup",
+      "hg": 0,
+      "ag": 1
+    }
+  ],
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "H",
+      "confidence": "中",
+      "reason": "ML模型主胜概率62.2%，平局与客胜较低，但验证准确率约54.5%，缺少战意信息故谨慎。"
+    },
+    "monte_carlo_prediction": {
+      "result": "H",
+      "most_likely_score": "1:0",
+      "reason": "模拟10000次后主胜概率55.2%，最可能比分1:0占比15.1%，场均进球主1.53客0.75。"
+    },
+    "score_predictions": [
+      {
+        "score": "1:0",
+        "prob": 0.151,
+        "reason": "蒙特卡洛模拟最高概率比分，主队攻击力略优但难以大胜。"
+      },
+      {
+        "score": "1:1",
+        "prob": 0.121,
+        "reason": "日本近期逼平瑞典荷兰，防守韧性足，有逼平可能。"
+      },
+      {
+        "score": "2:0",
+        "prob": 0.119,
+        "reason": "巴西若早破门可能扩大优势，2:0为第二顺位比分。"
+      },
+      {
+        "score": "0:0",
+        "prob": 0.1,
+        "reason": "双方都注重防守时可能闷平，模拟概率10%。"
+      },
+      {
+        "score": "2:1",
+        "prob": 0.089,
+        "reason": "巴西攻击力更胜一筹，但日本有能力取得进球。"
+      }
+    ],
+    "upset_prediction": {
+      "result": "A",
+      "score": "0:1",
+      "reason": "蒙特卡洛模拟客胜概率18.8%超15%阈值，日本近期战平瑞典荷兰，历史交锋曾1:0击败巴西，具备爆冷能力。"
+    },
+    "overall_analysis": "巴西整体实力和主场优势明显，ML模型与蒙特卡洛模拟均指向主胜，最可能比分1:0。但谨慎之处在于日本近期表现顽强，对阵荷兰、瑞典均取得平局，且历史交锋有客场取胜记录。赔率方面主胜1.75未见绝对压低，平局与客胜赔率偏高但存在冷意。综合来看，巴西取胜概率最大，但日本防守组织良好且反击犀利，需提防平局或小比分客胜的爆冷可能。",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"H\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型主胜概率62.2%，平局与客胜较低，但验证准确率约54.5%，缺少战意信息故谨慎。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"H\",\n    \"most_likely_score\": \"1:0\",\n    \"reason\": \"模拟10000次后主胜概率55.2%，最可能比分1:0占比15.1%，场均进球主1.53客0.75。\"\n  },\n  \"score_predictions\": [\n    {\"score\": \"1:0\", \"prob\": 0.151, \"reason\": \"蒙特卡洛模拟最高概率比分，主队攻击力略优但难以大胜。\"},\n    {\"score\": \"1:1\", \"prob\": 0.121, \"reason\": \"日本近期逼平瑞典荷兰，防守韧性足，有逼平可能。\"},\n    {\"score\": \"2:0\", \"prob\": 0.119, \"reason\": \"巴西若早破门可能扩大优势，2:0为第二顺位比分。\"},\n    {\"score\": \"0:0\", \"prob\": 0.100, \"reason\": \"双方都注重防守时可能闷平，模拟概率10%。\"},\n    {\"score\": \"2:1\", \"prob\": 0.089, \"reason\": \"巴西攻击力更胜一筹，但日本有能力取得进球。\"}\n  ],\n  \"upset_prediction\": {\n    \"result\": \"A\",\n    \"score\": \"0:1\",\n    \"reason\": \"蒙特卡洛模拟客胜概率18.8%超15%阈值，日本近期战平瑞典荷兰，历史交锋曾1:0击败巴西，具备爆冷能力。\"\n  },\n  \"overall_analysis\": \"巴西整体实力和主场优势明显，ML模型与蒙特卡洛模拟均指向主胜，最可能比分1:0。但谨慎之处在于日本近期表现顽强，对阵荷兰、瑞典均取得平局，且历史交锋有客场取胜记录。赔率方面主胜1.75未见绝对压低，平局与客胜赔率偏高但存在冷意。综合来看，巴西取胜概率最大，但日本防守组织良好且反击犀利，需提防平局或小比分客胜的爆冷可能。\"\n}"
+  }
+}

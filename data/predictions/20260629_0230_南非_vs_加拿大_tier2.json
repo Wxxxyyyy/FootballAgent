@@ -1,0 +1,169 @@
+{
+  "status": "ok",
+  "match_id": "2907376",
+  "home_team": "南非",
+  "away_team": "加拿大",
+  "tier": 2,
+  "prediction_time": "2026-06-29T02:29:52.341742",
+  "ml_prediction": {
+    "home_win_prob": 0.3278,
+    "draw_prob": 0.2596,
+    "away_win_prob": 0.4126,
+    "wdl_prediction": "A",
+    "input_odds": {
+      "B365H": 5.25,
+      "B365D": 3.8,
+      "B365A": 1.67,
+      "B365CH": 4.75,
+      "B365CD": 3.3,
+      "B365CA": 1.83
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.1987,
+    "draw_prob": 0.2824,
+    "away_win_prob": 0.5189,
+    "wdl_prediction": "A",
+    "expected_goals_home": 0.705,
+    "expected_goals_away": 1.325,
+    "most_likely_score": "0:1",
+    "score_distribution": {
+      "0:1": 0.1749,
+      "0:0": 0.1297,
+      "1:1": 0.1229,
+      "0:2": 0.1122,
+      "1:0": 0.0938
+    },
+    "lambda_home": 0.705,
+    "lambda_away": 1.325,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "South Africa",
+        "away_team": "South Korea",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-25 09:00"
+      },
+      {
+        "home_team": "Czech Republic",
+        "away_team": "South Africa",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-19 00:00"
+      },
+      {
+        "home_team": "Czech Republic",
+        "away_team": "South Africa",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "18 Jun 2026"
+      },
+      {
+        "home_team": "Mexico",
+        "away_team": "South Africa",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-12 03:00"
+      },
+      {
+        "home_team": "Mexico",
+        "away_team": "South Africa",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "11 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Switzerland",
+        "away_team": "Canada",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-25 03:00"
+      },
+      {
+        "home_team": "Canada",
+        "away_team": "Qatar",
+        "home_goals": 6,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-19 06:00"
+      },
+      {
+        "home_team": "Canada",
+        "away_team": "Qatar",
+        "home_goals": 6,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "18 Jun 2026"
+      },
+      {
+        "home_team": "Canada",
+        "away_team": "Bosnia & Herzegovina",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-13 03:00"
+      },
+      {
+        "home_team": "Canada",
+        "away_team": "Bosnia and Herzegovina",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "12 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [],
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "A",
+      "confidence": "中",
+      "reason": "ML模型客胜概率41.3%，明显高于主胜32.8%和平局26.0%，且无重大战意干扰。"
+    },
+    "monte_carlo_prediction": {
+      "result": "A",
+      "most_likely_score": "0:1",
+      "reason": "10000次泊松模拟客胜概率51.9%，预期进球主0.71客1.33，最可能比分0:1。"
+    },
+    "score_predictions": [
+      {
+        "score": "0:1",
+        "prob": 0.175,
+        "reason": "蒙特卡洛模拟最高概率比分，符合加拿大预期进球优势。"
+      },
+      {
+        "score": "0:0",
+        "prob": 0.13,
+        "reason": "平局中概率最高，体现南非防守韧性。"
+      }
+    ],
+    "upset_prediction": {
+      "result": "H",
+      "score": "1:0",
+      "reason": "主胜概率ML模型32.8%，蒙特卡洛19.9%，均超15%，南非近期状态不错有爆冷可能。"
+    },
+    "overall_analysis": "ML模型与蒙特卡洛模拟一致指向客胜，加拿大实力占优且赔率低至1.67。南非虽刚击败韩国，但整体进攻乏力，预期进球不足0.8。赔率结构支持客队，市场信心明显。不过南非防守尚可，可能拖入小球平局，甚至偷袭爆冷。综合分析，客胜概率最大，但仍需警惕南非主场韧性。",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"A\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型客胜概率41.3%，明显高于主胜32.8%和平局26.0%，且无重大战意干扰。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"A\",\n    \"most_likely_score\": \"0:1\",\n    \"reason\": \"10000次泊松模拟客胜概率51.9%，预期进球主0.71客1.33，最可能比分0:1。\"\n  },\n  \"score_predictions\": [\n    {\"score\": \"0:1\", \"prob\": 0.175, \"reason\": \"蒙特卡洛模拟最高概率比分，符合加拿大预期进球优势。\"},\n    {\"score\": \"0:0\", \"prob\": 0.13, \"reason\": \"平局中概率最高，体现南非防守韧性。\"}\n  ],\n  \"upset_prediction\": {\n    \"result\": \"H\",\n    \"score\": \"1:0\",\n    \"reason\": \"主胜概率ML模型32.8%，蒙特卡洛19.9%，均超15%，南非近期状态不错有爆冷可能。\"\n  },\n  \"overall_analysis\": \"ML模型与蒙特卡洛模拟一致指向客胜，加拿大实力占优且赔率低至1.67。南非虽刚击败韩国，但整体进攻乏力，预期进球不足0.8。赔率结构支持客队，市场信心明显。不过南非防守尚可，可能拖入小球平局，甚至偷袭爆冷。综合分析，客胜概率最大，但仍需警惕南非主场韧性。\"\n}"
+  }
+}

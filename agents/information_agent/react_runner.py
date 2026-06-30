@@ -24,7 +24,7 @@ from agents.information_agent.prompts import get_react_system_prompt
 from agents.information_agent.planner import _extract_history_text
 from agents.tools.mysql_tools.tool_entry import mysql_query
 from agents.tools.vector_tools.tool_entry import search_knowledge_base
-from common.llm_select import LLM_MODEL_QWEN_SIMPLE_NAME, get_llm
+from common.llm_select import LLM_MODEL_KIMI_NAME, get_llm
 
 # 与 planner 解耦：仅复用历史抽取
 TOOLS = [mysql_query, search_knowledge_base]
@@ -39,7 +39,7 @@ MAX_REACT_ITERATIONS = 6
 
 
 def _make_bound_llm(force_fallback: bool = False):
-    llm = get_llm(LLM_MODEL_QWEN_SIMPLE_NAME, force_fallback=force_fallback)
+    llm = get_llm(LLM_MODEL_KIMI_NAME, force_fallback=force_fallback)
     return llm.bind(temperature=0.2).bind_tools(TOOLS)
 
 

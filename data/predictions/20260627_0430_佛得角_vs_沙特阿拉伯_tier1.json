@@ -1,0 +1,169 @@
+{
+  "status": "ok",
+  "match_id": "2906965",
+  "home_team": "佛得角",
+  "away_team": "沙特阿拉伯",
+  "tier": 1,
+  "prediction_time": "2026-06-27T04:29:58.470034",
+  "ml_prediction": {
+    "home_win_prob": 0.3203,
+    "draw_prob": 0.3987,
+    "away_win_prob": 0.281,
+    "wdl_prediction": "D",
+    "input_odds": {
+      "B365H": 3.3,
+      "B365D": 3.4,
+      "B365A": 2.1,
+      "B365CH": 2.6,
+      "B365CD": 3.3,
+      "B365CA": 2.7
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.3629,
+    "draw_prob": 0.2835,
+    "away_win_prob": 0.3536,
+    "wdl_prediction": "H",
+    "expected_goals_home": 1.145,
+    "expected_goals_away": 1.118,
+    "most_likely_score": "1:1",
+    "score_distribution": {
+      "1:1": 0.1326,
+      "0:1": 0.1156,
+      "1:0": 0.1125,
+      "0:0": 0.1049,
+      "1:2": 0.0811
+    },
+    "lambda_home": 1.145,
+    "lambda_away": 1.118,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Uruguay",
+        "away_team": "Cape Verde",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-22 06:00"
+      },
+      {
+        "home_team": "Uruguay",
+        "away_team": "Cape Verde",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "21 Jun 2026"
+      },
+      {
+        "home_team": "Spain",
+        "away_team": "Cape Verde",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-16 00:00"
+      },
+      {
+        "home_team": "Spain",
+        "away_team": "Cape Verde",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "15 Jun 2026"
+      },
+      {
+        "home_team": "Bermuda",
+        "away_team": "Cape Verde",
+        "home_goals": 0,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "International Friendly",
+        "date": "06 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Spain",
+        "away_team": "Saudi Arabia",
+        "home_goals": 4,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-22 00:00"
+      },
+      {
+        "home_team": "Spain",
+        "away_team": "Saudi Arabia",
+        "home_goals": 4,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "21 Jun 2026"
+      },
+      {
+        "home_team": "Saudi Arabia",
+        "away_team": "Uruguay",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-16 06:00"
+      },
+      {
+        "home_team": "Saudi Arabia",
+        "away_team": "Uruguay",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "15 Jun 2026"
+      },
+      {
+        "home_team": "Saudi Arabia",
+        "away_team": "Senegal",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "International Friendly",
+        "date": "09 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [],
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "D",
+      "confidence": "中",
+      "reason": "ML模型平局概率0.3987最高，且无明确战意干扰，依据历史赔率模式倾向平局。"
+    },
+    "monte_carlo_prediction": {
+      "result": "D",
+      "most_likely_score": "1:1",
+      "reason": "蒙特卡洛模拟最可能比分1:1概率13.3%，模拟胜平负中平局概率28.35%虽非最高，但结合最可能比分仍示好平局。"
+    },
+    "score_predictions": [
+      {
+        "score": "1:1",
+        "prob": 0.133,
+        "reason": "蒙特卡洛模拟最高概率比分，反映双方攻击力相近且防守均非绝对稳固。"
+      },
+      {
+        "score": "0:1",
+        "prob": 0.116,
+        "reason": "模拟第二高比分，沙特若抓住反击机会，佛得角可能零封无果。"
+      }
+    ],
+    "upset_prediction": {
+      "result": "H",
+      "score": "1:0",
+      "reason": "佛得角近期逼平西班牙和乌拉圭，防守韧性十足，沙特刚遭西班牙4球重创，士气低迷，主胜冷门概率可达36%。"
+    },
+    "overall_analysis": "无明确出线或轮换情报，分析基于数据层面。ML模型倾向平局，蒙特卡洛模拟最可能1:1。但赔率显示市场明显看好客队沙特（客胜低至2.1），与近期状态矛盾：佛得角连平西、乌两强，沙特则0-4惨败西班牙。这种背离暗示市场可能高估沙特实力，平局是最合理平衡点。考虑到佛得角防守组织良好，沙特攻坚能力存疑，双方恐都难轻松取胜，首选平局，次防佛得角小胜冷门。",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"D\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型平局概率0.3987最高，且无明确战意干扰，依据历史赔率模式倾向平局。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"D\",\n    \"most_likely_score\": \"1:1\",\n    \"reason\": \"蒙特卡洛模拟最可能比分1:1概率13.3%，模拟胜平负中平局概率28.35%虽非最高，但结合最可能比分仍示好平局。\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"1:1\",\n      \"prob\": 0.133,\n      \"reason\": \"蒙特卡洛模拟最高概率比分，反映双方攻击力相近且防守均非绝对稳固。\"\n    },\n    {\n      \"score\": \"0:1\",\n      \"prob\": 0.116,\n      \"reason\": \"模拟第二高比分，沙特若抓住反击机会，佛得角可能零封无果。\"\n    }\n  ],\n  \"upset_prediction\": {\n    \"result\": \"H\",\n    \"score\": \"1:0\",\n    \"reason\": \"佛得角近期逼平西班牙和乌拉圭，防守韧性十足，沙特刚遭西班牙4球重创，士气低迷，主胜冷门概率可达36%。\"\n  },\n  \"overall_analysis\": \"无明确出线或轮换情报，分析基于数据层面。ML模型倾向平局，蒙特卡洛模拟最可能1:1。但赔率显示市场明显看好客队沙特（客胜低至2.1），与近期状态矛盾：佛得角连平西、乌两强，沙特则0-4惨败西班牙。这种背离暗示市场可能高估沙特实力，平局是最合理平衡点。考虑到佛得角防守组织良好，沙特攻坚能力存疑，双方恐都难轻松取胜，首选平局，次防佛得角小胜冷门。\"\n}"
+  }
+}

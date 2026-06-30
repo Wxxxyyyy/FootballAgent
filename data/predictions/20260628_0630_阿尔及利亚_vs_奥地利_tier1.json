@@ -1,0 +1,169 @@
+{
+  "status": "ok",
+  "match_id": "2906971",
+  "home_team": "阿尔及利亚",
+  "away_team": "奥地利",
+  "tier": 1,
+  "prediction_time": "2026-06-28T06:29:55.406643",
+  "ml_prediction": {
+    "home_win_prob": 0.4169,
+    "draw_prob": 0.3608,
+    "away_win_prob": 0.2223,
+    "wdl_prediction": "H",
+    "input_odds": {
+      "B365H": 3.2,
+      "B365D": 3.2,
+      "B365A": 2.3,
+      "B365CH": 3.5,
+      "B365CD": 2.05,
+      "B365CA": 3.6
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.2661,
+    "draw_prob": 0.4618,
+    "away_win_prob": 0.2721,
+    "wdl_prediction": "D",
+    "expected_goals_home": 0.509,
+    "expected_goals_away": 0.498,
+    "most_likely_score": "0:0",
+    "score_distribution": {
+      "0:0": 0.3577,
+      "0:1": 0.1893,
+      "1:0": 0.1869,
+      "1:1": 0.0972,
+      "0:2": 0.0462
+    },
+    "lambda_home": 0.509,
+    "lambda_away": 0.498,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Jordan",
+        "away_team": "Algeria",
+        "home_goals": 1,
+        "away_goals": 2,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-23 11:00"
+      },
+      {
+        "home_team": "Jordan",
+        "away_team": "Algeria",
+        "home_goals": 1,
+        "away_goals": 2,
+        "result": "A",
+        "competition": "FIFA World Cup",
+        "date": "22 Jun 2026"
+      },
+      {
+        "home_team": "Argentina",
+        "away_team": "Algeria",
+        "home_goals": 3,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-17 09:00"
+      },
+      {
+        "home_team": "Argentina",
+        "away_team": "Algeria",
+        "home_goals": 3,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "16 Jun 2026"
+      },
+      {
+        "home_team": "Bolivia",
+        "away_team": "Algeria",
+        "home_goals": 0,
+        "away_goals": 4,
+        "result": "A",
+        "competition": "International Friendly",
+        "date": "10 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Argentina",
+        "away_team": "Austria",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-23 01:00"
+      },
+      {
+        "home_team": "Argentina",
+        "away_team": "Austria",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "22 Jun 2026"
+      },
+      {
+        "home_team": "Austria",
+        "away_team": "Jordan",
+        "home_goals": 3,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-17 12:00"
+      },
+      {
+        "home_team": "Austria",
+        "away_team": "Jordan",
+        "home_goals": 3,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "16 Jun 2026"
+      },
+      {
+        "home_team": "Austria",
+        "away_team": "Tunisia",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "International Friendly",
+        "date": "01 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [],
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "H",
+      "confidence": "中",
+      "reason": "ML模型概率主胜最高(41.69%)，平局36.08%，客胜22.23%，模型倾向主胜。"
+    },
+    "monte_carlo_prediction": {
+      "result": "D",
+      "most_likely_score": "0:0",
+      "reason": "蒙特卡洛模拟平局概率高达46.18%，最可能比分0:0占比35.8%，预期进球极低。"
+    },
+    "score_predictions": [
+      {
+        "score": "0:0",
+        "prob": 0.358,
+        "reason": "蒙特卡洛模拟最可能比分，双方进攻效率较低。"
+      },
+      {
+        "score": "0:1",
+        "prob": 0.189,
+        "reason": "模拟次高比分，奥地利小胜概率略高于阿尔及利亚小胜。"
+      }
+    ],
+    "upset_prediction": {
+      "result": "H",
+      "score": "1:0",
+      "reason": "ML模型倾向主胜，且主胜概率高于15%，赔率3.2具备一定价值，若防守稳固可能爆冷。"
+    },
+    "overall_analysis": "本场缺乏赛前战意情报，仅凭数据和赔率判断。ML模型给出主胜倾向，但市场赔率明显支持客胜（2.3）。蒙特卡洛模拟则强烈指向平局（46.18%），且最可能0:0。双方近期比赛均显防守型，阿尔及利亚曾0:3负阿根廷，奥地利也被阿根廷零封，攻击力存疑。平局是最合理选择，但客胜赔率较低也需防范。考虑到主胜概率亦超15%，存在一定爆冷空间。推荐关注小比分平局，防守致胜。",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"H\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型概率主胜最高(41.69%)，平局36.08%，客胜22.23%，模型倾向主胜。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"D\",\n    \"most_likely_score\": \"0:0\",\n    \"reason\": \"蒙特卡洛模拟平局概率高达46.18%，最可能比分0:0占比35.8%，预期进球极低。\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"0:0\",\n      \"prob\": 0.358,\n      \"reason\": \"蒙特卡洛模拟最可能比分，双方进攻效率较低。\"\n    },\n    {\n      \"score\": \"0:1\",\n      \"prob\": 0.189,\n      \"reason\": \"模拟次高比分，奥地利小胜概率略高于阿尔及利亚小胜。\"\n    }\n  ],\n  \"upset_prediction\": {\n    \"result\": \"H\",\n    \"score\": \"1:0\",\n    \"reason\": \"ML模型倾向主胜，且主胜概率高于15%，赔率3.2具备一定价值，若防守稳固可能爆冷。\"\n  },\n  \"overall_analysis\": \"本场缺乏赛前战意情报，仅凭数据和赔率判断。ML模型给出主胜倾向，但市场赔率明显支持客胜（2.3）。蒙特卡洛模拟则强烈指向平局（46.18%），且最可能0:0。双方近期比赛均显防守型，阿尔及利亚曾0:3负阿根廷，奥地利也被阿根廷零封，攻击力存疑。平局是最合理选择，但客胜赔率较低也需防范。考虑到主胜概率亦超15%，存在一定爆冷空间。推荐关注小比分平局，防守致胜。\"\n}"
+  }
+}

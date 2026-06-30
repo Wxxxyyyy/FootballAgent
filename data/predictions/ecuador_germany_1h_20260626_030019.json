@@ -1,0 +1,188 @@
+{
+  "home_team": "Ecuador",
+  "away_team": "Germany",
+  "date": "2026-06-26",
+  "ml_prediction": {
+    "home_win_prob": 0.1711,
+    "draw_prob": 0.2164,
+    "away_win_prob": 0.6125,
+    "wdl_prediction": "A",
+    "input_odds": {
+      "B365H": 5.0,
+      "B365D": 3.75,
+      "B365A": 1.65,
+      "B365CH": 4.75,
+      "B365CD": 4.75,
+      "B365CA": 1.57
+    },
+    "odds_source": "Bet365"
+  },
+  "h2h_records": [],
+  "upset_signals": {
+    "has_risk": false,
+    "signals": [],
+    "underdog": "home",
+    "underdog_name": "Ecuador",
+    "favorite_name": "Germany"
+  },
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "A",
+      "confidence": "高",
+      "reason": "ML模型客胜概率61.25%，市场与模型高度一致指向德国赢球，无明显战意或轮换冲击此判断。"
+    },
+    "monte_carlo_prediction": {
+      "result": "A",
+      "most_likely_score": "0:1",
+      "reason": "蒙特卡洛模拟客胜概率56.56%，最可能比分0-1，预期进球差显著，德国进攻占优。"
+    },
+    "score_predictions": [
+      {
+        "score": "0:1",
+        "prob": 0.14,
+        "reason": "蒙特卡洛最可能比分，反映德国场面占优但厄瓜多尔防守稳固的常态。"
+      },
+      {
+        "score": "0:2",
+        "prob": 0.12,
+        "reason": "德国实力碾压，若早破门可能扩大优势，反击型对手更难招架。"
+      }
+    ],
+    "upset_prediction": null,
+    "overall_analysis": "本场为世界杯小组赛末轮，德国前两轮已全胜出线，新闻提及德国仅3次取得世界杯小组赛全胜，虽无明确轮换报道，但全胜战意可能推动球队延续强势。厄瓜多尔无重要伤停，风格防守反击，但面对德国高位压迫恐难觅反击空间。ML模型和蒙特卡洛模拟一致指向客胜，结合两队近期战绩，德国攻防两端表现碾压对手。在无核心缺阵及战意突变因素下，德国大概率小胜，爆冷可能极低。",
+    "raw_response": "```json\n{\n  \"ml_prediction\": {\n    \"result\": \"A\",\n    \"confidence\": \"高\",\n    \"reason\": \"ML模型客胜概率61.25%，市场与模型高度一致指向德国赢球，无明显战意或轮换冲击此判断。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"A\",\n    \"most_likely_score\": \"0:1\",\n    \"reason\": \"蒙特卡洛模拟客胜概率56.56%，最可能比分0-1，预期进球差显著，德国进攻占优。\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"0:1\",\n      \"prob\": 0.14,\n      \"reason\": \"蒙特卡洛最可能比分，反映德国场面占优但厄瓜多尔防守稳固的常态。\"\n    },\n    {\n      \"score\": \"0:2\",\n      \"prob\": 0.12,\n      \"reason\": \"德国实力碾压，若早破门可能扩大优势，反击型对手更难招架。\"\n    }\n  ],\n  \"upset_prediction\": null,\n  \"overall_analysis\": \"本场为世界杯小组赛末轮，德国前两轮已全胜出线，新闻提及德国仅3次取得世界杯小组赛全胜，虽无明确轮换报道，但全胜战意可能推动球队延续强势。厄瓜多尔无重要伤停，风格防守反击，但面对德国高位压迫恐难觅反击空间。ML模型和蒙特卡洛模拟一致指向客胜，结合两队近期战绩，德国攻防两端表现碾压对手。在无核心缺阵及战意突变因素下，德国大概率小胜，爆冷可能极低。\"\n}\n```"
+  },
+  "pre_match_intel": {
+    "home_team": "Ecuador",
+    "away_team": "Germany",
+    "home_team_zh": "厄瓜多尔",
+    "away_team_zh": "德国",
+    "date": "2026-06-26",
+    "tier": 2,
+    "lineup_intel": {
+      "tier": 1,
+      "home": {
+        "formation": "4-2-3-1",
+        "formation_source": "教练惯用阵型",
+        "starting_xi": [],
+        "key_absences": [],
+        "is_official": false,
+        "tier": 1
+      },
+      "away": {
+        "formation": "4-2-3-1",
+        "formation_source": "教练惯用阵型",
+        "starting_xi": [],
+        "key_absences": [],
+        "is_official": false,
+        "tier": 1
+      },
+      "note": "官方首发尚未公布，使用第一档数据"
+    },
+    "coach_style": {
+      "home": {
+        "coach": "Sebastián Beccacece",
+        "preferred_formation": "4-2-3-1",
+        "style": "防守反击",
+        "style_tags": [
+          "高位逼抢",
+          "快速反击",
+          "身体对抗"
+        ],
+        "tendency": "攻守平衡",
+        "description": "厄瓜多尔以高位逼抢和快速反击为主，高原主场优势明显，体能充沛",
+        "data_available": true
+      },
+      "away": {
+        "coach": "Julian Nagelsmann",
+        "preferred_formation": "4-2-3-1",
+        "style": "高位压迫",
+        "style_tags": [
+          "高位逼抢",
+          "阵地渗透",
+          "边中结合"
+        ],
+        "tendency": "攻强守弱",
+        "description": "纳格尔斯曼注重高位压迫和快速转换，阵地进攻层次丰富，但高位防线容易被反击打穿",
+        "data_available": true
+      },
+      "tactical_matchup": "无明显风格相克"
+    },
+    "news": {
+      "home": {
+        "news": [
+          {
+            "id": 5963484,
+            "title": "厄瓜多尔vs德国：哈弗茨、维尔茨首发，穆西亚拉、凯塞多出战",
+            "description": "",
+            "comments_total": 134,
+            "url": "https://www.dongqiudi.com/article/5963484",
+            "published_at": "",
+            "source": "懂球帝",
+            "relevance_tags": [],
+            "summary": "厄瓜多尔vs德国：哈弗茨、维尔茨首发，穆西亚拉、凯塞多出战 怎么又黄了 @懂球帝 26分钟前 北京时间6月26日凌晨4点，世界杯小组赛E组第3轮展开一场焦点战役，德国对阵厄瓜多尔。赛前，双方公布首发阵容。 球员名单 厄瓜多尔首发： 1-埃尔南-加林德斯、3-因卡皮耶、4-奥多涅斯、6-威廉-帕乔、15-比特、21-阿兰-弗朗哥、23-莫伊塞斯-凯塞多、9-约翰-耶博阿、13-恩纳-瓦伦西亚、19-"
+          },
+          {
+            "id": 5964541,
+            "title": "德意志攻势凶猛难抵挡？厄瓜多尔奋力死守此战有取胜机会吗？专家看法>>",
+            "description": "",
+            "comments_total": 0,
+            "url": "https://www.dongqiudi.com/article/5964541",
+            "published_at": "",
+            "source": "懂球帝",
+            "relevance_tags": [],
+            "summary": "文章不存在 前往文章首页跳转中1s"
+          }
+        ],
+        "soft_signals": []
+      },
+      "away": {
+        "news": [
+          {
+            "id": 5963484,
+            "title": "厄瓜多尔vs德国：哈弗茨、维尔茨首发，穆西亚拉、凯塞多出战",
+            "description": "",
+            "comments_total": 134,
+            "url": "https://www.dongqiudi.com/article/5963484",
+            "published_at": "",
+            "source": "懂球帝",
+            "relevance_tags": [],
+            "summary": "厄瓜多尔vs德国：哈弗茨、维尔茨首发，穆西亚拉、凯塞多出战 怎么又黄了 @懂球帝 23分钟前 北京时间6月26日凌晨4点，世界杯小组赛E组第3轮展开一场焦点战役，德国对阵厄瓜多尔。赛前，双方公布首发阵容。 球员名单 厄瓜多尔首发： 1-埃尔南-加林德斯、3-因卡皮耶、4-奥多涅斯、6-威廉-帕乔、15-比特、21-阿兰-弗朗哥、23-莫伊塞斯-凯塞多、9-约翰-耶博阿、13-恩纳-瓦伦西亚、19-"
+          },
+          {
+            "id": 5966750,
+            "title": "德国队仅3次取得世界杯小组赛全胜战绩，最近一次是在2006年",
+            "description": "",
+            "comments_total": 4,
+            "url": "https://www.dongqiudi.com/article/5966750",
+            "published_at": "",
+            "source": "懂球帝",
+            "relevance_tags": [],
+            "summary": "德国队仅3次取得世界杯小组赛全胜战绩，最近一次是在2006年 mr1555 @懂球帝 10分钟前 北京时间6月26日凌晨4:00，美加墨世界杯小组赛末轮，德国将对阵厄瓜多尔。 在赢得前两轮比赛后，德国队已经锁定小组头名，如果再战胜厄瓜多尔，德国队将第四次取得小组赛全胜战绩，此前他们曾在1970年、1974年（第二阶段小组赛）和2006年实现过这一目标。 厄瓜多尔队在2026年世界杯的前两场比赛中均"
+          }
+        ],
+        "soft_signals": []
+      }
+    },
+    "summary": "═══ 赛前情报（厄瓜多尔 vs 德国）═══\n\n【阵容情报 - 缺阵预判】\n厄瓜多尔队（惯用阵型，阵型: 4-2-3-1）:\n  缺阵: 无重要缺阵\n德国队（惯用阵型，阵型: 4-2-3-1）:\n  缺阵: 无重要缺阵\n\n【教练风格对比】\n厄瓜多尔 - Sebastián Beccacece: 惯用4-2-3-1, 风格防守反击(攻守平衡)\n德国 - Julian Nagelsmann: 惯用4-2-3-1, 风格高位压迫(攻强守弱)\n战术对碰: 无明显风格相克\n\n【赛前新闻】\n厄瓜多尔队近期新闻:\n  1. 厄瓜多尔vs德国：哈弗茨、维尔茨首发，穆西亚拉、凯塞多出战\n     厄瓜多尔vs德国：哈弗茨、维尔茨首发，穆西亚拉、凯塞多出战 怎么又黄了 @懂球帝 26分钟前 北京时间6月26日凌晨4点，世界杯小组赛E组第3轮展开一场焦点战役，德国对阵厄瓜多尔。赛前，双方公布首发阵\n  2. 德意志攻势凶猛难抵挡？厄瓜多尔奋力死守此战有取胜机会吗？专家看法>>\n     文章不存在 前往文章首页跳转中1s\n\n德国队近期新闻:\n  1. 厄瓜多尔vs德国：哈弗茨、维尔茨首发，穆西亚拉、凯塞多出战\n     厄瓜多尔vs德国：哈弗茨、维尔茨首发，穆西亚拉、凯塞多出战 怎么又黄了 @懂球帝 23分钟前 北京时间6月26日凌晨4点，世界杯小组赛E组第3轮展开一场焦点战役，德国对阵厄瓜多尔。赛前，双方公布首发阵\n  2. 德国队仅3次取得世界杯小组赛全胜战绩，最近一次是在2006年\n     德国队仅3次取得世界杯小组赛全胜战绩，最近一次是在2006年 mr1555 @懂球帝 10分钟前 北京时间6月26日凌晨4:00，美加墨世界杯小组赛末轮，德国将对阵厄瓜多尔。 在赢得前两轮比赛后，德国\n\n═══ 情报结束 ═══",
+    "elapsed_seconds": 4.4
+  },
+  "openclaw_summary": {
+    "status": "ok",
+    "odds_found": true,
+    "league": "World Cup 2026",
+    "home_last_5": {
+      "found": false,
+      "count": 0,
+      "team": ""
+    },
+    "away_last_5": {
+      "found": false,
+      "count": 0,
+      "team": ""
+    }
+  },
+  "elapsed_seconds": 19.2,
+  "trigger_label": "1h",
+  "trigger_time": "2026-06-26T03:00:19.749870"
+}

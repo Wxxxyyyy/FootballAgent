@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-服务器端 API - 双向通信枢纽
+服务器端 API - 通信枢纽
 
 数据流向:
-  正向（接收）: 旧电脑(OpenClaw) → 本地中继 → 本服务器
-  反向（请求）: 本服务器 → 本地中继 → 旧电脑(OpenClaw)
+  正向（接收）: OpenClaw 容器 → 本服务器
+  反向（请求）: 本服务器 → OpenClaw 容器
 
 端口: 8000
 """
@@ -22,19 +22,19 @@ from pathlib import Path
 from datetime import datetime
 from typing import Any, Optional
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 
 # 将项目根目录加入 sys.path，确保能 import pipeline 模块
 PROJECT_ROOT = Path(__file__).parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+load_dotenv(PROJECT_ROOT / ".env")
 
 # ==================== 配置 ====================
 
-# 中继站地址（通过 SSH 反向端口转发连接到本地电脑的 5000 端口）
-# 需要在本地电脑执行: ssh -R 15000:localhost:5000 user@server
-# 这样服务器上的 localhost:15000 就映射到本地电脑的 5000 端口
-RELAY_URL = "http://localhost:15000"
+# OpenClaw API 地址（Docker 内部网络直连，不再需要中继链路）
+OPENCLAW_API_URL = os.getenv("OPENCLAW_API_URL", "http://localhost:9000")
 
 # 同步任务默认超时（秒）
 TASK_TIMEOUT = 30.0
@@ -57,7 +57,7 @@ _task_events: dict[str, asyncio.Event] = {}
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
-    print(f"⚽ 服务器 API 启动 | 中继站: {RELAY_URL}")
+    print(f"⚽ 服务器 API 启动 | OpenClaw: {OPENCLAW_API_URL}")
     yield
     print("⚽ 服务器 API 关闭")
 
@@ -78,7 +78,7 @@ async def root():
     return {
         "status": "running",
         "message": "⚽ Football Agent 服务器 API 已就绪",
-        "relay_url": RELAY_URL,
+        "openclaw_url": OPENCLAW_API_URL,
         "timestamp": datetime.now().isoformat(),
     }
 
@@ -293,7 +293,7 @@ async def _send_to_openclaw(
     async_mode: bool = False,
 ) -> dict:
     """
-    底层函数: 通过中继链向 OpenClaw 发送任务
+    底层函数: 直接向 OpenClaw 服务发送任务（Docker 内网直连）
 
     Args:
         task_type:  任务类型 (ping / fetch_daily_matches / query_injury / ...)
@@ -317,7 +317,7 @@ async def _send_to_openclaw(
 
     try:
         async with httpx.AsyncClient(timeout=timeout) as client:
-            resp = await client.post(f"{RELAY_URL}/relay_to_openclaw", json=payload)
+            resp = await client.post(f"{OPENCLAW_API_URL}/task", json=payload)
             resp.raise_for_status()
             return {
                 "status": "success",
@@ -330,7 +330,7 @@ async def _send_to_openclaw(
         return {
             "status": "error",
             "task_id": task_id,
-            "message": f"无法连接中继站 ({RELAY_URL})，请检查 SSH 端口转发是否开启",
+            "message": f"无法连接 OpenClaw ({OPENCLAW_API_URL})，请检查容器是否启动",
         }
     except Exception as e:
         return {"status": "error", "task_id": task_id, "message": str(e)}
@@ -395,7 +395,7 @@ async def request_openclaw_async(task: dict):
 
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            resp = await client.post(f"{RELAY_URL}/relay_to_openclaw", json=payload)
+            resp = await client.post(f"{OPENCLAW_API_URL}/task", json=payload)
             resp.raise_for_status()
     except Exception as e:
         _task_events.pop(task_id, None)
@@ -433,27 +433,27 @@ async def test_connection_status():
     """检查全链路连通状态"""
     status = {
         "server": "running",
-        "relay_url": RELAY_URL,
+        "openclaw_url": OPENCLAW_API_URL,
         "timestamp": datetime.now().isoformat(),
     }
 
-    # 检查中继站
+    # 检查 OpenClaw 容器
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
-            resp = await client.get(f"{RELAY_URL}/")
-        status["relay"] = "connected" if resp.status_code == 200 else f"http {resp.status_code}"
+            resp = await client.get(f"{OPENCLAW_API_URL}/health")
+        status["openclaw"] = "connected" if resp.status_code == 200 else f"http {resp.status_code}"
     except Exception as e:
-        status["relay"] = f"disconnected ({type(e).__name__})"
+        status["openclaw"] = f"disconnected ({type(e).__name__})"
 
-    # 检查 OpenClaw（通过中继）
+    # 检查 OpenClaw 任务通道
     try:
         result = await _send_to_openclaw("ping", timeout=8.0)
         if result.get("status") == "success":
-            status["openclaw"] = "connected"
+            status["openclaw_task"] = "connected"
         else:
-            status["openclaw"] = result.get("message", "unknown error")
+            status["openclaw_task"] = result.get("message", "unknown error")
     except Exception as e:
-        status["openclaw"] = f"disconnected ({type(e).__name__})"
+        status["openclaw_task"] = f"disconnected ({type(e).__name__})"
 
     return status
 

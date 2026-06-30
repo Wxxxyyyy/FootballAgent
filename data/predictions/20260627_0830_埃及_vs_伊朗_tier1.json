@@ -1,0 +1,165 @@
+{
+  "status": "ok",
+  "match_id": "2906961",
+  "home_team": "埃及",
+  "away_team": "伊朗",
+  "tier": 1,
+  "prediction_time": "2026-06-27T08:29:56.976290",
+  "ml_prediction": {
+    "home_win_prob": 0.4369,
+    "draw_prob": 0.3375,
+    "away_win_prob": 0.2256,
+    "wdl_prediction": "H",
+    "input_odds": {
+      "B365H": 2.3,
+      "B365D": 3.0,
+      "B365A": 3.25,
+      "B365CH": 2.55,
+      "B365CD": 2.7,
+      "B365CA": 3.4
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.3703,
+    "draw_prob": 0.3523,
+    "away_win_prob": 0.2774,
+    "wdl_prediction": "H",
+    "expected_goals_home": 0.885,
+    "expected_goals_away": 0.722,
+    "most_likely_score": "0:0",
+    "score_distribution": {
+      "0:0": 0.1966,
+      "1:0": 0.18,
+      "0:1": 0.1424,
+      "1:1": 0.133,
+      "2:0": 0.079
+    },
+    "lambda_home": 0.885,
+    "lambda_away": 0.722,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "New Zealand",
+        "away_team": "Egypt",
+        "home_goals": 1,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-22 09:00"
+      },
+      {
+        "home_team": "New Zealand",
+        "away_team": "Egypt",
+        "home_goals": 1,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "FIFA World Cup",
+        "date": "21 Jun 2026"
+      },
+      {
+        "home_team": "Belgium",
+        "away_team": "Egypt",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-16 03:00"
+      },
+      {
+        "home_team": "Belgium",
+        "away_team": "Egypt",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "15 Jun 2026"
+      },
+      {
+        "home_team": "Brazil",
+        "away_team": "Egypt",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "International Friendly",
+        "date": "06 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Belgium",
+        "away_team": "Iran",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-22 03:00"
+      },
+      {
+        "home_team": "Belgium",
+        "away_team": "Iran",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "21 Jun 2026"
+      },
+      {
+        "home_team": "Iran",
+        "away_team": "New Zealand",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-16 09:00"
+      },
+      {
+        "home_team": "Iran",
+        "away_team": "New Zealand",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "15 Jun 2026"
+      },
+      {
+        "home_team": "Iran",
+        "away_team": "Mali",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "International Friendly",
+        "date": "04 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [],
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "H",
+      "confidence": "低",
+      "reason": "ML模型主胜概率43.69%略高于平局33.75%和客胜22.56%，倾向主胜但优势不明显"
+    },
+    "monte_carlo_prediction": {
+      "result": "D",
+      "most_likely_score": "0:0",
+      "reason": "模拟平局概率35.23%，最可能比分0:0占19.7%，反映双方进攻效率偏低"
+    },
+    "score_predictions": [
+      {
+        "score": "0:0",
+        "prob": 0.197,
+        "reason": "蒙特卡洛模拟最可能比分，符合预期进球较低的特点"
+      },
+      {
+        "score": "1:0",
+        "prob": 0.18,
+        "reason": "蒙特卡洛模拟第二可能比分，主队略占优势"
+      }
+    ],
+    "upset_prediction": null,
+    "overall_analysis": "比赛缺乏明确的战意信息，双方近期均展现出一定的韧性，埃及对阵比利时取得平局，伊朗同样逼平比利时。模型数据指向一场低进球数的胶着对决，ML模型与蒙特卡洛模拟在主胜和平局之间分歧较小。赔率方面主胜2.30相对保守，平局3.00并未完全排除。综合来看，埃及稍占主场优势但难以大胜，最可能以小比分收场，平局或一球小胜的可能性较大。",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"H\",\n    \"confidence\": \"低\",\n    \"reason\": \"ML模型主胜概率43.69%略高于平局33.75%和客胜22.56%，倾向主胜但优势不明显\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"D\",\n    \"most_likely_score\": \"0:0\",\n    \"reason\": \"模拟平局概率35.23%，最可能比分0:0占19.7%，反映双方进攻效率偏低\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"0:0\",\n      \"prob\": 0.197,\n      \"reason\": \"蒙特卡洛模拟最可能比分，符合预期进球较低的特点\"\n    },\n    {\n      \"score\": \"1:0\",\n      \"prob\": 0.18,\n      \"reason\": \"蒙特卡洛模拟第二可能比分，主队略占优势\"\n    }\n  ],\n  \"upset_prediction\": null,\n  \"overall_analysis\": \"比赛缺乏明确的战意信息，双方近期均展现出一定的韧性，埃及对阵比利时取得平局，伊朗同样逼平比利时。模型数据指向一场低进球数的胶着对决，ML模型与蒙特卡洛模拟在主胜和平局之间分歧较小。赔率方面主胜2.30相对保守，平局3.00并未完全排除。综合来看，埃及稍占主场优势但难以大胜，最可能以小比分收场，平局或一球小胜的可能性较大。\"\n}"
+  }
+}

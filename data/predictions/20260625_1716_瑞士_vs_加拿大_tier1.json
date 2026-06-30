@@ -1,0 +1,151 @@
+{
+  "status": "ok",
+  "match_id": "2906946",
+  "home_team": "瑞士",
+  "away_team": "加拿大",
+  "tier": 1,
+  "prediction_time": "2026-06-25T17:16:17.969628",
+  "ml_prediction": {
+    "home_win_prob": 0.3971,
+    "draw_prob": 0.2393,
+    "away_win_prob": 0.3635,
+    "wdl_prediction": "H",
+    "input_odds": {
+      "B365H": 2.0,
+      "B365D": 3.3,
+      "B365A": 3.6,
+      "B365CH": 2.63,
+      "B365CD": 3.0,
+      "B365CA": 3.0
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.3563,
+    "draw_prob": 0.317,
+    "away_win_prob": 0.3267,
+    "wdl_prediction": "H",
+    "expected_goals_home": 0.989,
+    "expected_goals_away": 0.905,
+    "most_likely_score": "0:0",
+    "score_distribution": {
+      "0:0": 0.1469,
+      "1:0": 0.1446,
+      "1:1": 0.1362,
+      "0:1": 0.1357,
+      "2:0": 0.0724
+    },
+    "lambda_home": 0.989,
+    "lambda_away": 0.905,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Switzerland",
+        "away_team": "Canada",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-25 03:00"
+      },
+      {
+        "home_team": "Switzerland",
+        "away_team": "Bosnia & Herzegovina",
+        "home_goals": 4,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-19 03:00"
+      },
+      {
+        "home_team": "Switzerland",
+        "away_team": "Bosnia and Herzegovina",
+        "home_goals": 4,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "18 Jun 2026"
+      },
+      {
+        "home_team": "Qatar",
+        "away_team": "Switzerland",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-14 03:00"
+      },
+      {
+        "home_team": "Qatar",
+        "away_team": "Switzerland",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "13 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Switzerland",
+        "away_team": "Canada",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-25 03:00"
+      },
+      {
+        "home_team": "Canada",
+        "away_team": "Qatar",
+        "home_goals": 6,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-19 06:00"
+      },
+      {
+        "home_team": "Canada",
+        "away_team": "Qatar",
+        "home_goals": 6,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "18 Jun 2026"
+      },
+      {
+        "home_team": "Canada",
+        "away_team": "Bosnia & Herzegovina",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-13 03:00"
+      },
+      {
+        "home_team": "Canada",
+        "away_team": "Bosnia and Herzegovina",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "12 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [
+    {
+      "date": "06-25 03:00",
+      "season": "2026",
+      "result": "2-1",
+      "comp": "World Cup 2026",
+      "hg": 2,
+      "ag": 1
+    }
+  ],
+  "llm_analysis": {
+    "error": "Missing credentials. Please pass an `api_key`, `workload_identity`, `admin_api_key`, or set the `OPENAI_API_KEY` or `OPENAI_ADMIN_KEY` environment variable.",
+    "raw_response": ""
+  }
+}

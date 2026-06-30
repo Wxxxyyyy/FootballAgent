@@ -1,0 +1,178 @@
+{
+  "status": "ok",
+  "match_id": "2907379",
+  "home_team": "荷兰",
+  "away_team": "摩洛哥",
+  "tier": 1,
+  "prediction_time": "2026-06-30T05:40:07.399902",
+  "ml_prediction": {
+    "home_win_prob": 0.4989,
+    "draw_prob": 0.1832,
+    "away_win_prob": 0.3179,
+    "wdl_prediction": "H",
+    "input_odds": {
+      "B365H": 2.0,
+      "B365D": 3.3,
+      "B365A": 3.75,
+      "B365CH": 2.3,
+      "B365CD": 3.1,
+      "B365CA": 3.4
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.4114,
+    "draw_prob": 0.3046,
+    "away_win_prob": 0.284,
+    "wdl_prediction": "H",
+    "expected_goals_home": 1.118,
+    "expected_goals_away": 0.863,
+    "most_likely_score": "1:0",
+    "score_distribution": {
+      "1:0": 0.1534,
+      "0:0": 0.1363,
+      "1:1": 0.1316,
+      "0:1": 0.1191,
+      "2:0": 0.0837
+    },
+    "lambda_home": 1.118,
+    "lambda_away": 0.863,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Tunisia",
+        "away_team": "Netherlands",
+        "home_goals": 1,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-26 07:00"
+      },
+      {
+        "home_team": "Netherlands",
+        "away_team": "Sweden",
+        "home_goals": 5,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-21 01:00"
+      },
+      {
+        "home_team": "Netherlands",
+        "away_team": "Sweden",
+        "home_goals": 5,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "20 Jun 2026"
+      },
+      {
+        "home_team": "Netherlands",
+        "away_team": "Japan",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-15 04:00"
+      },
+      {
+        "home_team": "Netherlands",
+        "away_team": "Japan",
+        "home_goals": 2,
+        "away_goals": 2,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "14 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Morocco",
+        "away_team": "Haiti",
+        "home_goals": 4,
+        "away_goals": 2,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-25 06:00"
+      },
+      {
+        "home_team": "Scotland",
+        "away_team": "Morocco",
+        "home_goals": 0,
+        "away_goals": 1,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-20 06:00"
+      },
+      {
+        "home_team": "Scotland",
+        "away_team": "Morocco",
+        "home_goals": 0,
+        "away_goals": 1,
+        "result": "A",
+        "competition": "FIFA World Cup",
+        "date": "19 Jun 2026"
+      },
+      {
+        "home_team": "Brazil",
+        "away_team": "Morocco",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-14 06:00"
+      },
+      {
+        "home_team": "Brazil",
+        "away_team": "Morocco",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "13 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [
+    {
+      "date": "31 May 2017",
+      "season": "2017",
+      "result": "1-2",
+      "comp": "International Friendly",
+      "hg": 1,
+      "ag": 2
+    }
+  ],
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "H",
+      "confidence": "中",
+      "reason": "ML模型显示主胜概率最高(49.9%)，略高于客胜的31.8%和平局的18.3%"
+    },
+    "monte_carlo_prediction": {
+      "result": "H",
+      "most_likely_score": "1:0",
+      "reason": "10000次泊松模拟，主胜概率41.1%最高，最可能比分1:0(15.3%)，主队预期进球1.118"
+    },
+    "score_predictions": [
+      {
+        "score": "1:0",
+        "prob": 0.153,
+        "reason": "蒙特卡洛最可能比分，反映双方谨慎开局"
+      },
+      {
+        "score": "0:0",
+        "prob": 0.136,
+        "reason": "第二高概率比分，摩洛哥防守稳固可能闷平"
+      }
+    ],
+    "upset_prediction": {
+      "result": "A",
+      "score": "1:2",
+      "reason": "历史交锋荷兰1-2落败，摩洛哥近期逼平巴西，客胜概率31.8%超15%阈值，存在爆冷赢球可能"
+    },
+    "overall_analysis": "本场未提供出线形势等战意情报，主要依据数据模型。荷兰近5场3胜2平，攻击力出色（5-1瑞典、3-1突尼斯），但摩洛哥防守顽强，近5场2胜2平1负，包括逼平巴西，且历史交锋摩洛哥曾2-1击败荷兰。ML模型倾向主胜但优势不稳固，平局与客胜概率合计50%。蒙特卡洛模拟显示平局概率30.5%，客胜28.4%，需防范冷门。赔率主胜2.0对应约50%胜率，与模型接近，平赔3.30、客胜3.75也保留想象空间。综合看荷兰小胜机会略大，但摩洛哥有能力抢分，建议关注平局和客胜爆冷.",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"H\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型显示主胜概率最高(49.9%)，略高于客胜的31.8%和平局的18.3%\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"H\",\n    \"most_likely_score\": \"1:0\",\n    \"reason\": \"10000次泊松模拟，主胜概率41.1%最高，最可能比分1:0(15.3%)，主队预期进球1.118\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"1:0\",\n      \"prob\": 0.153,\n      \"reason\": \"蒙特卡洛最可能比分，反映双方谨慎开局\"\n    },\n    {\n      \"score\": \"0:0\",\n      \"prob\": 0.136,\n      \"reason\": \"第二高概率比分，摩洛哥防守稳固可能闷平\"\n    }\n  ],\n  \"upset_prediction\": {\n    \"result\": \"A\",\n    \"score\": \"1:2\",\n    \"reason\": \"历史交锋荷兰1-2落败，摩洛哥近期逼平巴西，客胜概率31.8%超15%阈值，存在爆冷赢球可能\"\n  },\n  \"overall_analysis\": \"本场未提供出线形势等战意情报，主要依据数据模型。荷兰近5场3胜2平，攻击力出色（5-1瑞典、3-1突尼斯），但摩洛哥防守顽强，近5场2胜2平1负，包括逼平巴西，且历史交锋摩洛哥曾2-1击败荷兰。ML模型倾向主胜但优势不稳固，平局与客胜概率合计50%。蒙特卡洛模拟显示平局概率30.5%，客胜28.4%，需防范冷门。赔率主胜2.0对应约50%胜率，与模型接近，平赔3.30、客胜3.75也保留想象空间。综合看荷兰小胜机会略大，但摩洛哥有能力抢分，建议关注平局和客胜爆冷.\"\n}"
+  }
+}

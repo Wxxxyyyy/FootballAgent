@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 OpenClaw 每日数据同步
-经中继 relay_to_openclaw 拉取昨日比赛 JSON，再调用 openclaw_ingestion 入库
+向 OpenClaw 服务直接请求昨日比赛 JSON，再调用 openclaw_ingestion 入库
 """
 
 from __future__ import annotations
@@ -24,15 +24,15 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-_RELAY_ENV = "RELAY_URL"
-_DEFAULT_RELAY = "http://localhost:15000"
+_OPENCLAW_ENV = "OPENCLAW_API_URL"
+_DEFAULT_OPENCLAW = "http://localhost:9000"
 _MAX_RETRIES = 3
 _RETRY_BASE_SEC = 1.5
 
 
-def _relay_url() -> str:
+def _openclaw_url() -> str:
     load_dotenv()
-    return __import__("os").getenv(_RELAY_ENV, _DEFAULT_RELAY).rstrip("/")
+    return __import__("os").getenv(_OPENCLAW_ENV, _DEFAULT_OPENCLAW).rstrip("/")
 
 
 def _normalize_daily_payload(raw: Dict[str, Any]) -> Dict[str, Any]:
@@ -56,8 +56,8 @@ def sync_daily_matches() -> Dict[str, Any]:
     失败时按指数退避重试，错误写入日志。
     """
     yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-    relay = _relay_url()
-    url = f"{relay}/relay_to_openclaw"
+    base = _openclaw_url()
+    url = f"{base}/task"
     payload = {
         "task_id": str(uuid.uuid4()),
         "task_type": "fetch_daily_matches",

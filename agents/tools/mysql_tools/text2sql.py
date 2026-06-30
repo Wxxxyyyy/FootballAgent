@@ -8,13 +8,13 @@ Text2SQL · LLM 生成 SQL + 纠错重试回环
   3. 任何防线报错 → 组装「task + statement + errors + schema」重试上下文
   4. while 循环最多重试 MAX_RETRIES 次，全部失败则优雅退出
 
-默认使用 LLM_MODEL_QWEN_SIMPLE_NAME（Coder 模型），擅长写代码。
+默认使用 LLM_MODEL_KIMI_NAME（Coder 模型），擅长写代码。
 """
 
 import re
 from langchain_core.messages import SystemMessage, HumanMessage
 
-from common.llm_select import llm_call, LLM_MODEL_QWEN_SIMPLE_NAME
+from common.llm_select import llm_call, LLM_MODEL_KIMI_NAME
 from agents.tools.mysql_tools.security import (
     run_all_defenses,
     SQLSecurityError,
@@ -265,7 +265,7 @@ def generate_sql(
 
         # ── 调用 LLM 生成 SQL ──
         try:
-            response = llm_call(messages, model=LLM_MODEL_QWEN_SIMPLE_NAME)
+            response = llm_call(messages, model=LLM_MODEL_KIMI_NAME)
             raw_sql = _extract_sql(response.content)
         except Exception as e:
             last_error = f"LLM 调用失败: {type(e).__name__}: {e}"
