@@ -1,0 +1,10 @@
+[Unit]
+Description=FootballAgent Health Watchdog (oneshot)
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/data/workspace/FootballAgent
+ExecStart=/usr/bin/python3 scripts/health_watchdog.py
+StandardOutput=append:/data/workspace/FootballAgent/logs/watchdog.log
+StandardError=append:/data/workspace/FootballAgent/logs/watchdog.log

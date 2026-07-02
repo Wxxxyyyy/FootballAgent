@@ -25,7 +25,7 @@ from typing import Optional
 import httpx
 
 from odds_scraper import fetch_match_list, get_snapshot_manager
-from notifier import push_prediction
+from notifier import push_prediction, push_alert, _is_already_pushed
 
 logger = logging.getLogger(__name__)
 
@@ -179,19 +179,35 @@ def trigger_prediction(match: dict, tier: int = 1, trigger_point: float = 0) -> 
         if resp.status_code == 200:
             result = resp.json()
             logger.info(f"[预测完成] {home} vs {away}: {result.get('llm_analysis', {}).get('wdl_prediction', {}).get('primary', '?')}")
-            # 推送结果到用户手机
-            push_prediction(
+            # 推送结果到用户手机；推送失败发系统告警（预测已完成但用户收不到，必须感知）
+            pushed = push_prediction(
                 home_team=home,
                 away_team=away,
                 prediction_result=result,
                 tier=tier,
                 hours_to_kickoff=trigger_point,
             )
+            if not pushed and not _is_already_pushed(home, away, trigger_point):
+                push_alert(
+                    "预测推送失败",
+                    f"{home} vs {away} 触发点{trigger_point}h 的预测已完成但推送失败，"
+                    f"请查看 data/predictions/ 中的结果文件。",
+                )
             return result
         else:
             logger.error(f"预测系统返回 {resp.status_code}: {resp.text[:200]}")
+            push_alert(
+                "预测服务异常",
+                f"{home} vs {away} 触发点{trigger_point}h: 预测系统返回 HTTP {resp.status_code}，"
+                f"将在下次调度(30分钟后)重试。",
+            )
     except Exception as e:
         logger.error(f"触发预测失败: {e}")
+        push_alert(
+            "预测触发失败",
+            f"{home} vs {away} 触发点{trigger_point}h: {type(e).__name__}: {e}，"
+            f"将在下次调度(30分钟后)重试。",
+        )
 
     return None
 

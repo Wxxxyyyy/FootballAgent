@@ -25,7 +25,10 @@ BARK_KEY = os.getenv("BARK_KEY", "")
 BARK_ENABLED = os.getenv("BARK_ENABLED", "true").lower() == "true"
 
 # Bark API 地址
-BARK_API_BASE = "https://api.day.app"
+# BARK_SERVER: 自建 bark-server 地址（如 http://football_bark:8080），可靠性高，优先使用
+# 公共 api.day.app 作为兜底（已观测到丢件/延迟，见 2026-06-30 / 07-02 事故）
+PUBLIC_BARK_BASE = "https://api.day.app"
+BARK_API_BASE = os.getenv("BARK_SERVER", "").rstrip("/") or PUBLIC_BARK_BASE
 
 # 推送去重状态目录
 PUSH_STATE_DIR = os.getenv("PUSH_STATE_DIR", "/app/data/push_state")
@@ -75,10 +78,22 @@ def _mark_pushed(home_team: str, away_team: str, trigger_point: float):
     _save_push_state(state)
 
 
-def _bark_url(path: str) -> str:
-    """拼接 Bark API URL"""
-    key = os.getenv("BARK_KEY", BARK_KEY)
-    return f"{BARK_API_BASE}/{key}/{path}"
+def _bark_bases() -> list:
+    """按优先级返回 Bark 服务器列表: 自建优先，公共兜底"""
+    bases = []
+    if BARK_API_BASE != PUBLIC_BARK_BASE:
+        bases.append(BARK_API_BASE)
+    bases.append(PUBLIC_BARK_BASE)
+    return bases
+
+
+def _bark_url(base: str) -> str:
+    """拼接 Bark 推送 URL（自建服务器的设备 key 与公共服务器不同）"""
+    if base != PUBLIC_BARK_BASE:
+        key = os.getenv("BARK_SERVER_KEY", "") or os.getenv("BARK_KEY", BARK_KEY)
+    else:
+        key = os.getenv("BARK_KEY", BARK_KEY)
+    return f"{base}/{key}/"
 
 
 def push_prediction(
@@ -202,31 +217,34 @@ def push_prediction(
 
 
 def _send_with_retry(payload: dict, desc: str = "", max_attempts: int = 4) -> bool:
-    """发送 Bark 推送，网络失败时指数退避重试。
+    """发送 Bark 推送: 自建服务器优先 + 公共服务器兜底 + 指数退避重试。
 
-    背景: 公共 api.day.app 偶发 TLS 握手超时，单次失败会导致整条预测推送丢失
-    （如 2026-07-02 赛前1.5h 的推送）。重试基本可以消除这类偶发丢失。
+    背景: 公共 api.day.app 偶发 TLS 握手超时/受理后丢件
+    （2026-06-30 与 2026-07-02 两次事故），单次失败会丢整条预测推送。
     """
     import time
 
-    for attempt in range(1, max_attempts + 1):
-        try:
-            resp = httpx.post(_bark_url(""), json=payload, timeout=20)
-            if resp.status_code == 200:
-                data = resp.json()
-                if data.get("code") == 200:
-                    logger.info(f"[Bark] 推送成功: {desc} (第{attempt}次尝试)")
-                    return True
-                logger.warning(f"[Bark] 服务端拒绝: {data}")
-                return False  # 服务端明确拒绝（如 key 无效），重试无意义
-            logger.warning(f"[Bark] HTTP {resp.status_code}: {resp.text[:200]}")
-        except Exception as e:
-            logger.error(f"[Bark] 第{attempt}次推送异常: {e}")
+    for base in _bark_bases():
+        for attempt in range(1, max_attempts + 1):
+            try:
+                resp = httpx.post(_bark_url(base), json=payload, timeout=20)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if data.get("code") == 200:
+                        logger.info(f"[Bark] 推送成功: {desc} (服务器={base}, 第{attempt}次尝试)")
+                        return True
+                    logger.warning(f"[Bark] 服务端拒绝({base}): {data}")
+                    break  # 该服务器明确拒绝（如 key 未注册），换下一个服务器
+                logger.warning(f"[Bark] HTTP {resp.status_code}({base}): {resp.text[:200]}")
+            except Exception as e:
+                logger.error(f"[Bark] 第{attempt}次推送异常({base}): {e}")
 
-        if attempt < max_attempts:
-            time.sleep(2 ** attempt)  # 2s / 4s / 8s
+            if attempt < max_attempts:
+                time.sleep(2 ** attempt)  # 2s / 4s / 8s
+        else:
+            logger.error(f"[Bark] 服务器 {base} 重试{max_attempts}次均失败，切换下一个")
 
-    logger.error(f"[Bark] 推送最终失败（已重试{max_attempts}次）: {desc}")
+    logger.error(f"[Bark] 推送最终失败（所有服务器均不可用）: {desc}")
     return False
 
 
@@ -240,4 +258,21 @@ def push_simple(title: str, body: str) -> bool:
     return _send_with_retry(
         {"title": title, "body": body, "sound": "minuet", "group": "FootballAgent"},
         desc=title,
+    )
+
+
+def push_alert(title: str, body: str) -> bool:
+    """系统告警推送（独立分组 + 警报音，用于链路故障通知）"""
+    if not BARK_ENABLED or not BARK_KEY:
+        return False
+
+    return _send_with_retry(
+        {
+            "title": f"🚨 {title}",
+            "body": body,
+            "sound": "alarm",
+            "group": "系统告警",
+            "level": "timeSensitive",
+        },
+        desc=f"告警: {title}",
     )
