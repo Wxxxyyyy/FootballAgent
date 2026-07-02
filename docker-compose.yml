@@ -74,6 +74,8 @@ services:
       dockerfile: Dockerfile
     container_name: football_openclaw
     restart: always
+    depends_on:
+      - redis
     environment:
       - OPENCLAW_PORT=9000
       - OPENCLAW_API_KEY=${OPENCLAW_API_KEY:-}
@@ -83,9 +85,11 @@ services:
       - TZ=Asia/Shanghai
       - BARK_ENABLED=${BARK_ENABLED:-true}
       - BARK_KEY=${BARK_KEY:-}
-      # 容器间通过 football_net 网络的服务名访问数据库
+      # 容器间通过 football_net 网络的服务名访问数据库/缓存
       - MYSQL_HOST=football_mysql
       - NEO4J_URL=bolt://football_neo4j:7687
+      - REDIS_HOST=football_redis
+      - REDIS_PORT=6379
       - MYSQL_USER=${MYSQL_USER:-root}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-football123}
       - MYSQL_DATABASE=${MYSQL_DATABASE:-football_agent}

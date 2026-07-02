@@ -1,0 +1,9 @@
+[Unit]
+Description=Run accuracy tracker daily at 15:30 (after openclaw 15:00 result sync)
+
+[Timer]
+OnCalendar=*-*-* 15:30:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -24,11 +24,37 @@ from typing import Optional
 import httpx
 from bs4 import BeautifulSoup
 
+import redis_cache as rc
+
 logger = logging.getLogger(__name__)
 
 TITAN007_SCORE_URL = os.getenv("WORLDCUP_SCORE_URL", "https://2026.titan007.com/")
 ODDS_JS_URL = "https://1x2d.titan007.com/{match_id}.js"
 BET365_KEYWORDS = ["Bet 365", "bet365", "Bet365"]
+
+# 爬虫缓存 TTL（秒）: 均远小于 30 分钟调度间隔，只吸收"同一 tick 内的重复抓取"
+MATCHLIST_CACHE_TTL = 240   # 比赛列表
+ODDS_CACHE_TTL = 120        # 单场赔率 JS
+_MATCHLIST_CACHE_KEY = "crawl:matchlist"
+
+
+def _recompute_hours(matches: list[dict]) -> list[dict]:
+    """从缓存取回比赛列表后，用 kickoff_time 重算 hours_to_kickoff。
+
+    hours_to_kickoff 是时间敏感字段，直接用缓存值会因缓存滞后（最多 TTL 秒）
+    污染赛前触发窗口判断，故读缓存时按当前时间重新计算。
+    """
+    now = datetime.now()
+    for m in matches:
+        ko = m.get("kickoff_time")
+        if not ko:
+            continue
+        try:
+            kickoff = datetime.fromisoformat(ko)
+            m["hours_to_kickoff"] = (kickoff - now).total_seconds() / 3600
+        except (ValueError, TypeError):
+            pass
+    return matches
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -48,6 +74,11 @@ def fetch_match_list() -> list[dict]:
     返回: [{"match_id", "home_team", "away_team", "date", "kickoff_time",
             "hours_to_kickoff", "finished", "score"}, ...]
     """
+    cached = rc.cache_get_json(_MATCHLIST_CACHE_KEY)
+    if cached:
+        logger.info(f"[缓存命中] 比赛列表 {len(cached)} 场（重算距开赛时间）")
+        return _recompute_hours(cached)
+
     try:
         resp = httpx.get(TITAN007_SCORE_URL, headers=HEADERS, timeout=15, follow_redirects=True)
         if resp.status_code != 200:
@@ -126,6 +157,10 @@ def fetch_match_list() -> list[dict]:
             "score": score,
         })
 
+    # 仅缓存非空结果（空结果通常是抓取失败，缓存空会掩盖故障、阻断重试）
+    if matches:
+        rc.cache_set_json(_MATCHLIST_CACHE_KEY, matches, MATCHLIST_CACHE_TTL)
+
     return matches
 
 
@@ -144,6 +179,11 @@ def fetch_bet365_odds(match_id: str) -> Optional[dict]:
     返回: {"b365h", "b365d", "b365a", "b365ch", "b365cd", "b365ca",
            "home_team", "away_team"} 或 None
     """
+    cache_key = f"crawl:odds:{match_id}"
+    cached = rc.cache_get_json(cache_key)
+    if cached:
+        return cached
+
     url = ODDS_JS_URL.format(match_id=match_id)
     headers = {**HEADERS, "Referer": f"https://op1.titan007.com/oddslist/{match_id}.htm"}
 
@@ -182,7 +222,7 @@ def fetch_bet365_odds(match_id: str) -> Optional[dict]:
         company = fields[2] if len(fields) > 2 else ""
         if any(kw.lower() in company.lower() for kw in BET365_KEYWORDS):
             try:
-                return {
+                odds = {
                     "b365h": float(fields[3]),
                     "b365d": float(fields[4]),
                     "b365a": float(fields[5]),
@@ -192,6 +232,8 @@ def fetch_bet365_odds(match_id: str) -> Optional[dict]:
                     "home_team": home_team,
                     "away_team": away_team,
                 }
+                rc.cache_set_json(cache_key, odds, ODDS_CACHE_TTL)
+                return odds
             except (ValueError, IndexError) as e:
                 logger.warning(f"解析 Bet365 赔率失败: {e}")
                 continue

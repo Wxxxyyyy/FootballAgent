@@ -15,6 +15,7 @@
 import os
 import sys
 import json
+import hashlib
 import logging
 from datetime import datetime
 
@@ -27,6 +28,26 @@ if PROJECT_ROOT not in sys.path:
 
 from dotenv import load_dotenv
 load_dotenv(os.path.join(PROJECT_ROOT, ".env"))
+
+# Redis 预测结果缓存（纯提效层，不可用时降级为每次重算，绝不拖垮预测服务）
+try:
+    from common.redis_cache import cache_get_json, cache_set_json
+except Exception:  # noqa: BLE001
+    def cache_get_json(_key):
+        return None
+
+    def cache_set_json(_key, _value, _ttl):
+        return False
+
+# 预测结果缓存 TTL（秒）：同一场比赛 + 同一档 + 同一组赔率，30 分钟内直接复用
+PRED_CACHE_TTL = 1800
+
+
+def _pred_cache_key(match_id: str, tier: int, odds: dict) -> str:
+    """缓存键含赔率哈希: 赔率变化(新触发点)自然产生新键，重试(同赔率)则命中。"""
+    odds_norm = json.dumps(odds or {}, sort_keys=True, default=str)
+    odds_hash = hashlib.md5(odds_norm.encode("utf-8")).hexdigest()[:12]
+    return f"pred:{match_id}:t{tier}:{odds_hash}"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -88,6 +109,14 @@ def predict():
     odds = data.get("odds", {})
 
     logger.info(f"收到预测请求: {home_team} vs {away_team} (tier={tier}, match_id={match_id})")
+
+    # 缓存命中直接返回（主要挡住"推送失败→重试"场景下的重复重算，省去 LLM/情报采集开销）
+    cache_key = _pred_cache_key(match_id, tier, odds)
+    cached = cache_get_json(cache_key)
+    if cached:
+        logger.info(f"[缓存命中] {home_team} vs {away_team} (key={cache_key})，返回缓存预测")
+        cached["cache_hit"] = True
+        return jsonify(cached)
 
     result = {
         "status": "ok",
@@ -265,6 +294,11 @@ def predict():
 
     # 保存预测结果
     _save_result(match_id, home_team, away_team, tier, result)
+
+    # 仅缓存成功预测（含有效 llm_analysis）；失败/降级结果不缓存，以便下次重算
+    llm_analysis = result.get("llm_analysis")
+    if isinstance(llm_analysis, dict) and "error" not in llm_analysis:
+        cache_set_json(cache_key, result, PRED_CACHE_TTL)
 
     logger.info(f"预测完成: {home_team} vs {away_team}")
     return jsonify(result)

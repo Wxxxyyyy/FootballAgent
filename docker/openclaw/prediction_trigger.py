@@ -26,8 +26,18 @@ import httpx
 
 from odds_scraper import fetch_match_list, get_snapshot_manager
 from notifier import push_prediction, push_alert, _is_already_pushed
+import redis_cache as rc
 
 logger = logging.getLogger(__name__)
+
+# 去重标记在 Redis 的存活时间（2天，跨天自动过期，无需手工清理）
+TRIGGER_TTL = 2 * 24 * 3600
+
+
+def _trig_key(match_id: str, trigger_point: float) -> str:
+    """触发去重的 Redis key（按天隔离，与文件去重语义一致）。"""
+    today = date_type.today().isoformat()
+    return f"trig:{today}:{match_id}:{trigger_point:.1f}"
 
 # 预测系统地址（主应用）
 PREDICTOR_API_URL = os.getenv("PREDICTOR_API_URL", "http://host.docker.internal:8000")
@@ -79,10 +89,14 @@ def _save_triggered_state(state: dict):
 
 def _should_trigger(match_id: str, trigger_point: float) -> bool:
     """
-    判断是否应该触发预测（基于持久化文件去重）
+    判断是否应该触发预测。
 
-    去重 key: match_id + trigger_point
+    去重 key: match_id + trigger_point。
+    Redis 为主 + 文件兜底，取并集: 任一来源标记过即视为已触发（不重复）。
+    Redis 降级时退化为纯文件去重，与改造前行为完全一致，绝不会漏触发。
     """
+    if rc.is_marked(_trig_key(match_id, trigger_point)):
+        return False
     state = _load_triggered_state()
     triggered_points = state.get(match_id, [])
     for t in triggered_points:
@@ -92,7 +106,8 @@ def _should_trigger(match_id: str, trigger_point: float) -> bool:
 
 
 def _mark_triggered(match_id: str, trigger_point: float):
-    """标记某场比赛在某个触发点已完成预测（持久化到文件）"""
+    """标记某场比赛在某个触发点已完成预测（Redis + 文件双写）"""
+    rc.mark(_trig_key(match_id, trigger_point), TRIGGER_TTL)
     state = _load_triggered_state()
     if match_id not in state:
         state[match_id] = []
@@ -101,7 +116,8 @@ def _mark_triggered(match_id: str, trigger_point: float):
 
 
 def _unmark_triggered(match_id: str, trigger_point: float):
-    """移除某场比赛某个触发点的标记（预测失败时调用，允许下次重试）"""
+    """移除某场比赛某个触发点的标记（预测失败时调用，允许下次重试；Redis + 文件双删）"""
+    rc.unmark(_trig_key(match_id, trigger_point))
     state = _load_triggered_state()
     if match_id in state:
         state[match_id] = [t for t in state[match_id] if abs(t - trigger_point) >= 0.3]

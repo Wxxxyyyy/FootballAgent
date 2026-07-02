@@ -1,0 +1,11 @@
+[Unit]
+Description=FootballAgent accuracy tracker (prediction vs outcome)
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/data/workspace/FootballAgent
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 scripts/accuracy_tracker.py
+StandardOutput=append:/data/workspace/FootballAgent/logs/accuracy_tracker.log
+StandardError=append:/data/workspace/FootballAgent/logs/accuracy_tracker.log

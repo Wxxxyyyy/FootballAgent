@@ -18,7 +18,18 @@ from datetime import date as date_type
 
 import httpx
 
+import redis_cache as rc
+
 logger = logging.getLogger(__name__)
+
+# 推送去重标记在 Redis 的存活时间（2天，跨天自动过期）
+PUSH_TTL = 2 * 24 * 3600
+
+
+def _push_key(home_team: str, away_team: str, trigger_point: float) -> str:
+    """推送去重的 Redis key（按天隔离，与文件去重语义一致）。"""
+    today = date_type.today().isoformat()
+    return f"push:{today}:{home_team}_vs_{away_team}_{trigger_point:.1f}"
 
 # Bark device key（从环境变量读取，避免硬编码）
 BARK_KEY = os.getenv("BARK_KEY", "")
@@ -64,14 +75,17 @@ def _save_push_state(state: set):
 
 
 def _is_already_pushed(home_team: str, away_team: str, trigger_point: float) -> bool:
-    """检查某场比赛某个触发点是否已推送过"""
+    """检查某场比赛某个触发点是否已推送过（Redis 为主 + 文件兜底，取并集）"""
+    if rc.is_marked(_push_key(home_team, away_team, trigger_point)):
+        return True
     key = f"{home_team}_vs_{away_team}_{trigger_point:.1f}"
     state = _load_push_state()
     return key in state
 
 
 def _mark_pushed(home_team: str, away_team: str, trigger_point: float):
-    """标记已推送"""
+    """标记已推送（Redis + 文件双写）"""
+    rc.mark(_push_key(home_team, away_team, trigger_point), PUSH_TTL)
     key = f"{home_team}_vs_{away_team}_{trigger_point:.1f}"
     state = _load_push_state()
     state.add(key)
