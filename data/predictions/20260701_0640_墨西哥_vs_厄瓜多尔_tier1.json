@@ -1,0 +1,210 @@
+{
+  "status": "ok",
+  "match_id": "2907382",
+  "home_team": "墨西哥",
+  "away_team": "厄瓜多尔",
+  "tier": 1,
+  "prediction_time": "2026-07-01T06:40:07.213975",
+  "ml_prediction": {
+    "home_win_prob": 0.6556,
+    "draw_prob": 0.2336,
+    "away_win_prob": 0.1109,
+    "wdl_prediction": "H",
+    "input_odds": {
+      "B365H": 2.0,
+      "B365D": 3.1,
+      "B365A": 4.0,
+      "B365CH": 2.2,
+      "B365CD": 2.9,
+      "B365CA": 4.1
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.4378,
+    "draw_prob": 0.3247,
+    "away_win_prob": 0.2375,
+    "wdl_prediction": "H",
+    "expected_goals_home": 1.039,
+    "expected_goals_away": 0.674,
+    "most_likely_score": "1:0",
+    "score_distribution": {
+      "1:0": 0.1895,
+      "0:0": 0.179,
+      "0:1": 0.124,
+      "1:1": 0.122,
+      "2:0": 0.0991
+    },
+    "lambda_home": 1.039,
+    "lambda_away": 0.674,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Czech Republic",
+        "away_team": "Mexico",
+        "home_goals": 0,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-25 09:00"
+      },
+      {
+        "home_team": "Mexico",
+        "away_team": "South Korea",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-19 09:00"
+      },
+      {
+        "home_team": "Mexico",
+        "away_team": "South Korea",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "18 Jun 2026"
+      },
+      {
+        "home_team": "Mexico",
+        "away_team": "South Africa",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-12 03:00"
+      },
+      {
+        "home_team": "Mexico",
+        "away_team": "South Africa",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "11 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Ecuador",
+        "away_team": "Germany",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-26 04:00"
+      },
+      {
+        "home_team": "Ecuador",
+        "away_team": "Curacao",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-21 08:00"
+      },
+      {
+        "home_team": "Ecuador",
+        "away_team": "Curacao",
+        "home_goals": 0,
+        "away_goals": 0,
+        "result": "D",
+        "competition": "FIFA World Cup",
+        "date": "20 Jun 2026"
+      },
+      {
+        "home_team": "Ivory Coast",
+        "away_team": "Ecuador",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-15 07:00"
+      },
+      {
+        "home_team": "Ivory Coast",
+        "away_team": "Ecuador",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "14 Jun 2026"
+      }
+    ]
+  },
+  "h2h_records": [
+    {
+      "date": "30 Jun 2024",
+      "season": "2024",
+      "result": "0-0",
+      "comp": "Copa America",
+      "hg": 0,
+      "ag": 0
+    },
+    {
+      "date": "27 Oct 2021",
+      "season": "2022",
+      "result": "2-3",
+      "comp": "International Friendly",
+      "hg": 2,
+      "ag": 3
+    },
+    {
+      "date": "14 Oct 2025",
+      "season": "2026",
+      "result": "1-1",
+      "comp": "International Friendly",
+      "hg": 1,
+      "ag": 1
+    },
+    {
+      "date": "09 Jun 2019",
+      "season": "2019",
+      "result": "3-2",
+      "comp": "International Friendly",
+      "hg": 3,
+      "ag": 2
+    },
+    {
+      "date": "05 Jun 2022",
+      "season": "2022",
+      "result": "0-0",
+      "comp": "International Friendly",
+      "hg": 0,
+      "ag": 0
+    }
+  ],
+  "llm_analysis": {
+    "ml_prediction": {
+      "result": "H",
+      "confidence": "中",
+      "reason": "ML模型主胜概率65.6%，赔率2.0支持主队，无明显战意干扰，但历史交锋平局较多。"
+    },
+    "monte_carlo_prediction": {
+      "result": "H",
+      "most_likely_score": "1:0",
+      "reason": "模拟主胜43.8%，最可能比分1:0(18.9%)，主队进攻略优，但零封可能高。"
+    },
+    "score_predictions": [
+      {
+        "score": "1:0",
+        "prob": 0.189,
+        "reason": "最可能比分，主队防守稳固"
+      },
+      {
+        "score": "0:0",
+        "prob": 0.179,
+        "reason": "次可能比分，双方可能保守"
+      }
+    ],
+    "upset_prediction": {
+      "result": "D",
+      "score": "0:0",
+      "reason": "历史交锋平局率高，蒙特卡洛平局概率32.5%，赔率3.1存在平局冷门价值。"
+    },
+    "overall_analysis": "墨西哥近期状态出色，连胜且零封对手，防守端表现稳定。厄瓜多尔刚战胜德国，但整体进攻效率一般。历史交锋显示双方多次战平，且最近一次0-0。ML模型和蒙特卡洛均倾向主胜，但平局概率不容忽视。考虑到主队实力略优但并非碾压，本场可能小比分，主胜或平局可能性大，防平是合理选择。",
+    "raw_response": "{\n  \"ml_prediction\": {\n    \"result\": \"H\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型主胜概率65.6%，赔率2.0支持主队，无明显战意干扰，但历史交锋平局较多。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"H\",\n    \"most_likely_score\": \"1:0\",\n    \"reason\": \"模拟主胜43.8%，最可能比分1:0(18.9%)，主队进攻略优，但零封可能高。\"\n  },\n  \"score_predictions\": [\n    {\"score\": \"1:0\", \"prob\": 0.189, \"reason\": \"最可能比分，主队防守稳固\"},\n    {\"score\": \"0:0\", \"prob\": 0.179, \"reason\": \"次可能比分，双方可能保守\"}\n  ],\n  \"upset_prediction\": {\n    \"result\": \"D\",\n    \"score\": \"0:0\",\n    \"reason\": \"历史交锋平局率高，蒙特卡洛平局概率32.5%，赔率3.1存在平局冷门价值。\"\n  },\n  \"overall_analysis\": \"墨西哥近期状态出色，连胜且零封对手，防守端表现稳定。厄瓜多尔刚战胜德国，但整体进攻效率一般。历史交锋显示双方多次战平，且最近一次0-0。ML模型和蒙特卡洛均倾向主胜，但平局概率不容忽视。考虑到主队实力略优但并非碾压，本场可能小比分，主胜或平局可能性大，防平是合理选择。\"\n}"
+  }
+}

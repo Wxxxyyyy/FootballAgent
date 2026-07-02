@@ -210,6 +210,28 @@ def predict():
         logger.error(f"  [Neo4j] 查询失败: {e}")
         result["h2h_records"] = []
 
+    # ══════ Step 4.5: 赛前情报采集（伤停/首发/新闻/教练风格）══════
+    # 采集结果以摘要文本注入 LLM prompt，让预测考量赛前新闻/战意/伤停。
+    # 任意数据源失败都不阻断预测。
+    intel_summary = ""
+    try:
+        from agents.predicted_agent.scouters import PreMatchIntel
+
+        hours_to_kickoff = _hours_to_kickoff(data.get("kickoff_time"), tier)
+        intel = PreMatchIntel().gather(
+            home_team, away_team, date or None, hours_to_kickoff=hours_to_kickoff
+        )
+        intel_summary = intel.get("summary", "") if isinstance(intel, dict) else ""
+        result["pre_match_intel"] = {
+            "tier": intel.get("tier") if isinstance(intel, dict) else tier,
+            "summary": intel_summary,
+            "elapsed_seconds": intel.get("elapsed_seconds") if isinstance(intel, dict) else None,
+        }
+        logger.info(f"  [情报] 采集完成 ({len(intel_summary)} 字符, 距开赛 {hours_to_kickoff:.1f}h)")
+    except Exception as e:
+        logger.error(f"  [情报] 采集失败（跳过，不阻断预测）: {e}")
+        result["pre_match_intel"] = {"error": str(e), "summary": ""}
+
     # ══════ Step 5: LLM 综合分析 ══════
     try:
         from agents.predicted_agent.models.llm_predictor import predict_with_llm
@@ -224,20 +246,42 @@ def predict():
             h2h_records=result.get("h2h_records", []),
             odds_info=odds,
             upset_signals=None,
-            pre_match_intel_summary="",
+            pre_match_intel_summary=intel_summary,
             monte_carlo_result=result.get("monte_carlo"),
         )
         result["llm_analysis"] = llm_result
         logger.info(f"  [LLM] 分析完成")
     except Exception as e:
         logger.error(f"  [LLM] 分析失败: {e}")
-        result["llm_analysis"] = {"error": str(e)}
+        # 即便 LLM 模块整体不可用，也用 ML+蒙特卡洛 合成可推送结果
+        try:
+            from agents.predicted_agent.models.llm_predictor import _fallback_from_models
+
+            result["llm_analysis"] = _fallback_from_models(
+                result.get("ml_prediction", {}), result.get("monte_carlo"), str(e)
+            )
+        except Exception:
+            result["llm_analysis"] = {"error": str(e)}
 
     # 保存预测结果
     _save_result(match_id, home_team, away_team, tier, result)
 
     logger.info(f"预测完成: {home_team} vs {away_team}")
     return jsonify(result)
+
+
+def _hours_to_kickoff(kickoff_time, tier) -> float:
+    """估算距开赛小时数：优先解析 kickoff_time（ISO），否则按 tier 推断。
+
+    tier=2 表示赛前 1h 内（第二档官方首发），tier=1 表示更早（第一档缺阵预判）。
+    """
+    if kickoff_time:
+        try:
+            ko = datetime.fromisoformat(str(kickoff_time))
+            return max(0.0, (ko - datetime.now()).total_seconds() / 3600.0)
+        except (ValueError, TypeError):
+            pass
+    return 0.5 if tier == 2 else 24.0
 
 
 def _save_result(match_id, home, away, tier, result):

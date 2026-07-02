@@ -1,0 +1,198 @@
+{
+  "status": "ok",
+  "match_id": "test_170907",
+  "home_team": "Brazil",
+  "away_team": "Germany",
+  "tier": 1,
+  "prediction_time": "2026-06-30T17:09:07.408634",
+  "trigger_time": "2026-06-30T17:09:07",
+  "ml_prediction": {
+    "home_win_prob": 0.4723,
+    "draw_prob": 0.279,
+    "away_win_prob": 0.2487,
+    "wdl_prediction": "H",
+    "input_odds": {
+      "B365H": 2.1,
+      "B365D": 3.3,
+      "B365A": 3.4,
+      "B365CH": 2.05,
+      "B365CD": 3.3,
+      "B365CA": 3.6
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.4553,
+    "draw_prob": 0.2824,
+    "away_win_prob": 0.2623,
+    "wdl_prediction": "H",
+    "expected_goals_home": 1.299,
+    "expected_goals_away": 0.905,
+    "most_likely_score": "1:0",
+    "score_distribution": {
+      "1:0": 0.1428,
+      "1:1": 0.1268,
+      "0:0": 0.1104,
+      "0:1": 0.1001,
+      "2:0": 0.0911
+    },
+    "lambda_home": 1.299,
+    "lambda_away": 0.905,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Brazil",
+        "away_team": "Japan",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-30 01:00"
+      },
+      {
+        "home_team": "Scotland",
+        "away_team": "Brazil",
+        "home_goals": 0,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-25 06:00"
+      },
+      {
+        "home_team": "Brazil",
+        "away_team": "Haiti",
+        "home_goals": 3,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-20 08:30"
+      },
+      {
+        "home_team": "Brazil",
+        "away_team": "Haiti",
+        "home_goals": 3,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "19 Jun 2026"
+      },
+      {
+        "home_team": "Brazil",
+        "away_team": "Morocco",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-14 06:00"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Germany",
+        "away_team": "Paraguay",
+        "home_goals": 1,
+        "away_goals": 1,
+        "result": "D",
+        "competition": "World Cup 2026",
+        "date": "06-30 04:30"
+      },
+      {
+        "home_team": "Ecuador",
+        "away_team": "Germany",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-26 04:00"
+      },
+      {
+        "home_team": "Germany",
+        "away_team": "Ivory Coast",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-21 04:00"
+      },
+      {
+        "home_team": "Germany",
+        "away_team": "Ivory Coast",
+        "home_goals": 2,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "20 Jun 2026"
+      },
+      {
+        "home_team": "Germany",
+        "away_team": "Curacao",
+        "home_goals": 7,
+        "away_goals": 1,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-15 01:00"
+      }
+    ]
+  },
+  "h2h_records": [
+    {
+      "date": "27 Mar 2018",
+      "season": "2018",
+      "result": "0-1",
+      "comp": "International Friendly",
+      "hg": 0,
+      "ag": 1
+    },
+    {
+      "date": "2014-07-08",
+      "season": "2014",
+      "result": "1-7",
+      "comp": "World Cup 2014",
+      "hg": 1,
+      "ag": 7
+    }
+  ],
+  "pre_match_intel": {
+    "tier": 1,
+    "summary": "═══ 赛前情报（巴西 vs 德国）═══\n\n【阵容情报 - 缺阵预判】\n巴西队（惯用阵型，阵型: 4-2-4）:\n  缺阵: 无重要缺阵\n德国队（惯用阵型，阵型: 4-2-3-1）:\n  缺阵: 无重要缺阵\n\n【教练风格对比】\n巴西 - Carlo Ancelotti: 惯用4-2-4, 风格进攻控球(攻强守弱)\n德国 - Julian Nagelsmann: 惯用4-2-3-1, 风格高位压迫(攻强守弱)\n战术对碰: 阵型差异: Brazil 4-2-4 vs Germany 4-2-3-1\n\n【赛前新闻】\n巴西队近期新闻:\n  1. 巴西2-1逆转日本晋级16强，马丁内利补时绝杀，卡塞米罗建功\n     巴西2-1逆转日本晋级16强，马丁内利补时绝杀，卡塞米罗建功 战报bot @懂球帝 今天 03:02 北京时间6月30日1:00，世界杯1/16决赛焦点战，巴西与日本在休斯顿体育场展开角逐，本场主裁判\n  2. 多位名宿为巴西助阵，里瓦尔多：我们巴西队是不可战胜的\n     多位名宿为巴西助阵，里瓦尔多：我们巴西队是不可战胜的 一只熊 @懂球帝 刚刚 北京时间6月30日凌晨，2026美加墨世界杯1/16决赛，巴西队2-1逆转淘汰日本队。巴西传奇球星里瓦尔多在社交媒体里晒出\n  3. 日本“最显眼包”球迷，被巴西球迷包围的咆哮哥 [士气低落]\n     日本“最显眼包”球迷，被巴西球迷包围的咆哮哥 Melon牛牛 @懂球帝 26分钟前 北京时间6月30日，巴西2-1淘汰日本赛后，一日本球迷崩溃脱衣，巴西球迷为他披上巴西国旗，引发全网热议。 据现场球迷\n  软信号:\n    [中] 士气低落: 新闻提及: 崩溃\n\n德国队近期新闻:\n  1. 马特乌斯：德国队必须换帅了，球队内部因家属团随行存在矛盾 [队内冲突]\n     马特乌斯：德国队必须换帅了，球队内部因家属团随行存在矛盾 七零八零 @懂球帝 30分钟前 世界杯淘汰赛，德国点球大战不敌巴拉圭。名宿、解说专家马特乌斯揭露了球队内部的真实生态，并认为纳格尔斯曼在国家队\n  2. 德国队世界杯出局后阿迪官网球衣降价出售，主场球衣打5折 [出线形势]\n     德国队世界杯出局后阿迪官网球衣降价出售，主场球衣打5折 JayStones @懂球帝 今天 15:49 在今天凌晨进行的世界杯十六分之一决赛中，德国被巴拉圭淘汰，随后，阿迪达斯官网上德国队球队的球衣大\n  软信号:\n    [高] 队内冲突: 新闻提及: 矛盾\n    [高] 出线形势: 新闻提及: 出局\n\n【软信号汇总】\n巴西:\n  [中] 士气低落: 新闻提及: 崩溃\n德国:\n  [高] 队内冲突: 新闻提及: 矛盾\n  [高] 出线形势: 新闻提及: 出局\n\n═══ 情报结束 ═══",
+    "elapsed_seconds": 4.3
+  },
+  "llm_analysis": {
+    "wdl_prediction": {
+      "primary": "H",
+      "secondary": "D",
+      "confidence": "高"
+    },
+    "key_points": [
+      "德国队已在世界杯1/16决赛中点球不敌巴拉圭，遭遇淘汰（出线形势显示“出局”），全队战意严重缺失。",
+      "德国队内出现公开矛盾（名宿马特乌斯爆料家属团随行引发冲突），队内团结受损，无心恋战。",
+      "巴西队刚在补时阶段2-1逆转日本晋级，士气高涨，且阵容无明显缺阵，战意和状态均占优。"
+    ],
+    "ml_prediction": {
+      "result": "H",
+      "confidence": "中",
+      "reason": "ML模型主胜概率47.2%为三方最高，赔率格局同样示好主队，与基本面战意优势一致。"
+    },
+    "monte_carlo_prediction": {
+      "result": "H",
+      "most_likely_score": "1:0",
+      "reason": "模拟中主胜概率45.5%，预期进球1.3:0.9，最可能比分1-0反映低进球均势。"
+    },
+    "score_predictions": [
+      {
+        "score": "1:0",
+        "prob": 0.143,
+        "reason": "蒙特卡洛最可能比分，两队攻击力一般且德国缺乏战意。"
+      },
+      {
+        "score": "2:0",
+        "prob": 0.091,
+        "reason": "巴西凭借士气压制无心恋战的德国，有一定零封概率。"
+      }
+    ],
+    "upset_prediction": null,
+    "overall_analysis": "本场比赛最大变数在于战意：德国队在世界杯已出局，且爆出队内矛盾，全队士气和凝聚力均处于低谷，极可能大幅轮换或应付了事。巴西则刚经历绝杀晋级，气势正盛，球员和球迷都处于高昂状态。尽管ML模型和蒙特卡洛模拟均指向主胜，但本质原因仍在于情报显示的巨大心态反差。赔率市场尚未充分消化德国消极信号，主胜2.1仍具价值。建议关注巴西取胜，比分倾向1-0、2-0。",
+    "raw_response": "{\n  \"wdl_prediction\": {\n    \"primary\": \"H\",\n    \"secondary\": \"D\",\n    \"confidence\": \"高\"\n  },\n  \"key_points\": [\n    \"德国队已在世界杯1/16决赛中点球不敌巴拉圭，遭遇淘汰（出线形势显示“出局”），全队战意严重缺失。\",\n    \"德国队内出现公开矛盾（名宿马特乌斯爆料家属团随行引发冲突），队内团结受损，无心恋战。\",\n    \"巴西队刚在补时阶段2-1逆转日本晋级，士气高涨，且阵容无明显缺阵，战意和状态均占优。\"\n  ],\n  \"ml_prediction\": {\n    \"result\": \"H\",\n    \"confidence\": \"中\",\n    \"reason\": \"ML模型主胜概率47.2%为三方最高，赔率格局同样示好主队，与基本面战意优势一致。\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"H\",\n    \"most_likely_score\": \"1:0\",\n    \"reason\": \"模拟中主胜概率45.5%，预期进球1.3:0.9，最可能比分1-0反映低进球均势。\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"1:0\",\n      \"prob\": 0.143,\n      \"reason\": \"蒙特卡洛最可能比分，两队攻击力一般且德国缺乏战意。\"\n    },\n    {\n      \"score\": \"2:0\",\n      \"prob\": 0.091,\n      \"reason\": \"巴西凭借士气压制无心恋战的德国，有一定零封概率。\"\n    }\n  ],\n  \"upset_prediction\": null,\n  \"overall_analysis\": \"本场比赛最大变数在于战意：德国队在世界杯已出局，且爆出队内矛盾，全队士气和凝聚力均处于低谷，极可能大幅轮换或应付了事。巴西则刚经历绝杀晋级，气势正盛，球员和球迷都处于高昂状态。尽管ML模型和蒙特卡洛模拟均指向主胜，但本质原因仍在于情报显示的巨大心态反差。赔率市场尚未充分消化德国消极信号，主胜2.1仍具价值。建议关注巴西取胜，比分倾向1-0、2-0。\"\n}"
+  }
+}

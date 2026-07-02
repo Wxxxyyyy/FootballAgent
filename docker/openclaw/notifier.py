@@ -186,39 +186,48 @@ def push_prediction(
 
     body = "\n".join(body_parts)
 
-    # 发送推送（Bark 支持 URL 参数式 POST）
-    try:
-        # 使用 Bark 的高级参数：title + body，支持响铃
-        payload = {
-            "title": title,
-            "body": body,
-            "sound": "minuet",  # 默认铃声
-            "group": "FootballAgent",  # 消息分组
-        }
+    # 使用 Bark 的高级参数：title + body，支持响铃
+    payload = {
+        "title": title,
+        "body": body,
+        "sound": "minuet",  # 默认铃声
+        "group": "FootballAgent",  # 消息分组
+    }
 
-        resp = httpx.post(
-            _bark_url(""),  # https://api.day.app/{key}/
-            json=payload,
-            timeout=10,
-        )
+    if _send_with_retry(payload, desc=f"{home_team} vs {away_team} (触发点={hours_to_kickoff:.1f}h)"):
+        # 标记已推送，防止重复
+        _mark_pushed(home_team, away_team, hours_to_kickoff)
+        return True
+    return False
 
-        if resp.status_code == 200:
-            data = resp.json()
-            if data.get("code") == 200:
-                logger.info(f"[Bark] 推送成功: {home_team} vs {away_team} (触发点={hours_to_kickoff:.1f}h)")
-                # 标记已推送，防止重复
-                _mark_pushed(home_team, away_team, hours_to_kickoff)
-                return True
-            else:
-                logger.warning(f"[Bark] 推送失败: {data}")
-                return False
-        else:
+
+def _send_with_retry(payload: dict, desc: str = "", max_attempts: int = 4) -> bool:
+    """发送 Bark 推送，网络失败时指数退避重试。
+
+    背景: 公共 api.day.app 偶发 TLS 握手超时，单次失败会导致整条预测推送丢失
+    （如 2026-07-02 赛前1.5h 的推送）。重试基本可以消除这类偶发丢失。
+    """
+    import time
+
+    for attempt in range(1, max_attempts + 1):
+        try:
+            resp = httpx.post(_bark_url(""), json=payload, timeout=20)
+            if resp.status_code == 200:
+                data = resp.json()
+                if data.get("code") == 200:
+                    logger.info(f"[Bark] 推送成功: {desc} (第{attempt}次尝试)")
+                    return True
+                logger.warning(f"[Bark] 服务端拒绝: {data}")
+                return False  # 服务端明确拒绝（如 key 无效），重试无意义
             logger.warning(f"[Bark] HTTP {resp.status_code}: {resp.text[:200]}")
-            return False
+        except Exception as e:
+            logger.error(f"[Bark] 第{attempt}次推送异常: {e}")
 
-    except Exception as e:
-        logger.error(f"[Bark] 推送异常: {e}")
-        return False
+        if attempt < max_attempts:
+            time.sleep(2 ** attempt)  # 2s / 4s / 8s
+
+    logger.error(f"[Bark] 推送最终失败（已重试{max_attempts}次）: {desc}")
+    return False
 
 
 def push_simple(title: str, body: str) -> bool:
@@ -228,20 +237,7 @@ def push_simple(title: str, body: str) -> bool:
     if not BARK_KEY:
         return False
 
-    try:
-        resp = httpx.post(
-            _bark_url(""),
-            json={
-                "title": title,
-                "body": body,
-                "sound": "minuet",
-                "group": "FootballAgent",
-            },
-            timeout=10,
-        )
-        if resp.status_code == 200:
-            data = resp.json()
-            return data.get("code") == 200
-        return False
-    except Exception:
-        return False
+    return _send_with_retry(
+        {"title": title, "body": body, "sound": "minuet", "group": "FootballAgent"},
+        desc=title,
+    )

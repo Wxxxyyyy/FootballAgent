@@ -1,0 +1,225 @@
+{
+  "status": "ok",
+  "match_id": "verify_8001",
+  "home_team": "阿根廷",
+  "away_team": "墨西哥",
+  "tier": 1,
+  "prediction_time": "2026-07-02T11:05:57.826647",
+  "ml_prediction": {
+    "home_win_prob": 0.5958,
+    "draw_prob": 0.2714,
+    "away_win_prob": 0.1328,
+    "wdl_prediction": "H",
+    "input_odds": {
+      "B365H": 1.55,
+      "B365D": 4.0,
+      "B365A": 6.0,
+      "B365CH": 1.5,
+      "B365CD": 4.2,
+      "B365CA": 6.5
+    }
+  },
+  "monte_carlo": {
+    "home_win_prob": 0.626,
+    "draw_prob": 0.2221,
+    "away_win_prob": 0.1519,
+    "wdl_prediction": "H",
+    "expected_goals_home": 1.791,
+    "expected_goals_away": 0.721,
+    "most_likely_score": "1:0",
+    "score_distribution": {
+      "1:0": 0.1433,
+      "2:0": 0.1307,
+      "1:1": 0.1019,
+      "2:1": 0.093,
+      "0:0": 0.0804
+    },
+    "lambda_home": 1.791,
+    "lambda_away": 0.721,
+    "n_simulations": 10000
+  },
+  "recent_matches": {
+    "home": [
+      {
+        "home_team": "Jordan",
+        "away_team": "Argentina",
+        "home_goals": 1,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-28 10:00"
+      },
+      {
+        "home_team": "Argentina",
+        "away_team": "Austria",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-23 01:00"
+      },
+      {
+        "home_team": "Argentina",
+        "away_team": "Austria",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "22 Jun 2026"
+      },
+      {
+        "home_team": "Argentina",
+        "away_team": "Algeria",
+        "home_goals": 3,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-17 09:00"
+      },
+      {
+        "home_team": "Argentina",
+        "away_team": "Algeria",
+        "home_goals": 3,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "16 Jun 2026"
+      }
+    ],
+    "away": [
+      {
+        "home_team": "Mexico",
+        "away_team": "Ecuador",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "07-01 10:00"
+      },
+      {
+        "home_team": "Czech Republic",
+        "away_team": "Mexico",
+        "home_goals": 0,
+        "away_goals": 3,
+        "result": "A",
+        "competition": "World Cup 2026",
+        "date": "06-25 09:00"
+      },
+      {
+        "home_team": "Mexico",
+        "away_team": "South Korea",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-19 09:00"
+      },
+      {
+        "home_team": "Mexico",
+        "away_team": "South Korea",
+        "home_goals": 1,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "FIFA World Cup",
+        "date": "18 Jun 2026"
+      },
+      {
+        "home_team": "Mexico",
+        "away_team": "South Africa",
+        "home_goals": 2,
+        "away_goals": 0,
+        "result": "H",
+        "competition": "World Cup 2026",
+        "date": "06-12 03:00"
+      }
+    ]
+  },
+  "h2h_records": [
+    {
+      "date": "26 Nov 2022",
+      "season": "2023",
+      "result": "2-0",
+      "comp": "FIFA World Cup",
+      "hg": 2,
+      "ag": 0
+    },
+    {
+      "date": "2022-11-26",
+      "season": "2022",
+      "result": "2-0",
+      "comp": "World Cup 2022",
+      "hg": 2,
+      "ag": 0
+    },
+    {
+      "date": "20 Nov 2018",
+      "season": "2019",
+      "result": "2-0",
+      "comp": "International Friendly",
+      "hg": 2,
+      "ag": 0
+    },
+    {
+      "date": "16 Nov 2018",
+      "season": "2019",
+      "result": "2-0",
+      "comp": "International Friendly",
+      "hg": 2,
+      "ag": 0
+    },
+    {
+      "date": "10 Sep 2019",
+      "season": "2020",
+      "result": "4-0",
+      "comp": "International Friendly",
+      "hg": 4,
+      "ag": 0
+    }
+  ],
+  "pre_match_intel": {
+    "tier": 1,
+    "summary": "═══ 赛前情报（阿根廷 vs 墨西哥）═══\n\n【阵容情报 - 缺阵预判】\n阿根廷队（惯用阵型，阵型: 4-3-3）:\n  缺阵: 无重要缺阵\n墨西哥队（惯用阵型，阵型: 4-3-3）:\n  缺阵: 无重要缺阵\n\n【教练风格对比】\n阿根廷 - Lionel Scaloni: 惯用4-3-3, 风格攻守平衡(攻守平衡)\n墨西哥 - Javier Aguirre: 惯用4-3-3, 风格进攻控球(攻强守弱)\n战术对碰: 无明显风格相克\n\n【赛前新闻】\n阿根廷队近期新闻:\n  1. ​迈阿密静候梅西登场， 阿根廷球迷已占领佛罗里达\n     ​迈阿密静候梅西登场， 阿根廷球迷已占领佛罗里达 足球推文 足球推文 2026-07-02 09:37 梅西已抵达他最熟悉的领地。 在迈阿密与他朝夕相处的亲友正翘首以盼，而数以万计涌入佛罗里达的阿根廷\n\n墨西哥队近期新闻:\n  1. 墨西哥开赛至今一球未丢，亨利：若英格兰队先丢球，将很被动\n     墨西哥开赛至今一球未丢，亨利：若英格兰队先丢球，将很被动 迷你庫珀 @懂球帝 20分钟前 北京时间7月2日，在福克斯赛后节目中，法国足坛名宿蒂埃里-亨利提醒英格兰队，如果在面对墨西哥队时像今天这样先失\n\n═══ 情报结束 ═══",
+    "elapsed_seconds": 3.4
+  },
+  "llm_analysis": {
+    "wdl_prediction": {
+      "primary": "H",
+      "secondary": "D",
+      "confidence": "中"
+    },
+    "key_points": [
+      "墨西哥开赛至今一球未丢，防守体系极为稳固，可能限制阿根廷的进攻效率",
+      "阿根廷历史交锋碾压墨西哥，近5次全胜且至少净胜2球，心理优势明显",
+      "ML模型与蒙特卡洛模拟均指向主胜，赔率主胜低至1.55，市场强烈看好阿根廷"
+    ],
+    "ml_prediction": {
+      "result": "H",
+      "confidence": "中",
+      "reason": "模型主胜概率59.58%，显著高于平局27.14%和客胜13.28%，倾向主胜"
+    },
+    "monte_carlo_prediction": {
+      "result": "H",
+      "most_likely_score": "1:0",
+      "reason": "泊松模拟万次，主胜概率62.6%，最可能比分1:0（14.3%），匹配两队实力差"
+    },
+    "score_predictions": [
+      {
+        "score": "1:0",
+        "prob": 0.15,
+        "reason": "蒙特卡洛最可能比分，结合墨西哥零失球防守，阿根廷小胜可期"
+      },
+      {
+        "score": "2:0",
+        "prob": 0.12,
+        "reason": "次高概率比分，历史交锋多次2-0，阿根廷攻击线有能力打破僵局"
+      }
+    ],
+    "upset_prediction": {
+      "result": "A",
+      "score": "0:1",
+      "reason": "墨西哥防守密不透风，若阿根廷久攻不下，对手反击可能偷袭得手，冷门概率约15%"
+    },
+    "overall_analysis": "阿根廷综合实力与交锋历史全面占优，ML模型和模拟均指向主胜，赔率亦低至1.55。但墨西哥本届赛事防守堪称铜墙铁壁，至今零失球，这将成为比赛最大变数。阿根廷虽攻击线豪华，面对收缩防守时破密防效率存在疑问，比赛可能陷入胶着。预计阿根廷控球占优，但进球不会轻松，最可能1-0或2-0小胜，平局风险不可忽视。若墨西哥先进球，比赛走势可能完全改变。整体看好阿根廷不败，推荐首选主胜，防平。",
+    "raw_response": "{\n  \"wdl_prediction\": {\n    \"primary\": \"H\",\n    \"secondary\": \"D\",\n    \"confidence\": \"中\"\n  },\n  \"key_points\": [\n    \"墨西哥开赛至今一球未丢，防守体系极为稳固，可能限制阿根廷的进攻效率\",\n    \"阿根廷历史交锋碾压墨西哥，近5次全胜且至少净胜2球，心理优势明显\",\n    \"ML模型与蒙特卡洛模拟均指向主胜，赔率主胜低至1.55，市场强烈看好阿根廷\"\n  ],\n  \"ml_prediction\": {\n    \"result\": \"H\",\n    \"confidence\": \"中\",\n    \"reason\": \"模型主胜概率59.58%，显著高于平局27.14%和客胜13.28%，倾向主胜\"\n  },\n  \"monte_carlo_prediction\": {\n    \"result\": \"H\",\n    \"most_likely_score\": \"1:0\",\n    \"reason\": \"泊松模拟万次，主胜概率62.6%，最可能比分1:0（14.3%），匹配两队实力差\"\n  },\n  \"score_predictions\": [\n    {\n      \"score\": \"1:0\",\n      \"prob\": 0.15,\n      \"reason\": \"蒙特卡洛最可能比分，结合墨西哥零失球防守，阿根廷小胜可期\"\n    },\n    {\n      \"score\": \"2:0\",\n      \"prob\": 0.12,\n      \"reason\": \"次高概率比分，历史交锋多次2-0，阿根廷攻击线有能力打破僵局\"\n    }\n  ],\n  \"upset_prediction\": {\n    \"result\": \"A\",\n    \"score\": \"0:1\",\n    \"reason\": \"墨西哥防守密不透风，若阿根廷久攻不下，对手反击可能偷袭得手，冷门概率约15%\"\n  },\n  \"overall_analysis\": \"阿根廷综合实力与交锋历史全面占优，ML模型和模拟均指向主胜，赔率亦低至1.55。但墨西哥本届赛事防守堪称铜墙铁壁，至今零失球，这将成为比赛最大变数。阿根廷虽攻击线豪华，面对收缩防守时破密防效率存在疑问，比赛可能陷入胶着。预计阿根廷控球占优，但进球不会轻松，最可能1-0或2-0小胜，平局风险不可忽视。若墨西哥先进球，比赛走势可能完全改变。整体看好阿根廷不败，推荐首选主胜，防平。\"\n}"
+  }
+}

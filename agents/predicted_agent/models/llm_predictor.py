@@ -43,6 +43,16 @@ _SYSTEM_PROMPT = """\
 
 输出要求: 必须严格以 JSON 格式输出，结构如下:
 {
+  "wdl_prediction": {
+    "primary": "H 或 D 或 A（综合所有信息后的最可能结果）",
+    "secondary": "H 或 D 或 A（次可能结果，与 primary 不同）",
+    "confidence": "高 或 中 或 低"
+  },
+  "key_points": [
+    "关键依据1（最重要，优先引用赛前情报：伤停/首发/战意/轮换/新闻软信号）",
+    "关键依据2",
+    "关键依据3"
+  ],
   "ml_prediction": {
     "result": "H 或 D 或 A",
     "confidence": "高/中/低",
@@ -60,6 +70,12 @@ _SYSTEM_PROMPT = """\
   "upset_prediction": null,
   "overall_analysis": "综合分析（100-200字）"
 }
+
+关于 wdl_prediction 与 key_points（这两项是推送给用户的核心，务必填写）:
+- wdl_prediction 是你综合 ML/蒙特卡洛/近况/交锋/赛前情报后的【最终判断】，不要照抄某一个模型。
+- score_predictions 的比分也必须是综合判断（以蒙特卡洛分布为基础，但要结合战意/伤停/情报修正），不要照抄蒙特卡洛。
+- key_points 给 2-4 条，必须【优先】体现赛前情报（伤停、官方首发、战意/出线形势、轮换、新闻软信号）；
+  只有在确实没有任何情报时，才退而引用模型概率与近期战绩。严禁编造情报里没有的内容。
 
 爆冷预测规则:
 - 如果你认为存在爆冷可能（冷门方胜率≥15%），则填写 upset_prediction:
@@ -143,6 +159,8 @@ def predict_with_llm(
         print(f"  [LLM] 收到响应 ({len(raw_text)} 字符)")
 
         parsed = _parse_response(raw_text)
+        # 归一化：保证 wdl_prediction / key_points 存在（notifier 推送依赖这两项）
+        parsed = _normalize_output(parsed, ml_result, monte_carlo_result, pre_match_intel_summary)
         parsed["raw_response"] = raw_text
         return parsed
 
@@ -150,7 +168,10 @@ def predict_with_llm(
         print(f"  [LLM] 调用失败: {e}")
         import traceback
         traceback.print_exc()
-        return {"error": str(e), "raw_response": ""}
+        # 兜底：LLM 不可用时，用 ML 概率 + 蒙特卡洛合成可推送的结果，保证赛前仍能收到预测
+        fallback = _fallback_from_models(ml_result, monte_carlo_result, str(e))
+        fallback["raw_response"] = ""
+        return fallback
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -317,4 +338,141 @@ def _parse_response(text: str) -> dict:
     return {
         "parse_error": "无法解析 LLM JSON 输出",
         "overall_analysis": text,
+    }
+
+
+# ═══════════════════════════════════════════════════════════════
+#  输出归一化 / 兜底（保证 notifier 需要的 wdl_prediction / key_points 存在）
+# ═══════════════════════════════════════════════════════════════
+
+def _to_float(v, default: float = 0.0) -> float:
+    """把概率值统一成 0-1 float，兼容 '52.1%' / '0.52' / 0.52。"""
+    if isinstance(v, (int, float)):
+        return float(v)
+    if isinstance(v, str):
+        s = v.strip().replace("%", "")
+        try:
+            f = float(s)
+            return f / 100.0 if "%" in v else f
+        except ValueError:
+            return default
+    return default
+
+
+def _wdl_from_probs(ml_result: Optional[dict]):
+    """从 ML 概率推 (primary, secondary, confidence)；无数据返回 (None, None, None)。"""
+    if not ml_result or "error" in ml_result:
+        return None, None, None
+    probs = {
+        "H": _to_float(ml_result.get("home_win_prob")),
+        "D": _to_float(ml_result.get("draw_prob")),
+        "A": _to_float(ml_result.get("away_win_prob")),
+    }
+    if sum(probs.values()) <= 0:
+        return None, None, None
+    ranked = sorted(probs.items(), key=lambda kv: kv[1], reverse=True)
+    primary, p1 = ranked[0]
+    secondary, p2 = ranked[1]
+    gap = p1 - p2
+    confidence = "高" if gap >= 0.20 else ("中" if gap >= 0.08 else "低")
+    return primary, secondary, confidence
+
+
+def _synth_key_points(parsed: dict, intel_summary: str = "") -> list:
+    """合成关键依据：优先模型/比分给出的 reason。"""
+    points = []
+    mlp = parsed.get("ml_prediction") or {}
+    mcp = parsed.get("monte_carlo_prediction") or {}
+    for r in (mlp.get("reason"), mcp.get("reason")):
+        if r and r not in points:
+            points.append(str(r))
+    for s in (parsed.get("score_predictions") or [])[:2]:
+        r = s.get("reason") if isinstance(s, dict) else None
+        if r and r not in points:
+            points.append(str(r))
+    if not points:
+        oa = parsed.get("overall_analysis")
+        if oa:
+            points.append(str(oa)[:80])
+    return points[:3]
+
+
+def _normalize_output(parsed: dict, ml_result: Optional[dict] = None,
+                      monte_carlo_result: Optional[dict] = None,
+                      intel_summary: str = "") -> dict:
+    """保证 parsed 含可用的 wdl_prediction 与 key_points（LLM 漏填时合成）。"""
+    if not isinstance(parsed, dict):
+        return parsed
+
+    wdl = parsed.get("wdl_prediction")
+    valid = isinstance(wdl, dict) and wdl.get("primary") in ("H", "D", "A")
+    if not valid:
+        # 1) 优先用 LLM 已给的 ml_prediction / monte_carlo_prediction 结果
+        mlp = parsed.get("ml_prediction") or {}
+        mcp = parsed.get("monte_carlo_prediction") or {}
+        primary = mlp.get("result") if mlp.get("result") in ("H", "D", "A") else None
+        secondary = mcp.get("result") if mcp.get("result") in ("H", "D", "A") else None
+        confidence = mlp.get("confidence")
+        # 2) 退回 ML 概率合成
+        if not primary or not secondary or not confidence:
+            p, s, c = _wdl_from_probs(ml_result)
+            primary = primary or p
+            secondary = secondary or (s if s != primary else None) or s
+            confidence = confidence or c
+        if primary:
+            if not secondary or secondary == primary:
+                secondary = next((x for x in ("H", "D", "A") if x != primary), "D")
+            parsed["wdl_prediction"] = {
+                "primary": primary,
+                "secondary": secondary,
+                "confidence": confidence or "中",
+            }
+
+    kps = parsed.get("key_points")
+    if not isinstance(kps, list) or not kps:
+        parsed["key_points"] = _synth_key_points(parsed, intel_summary)
+
+    return parsed
+
+
+def _fallback_from_models(ml_result: Optional[dict],
+                          monte_carlo_result: Optional[dict],
+                          err: str) -> dict:
+    """LLM 不可用时，用 ML + 蒙特卡洛合成可推送结果，确保赛前仍能收到预测。"""
+    primary, secondary, confidence = _wdl_from_probs(ml_result)
+    mc = monte_carlo_result or {}
+
+    # 比分：取蒙特卡洛 top2
+    score_predictions = []
+    dist = mc.get("score_distribution") or {}
+    if dist:
+        for score, prob in list(dist.items())[:2]:
+            score_predictions.append({
+                "score": str(score).replace("-", ":"),
+                "prob": _to_float(prob),
+                "reason": "蒙特卡洛模拟高频比分",
+            })
+    elif mc.get("most_likely_score"):
+        score_predictions.append({
+            "score": str(mc["most_likely_score"]).replace("-", ":"),
+            "prob": 0.0,
+            "reason": "蒙特卡洛最可能比分",
+        })
+
+    key_points = ["⚠️ LLM 暂不可用，以下为 ML+蒙特卡洛 模型综合结果（未含赛前新闻分析）"]
+    if mc.get("most_likely_score"):
+        key_points.append(f"蒙特卡洛最可能比分 {mc['most_likely_score']}")
+
+    return {
+        "wdl_prediction": {
+            "primary": primary or "D",
+            "secondary": secondary or "H",
+            "confidence": confidence or "低",
+        },
+        "score_predictions": score_predictions,
+        "upset_prediction": None,
+        "key_points": key_points,
+        "overall_analysis": f"LLM 调用失败（{err}），已降级为模型综合输出。",
+        "error": err,
+        "degraded": True,
     }
