@@ -6,6 +6,8 @@
 - 对话锁状态下（等待用户补充输入），跳过 LLM 润色，仅做安全检查
 """
 
+from langchain_core.messages import AIMessage
+
 from agents.states import AgentState
 from agents.summary_agent.skill import summarize
 from agents.summary_agent.safety_check import safety_check
@@ -51,6 +53,12 @@ def summary_agent_node(state: AgentState) -> dict:
     # ── 正常流程：完整的 LLM 润色 + 安全检查 ──
     result = summarize(raw_agent_response=raw, intent=intent)
 
+    # 预测结果打标为"可重新获取"（可重新预测 + 磁盘 data/predictions/ 有存档），
+    # 供 L3 Micro-Compact 压缩时清理，避免长预测文本持续占用全局上下文
+    if intent == "predicted_agent":
+        msg = AIMessage(content=result["final_text"], name="prediction_result")
+    else:
+        msg = AIMessage(content=result["final_text"])
     return {
-        "messages": [("assistant", result["final_text"])],
+        "messages": [msg],
     }

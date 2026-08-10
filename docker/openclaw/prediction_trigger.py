@@ -310,6 +310,21 @@ def prediction_loop():
         # 避免预测耗时期间（可能5分钟），下一次调度又触发同一场比赛
         _mark_triggered(match_id, nearest_point)
 
+        # 第一性原理: 优先走 MQ 异步派发预测请求（解耦+削峰）
+        # MQ 不可用时退回 HTTP 同步模式（保证不漏触发）
+        mq_dispatched = False
+        try:
+            from mq_publisher import publish_predict_request
+            mq_dispatched = publish_predict_request(m, tier=tier, trigger_point=nearest_point)
+            if mq_dispatched:
+                triggered_count += 1
+                logger.info(f"[MQ] 预测请求已派发: {m['home_team']} vs {m['away_team']} "
+                            f"(由 consumer 异步处理)")
+                continue
+        except ImportError:
+            pass  # 容器内无 mq_publisher → 走降级
+
+        # 降级: MQ 不可用时走原 HTTP 同步模式
         result = trigger_prediction(m, tier=tier, trigger_point=nearest_point)
 
         if result is not None:

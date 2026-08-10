@@ -29,6 +29,8 @@ logging.basicConfig(
     level=os.getenv("LOG_LEVEL", "INFO"),
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
+# pika 连接日志太啰嗦（每次开关连接都打印），降到 WARNING
+logging.getLogger("pika").setLevel(logging.WARNING)
 logger = logging.getLogger("openclaw")
 
 app = Flask(__name__)
@@ -79,16 +81,48 @@ def start_scheduler():
 
 
 def _daily_sync_job():
-    """每日比赛结果同步"""
+    """每日比赛结果同步
+    
+    第一性原理改造: 采集与入库解耦。
+    - MQ 可用: fetch → publish 消息，由 consumer 异步写 MySQL/Neo4j
+    - MQ 不可用: 退回直连模式（daily_sync 同步写库），保证不漏数据
+    """
     try:
-        from match_sync import daily_sync
+        from match_sync import fetch_finished_matches, daily_sync
+        matches = fetch_finished_matches()
+        if not matches:
+            logger.info("无已完赛比赛")
+            return
+
+        logger.info(f"获取到 {len(matches)} 场已完赛比赛")
+
+        # 优先走 MQ（解耦采集与入库）
+        try:
+            import sys, os
+            # OpenClaw 容器内没有 common/ 目录，用 sys.path 注入宿主机路径不可行
+            # 这里用本地 publisher 封装（见 mq_publisher.py）
+            from mq_publisher import publish_match_result
+            ok = publish_match_result(matches)
+            if ok:
+                logger.info(f"[MQ] 比赛结果已发布 ({len(matches)}场)，由 consumer 异步入库")
+                return
+        except ImportError:
+            pass  # 容器内无 mq_publisher → 走降级
+
+        # 降级: MQ 不可用时直连写库
+        logger.warning("[MQ] 不可用，退回直连模式同步")
         daily_sync()
     except Exception as e:
         logger.exception(f"daily_sync 执行失败: {e}")
 
 
 def _odds_update_job():
-    """赔率快照更新"""
+    """赔率快照更新
+    
+    第一性原理改造: 赔率变动通过 MQ 通知下游（写MySQL/触发实时预测）。
+    - 快照始终更新到本地（保证 trigger_prediction 能读到）
+    - 同时 publish 到 MQ，consumer 异步写 MySQL 赔率历史表
+    """
     try:
         from odds_scraper import fetch_match_list, get_snapshot_manager
         matches = fetch_match_list()
@@ -96,12 +130,40 @@ def _odds_update_job():
             mgr = get_snapshot_manager()
             count = mgr.update_all_upcoming(matches)
             logger.info(f"赔率快照更新: {count}场")
+
+            # 发布赔率更新事件到 MQ（best-effort，失败不影响采集）
+            try:
+                from mq_publisher import publish_odds_update
+                published = 0
+                for m in matches:
+                    if m.get("finished"):
+                        continue
+                    odds = mgr.get_odds(m["match_id"])
+                    if odds:
+                        publish_odds_update(
+                            match_id=m["match_id"],
+                            home_team=m["home_team"],
+                            away_team=m["away_team"],
+                            odds=odds,
+                            kickoff_time=m.get("kickoff_time"),
+                        )
+                        published += 1
+                if published:
+                    logger.info(f"[MQ] 赔率更新已发布 ({published}场)")
+            except ImportError:
+                pass  # 容器内无 mq_publisher → 跳过 MQ
     except Exception as e:
         logger.exception(f"odds_update 执行失败: {e}")
 
 
 def _prediction_trigger_job():
-    """预测触发检查"""
+    """预测触发检查
+    
+    第一性原理改造: 预测请求通过 MQ 异步化。
+    - trigger_prediction 不再阻塞5分钟等 HTTP 返回
+    - publish 消息后立即返回，consumer 异步调预测API + 推送
+    - MQ 不可用时退回同步直连模式
+    """
     try:
         from prediction_trigger import prediction_loop
         prediction_loop()

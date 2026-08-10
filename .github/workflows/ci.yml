@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 只装单测所需的最小依赖（重依赖如 openai/lightgbm 均为惰性导入，单测不触发）
+      - name: Install test dependencies
+        run: |
+          pip install pytest ruff httpx beautifulsoup4 lxml pymysql redis python-dotenv flask pika
+
+      # 门禁1: 致命错误（语法错误/未定义名）— 全仓库
+      - name: Ruff (fatal errors only)
+        run: ruff check --select E9,F63,F7,F82 .
+
+      # 门禁2: 契约单测（无外部服务依赖: Redis 走降级路径、不连库不联网）
+      - name: Unit tests
+        run: pytest tests/unit/ -v

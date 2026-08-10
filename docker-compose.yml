@@ -1,6 +1,46 @@
-# ⚽ Football Agent - Docker Compose 编排文件
-# 启动命令: docker-compose up -d
-# 所有服务通过内部网络 football_net 互联，外部仅暴露必要端口
+# ⚽ Football Agent - Docker Compose 编排文件（全容器化）
+# 首次部署 / 代码更新后: docker compose up -d --build
+# 日常启动: docker compose up -d
+# 所有服务通过内部网络 football_net 互联，外部仅暴露必要端口（全部绑定 127.0.0.1）
+
+# ---------- 业务层公共配置（YAML 锚点，predictor / mq-consumer 共用） ----------
+x-app-common: &app-common
+  image: football_agent:latest
+  build:
+    context: .
+    dockerfile: Dockerfile
+  restart: always
+  networks:
+    - football_net
+  environment:
+    - TZ=Asia/Shanghai
+    # 容器间通过 football_net 的服务名互访（与 OpenClaw 容器同一套约定）
+    - MYSQL_HOST=football_mysql
+    - MYSQL_PORT=3306
+    - MYSQL_USER=${MYSQL_USER:-root}
+    - MYSQL_PASSWORD=${MYSQL_PASSWORD:-football123}
+    - MYSQL_DATABASE=${MYSQL_DATABASE:-football_agent}
+    - NEO4J_URL=bolt://football_neo4j:7687
+    - NEO4J_USERNAME=${NEO4J_USERNAME:-neo4j}
+    - NEO4J_PASSWORD=${NEO4J_PASSWORD:-football123}
+    - REDIS_HOST=football_redis
+    - REDIS_PORT=6379
+    - MILVUS_HOST=football_milvus
+    - MILVUS_PORT=19530
+    - MQ_HOST=football_rabbitmq
+    - MQ_PORT=5672
+    - MQ_USER=${MQ_USER:-football}
+    - MQ_PASSWORD=${MQ_PASSWORD:-football123}
+    # LLM 密钥从 .env 透传（严禁写死进镜像）
+    - LLM_API_KEY=${LLM_API_KEY:-}
+    - LLM_BASE_URL=${LLM_BASE_URL:-https://coding.dashscope.aliyuncs.com/v1}
+    # Ollama 仍在宿主机，容器经 host-gateway 访问（本地降级链路）
+    - OLLAMA_BASE_URL=http://host.docker.internal:11434
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+  volumes:
+    - ./data:/app/data      # 预测结果 JSON / 赔率快照 / 评测报告持久化
+    - ./logs:/app/logs
 
 services:
   # ---------- MySQL 关系数据库 ----------
@@ -95,6 +135,10 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE:-football_agent}
       - NEO4J_USERNAME=${NEO4J_USERNAME:-neo4j}
       - NEO4J_PASSWORD=${NEO4J_PASSWORD:-football123}
+      # MQ 连接（容器间走服务名）
+      - MQ_HOST=football_rabbitmq
+      - MQ_USER=${MQ_USER:-football}
+      - MQ_PASSWORD=${MQ_PASSWORD:-football123}
     ports:
       - "127.0.0.1:${OPENCLAW_PORT:-9000}:9000"
     # Linux 下让容器能用 host.docker.internal 访问主机的预测服务(8000)
@@ -110,37 +154,137 @@ services:
     networks:
       - football_net
 
-  # ---------- Milvus 向量数据库（可选，按需启用） ----------
-  # milvus:
-  #   image: milvusdb/milvus:v2.4.0
-  #   container_name: football_milvus
-  #   ports:
-  #     - "127.0.0.1:19530:19530"
-  #   volumes:
-  #     - milvus_data:/var/lib/milvus
-  #   networks:
-  #     - football_net
+  # ---------- Milvus 向量数据库（RAG 知识库，依赖 etcd + minio） ----------
+  # 业务容器通过 MILVUS_HOST=football_milvus 访问；宿主机调试走 127.0.0.1:19530
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.5
+    container_name: football_etcd
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - etcd_data:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    restart: always
+    networks:
+      - football_net
 
-  # ---------- RabbitMQ 消息队列（后期按需启用） ----------
-  # rabbitmq:
-  #   image: rabbitmq:3-management-alpine
-  #   container_name: football_rabbitmq
-  #   restart: always
-  #   environment:
-  #     RABBITMQ_DEFAULT_USER: ${MQ_USER:-football}
-  #     RABBITMQ_DEFAULT_PASS: ${MQ_PASSWORD:-football123}
-  #   ports:
-  #     - "127.0.0.1:5672:5672"    # AMQP 协议
-  #     - "127.0.0.1:15672:15672"  # 管理界面
-  #   volumes:
-  #     - rabbitmq_data:/var/lib/rabbitmq
-  #   healthcheck:
-  #     test: ["CMD", "rabbitmq-diagnostics", "check_running"]
-  #     interval: 15s
-  #     timeout: 10s
-  #     retries: 5
-  #   networks:
-  #     - football_net
+  minio:
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    container_name: football_minio
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    ports:
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - minio_data:/minio_data
+    command: minio server /minio_data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    restart: always
+    networks:
+      - football_net
+
+  milvus:
+    image: milvusdb/milvus:v2.4.0
+    container_name: football_milvus
+    command: ["milvus", "run", "standalone"]
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      ETCD_ENDPOINTS: football_etcd:2379
+      MINIO_ADDRESS: football_minio:9000
+    ports:
+      - "127.0.0.1:19530:19530"
+    volumes:
+      - milvus_data:/var/lib/milvus
+    depends_on:
+      etcd:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    restart: always
+    networks:
+      - football_net
+
+  # ---------- RabbitMQ 消息队列（事件驱动核心） ----------
+  # OpenClaw 采集数据后发 MQ，消费者异步写库/触发预测，实现解耦+削峰+可靠投递
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: football_rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${MQ_USER:-football}
+      RABBITMQ_DEFAULT_PASS: ${MQ_PASSWORD:-football123}
+    ports:
+      - "127.0.0.1:5672:5672"    # AMQP 协议
+      - "127.0.0.1:15672:15672"  # Web 管理界面
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - football_net
+
+  # ---------- 预测 API 服务（Flask，替代 football-predictor.service） ----------
+  predictor:
+    <<: *app-common
+    container_name: football_predictor
+    command: python -m api.prediction_api
+    ports:
+      - "127.0.0.1:${PREDICTOR_PORT:-8000}:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # ---------- MQ 消费者（替代 football-mq-consumer.service） ----------
+  # 消费 OpenClaw 投递的采集事件，异步写 MySQL/Neo4j，削峰填谷
+  mq-consumer:
+    <<: *app-common
+    container_name: football_mq_consumer
+    command: python -m pipeline.mq_consumer
+    depends_on:
+      mysql:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # ---------- 容器内统一调度器（替代 accuracy/alert 两个 systemd timer） ----------
+  # accuracy_tracker 每日 15:30 评估昨日预测；alert_rules 每 10 分钟巡检 LLM 台账
+  scheduler:
+    <<: *app-common
+    container_name: football_scheduler
+    command: python -m scripts.scheduler_runner
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 networks:
   football_net:
@@ -152,5 +296,7 @@ volumes:
   neo4j_logs:
   redis_data:
   openclaw_data:
-  # milvus_data:
-  # rabbitmq_data:
+  etcd_data:
+  minio_data:
+  milvus_data:
+  rabbitmq_data:

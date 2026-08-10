@@ -1,0 +1,10 @@
+[Unit]
+Description=FootballAgent LLM Alert Rules (oneshot)
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/data/workspace/FootballAgent
+ExecStart=/usr/bin/python3 scripts/alert_rules.py
+StandardOutput=append:/data/workspace/FootballAgent/logs/alert_rules.log
+StandardError=append:/data/workspace/FootballAgent/logs/alert_rules.log

@@ -13,8 +13,12 @@ LLM 推理预测模型 - 调用 Kimi 2.5 进行赛前综合分析
 import os
 import re
 import json
+import time
 from typing import Optional
 from dotenv import load_dotenv
+
+# 链路追踪 decorator（轻量，模块级导入；tracer 内部惰性连 MySQL）
+from common.tracer import traced
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))
@@ -124,6 +128,21 @@ def predict_with_llm(
         包含 wdl_prediction / score_predictions /
         overall_analysis / upset_alert / raw_response 的字典
     """
+    # 链路追踪: 记录 LLM 调用 span（与上层 trace_id 自动关联）
+    return _predict_with_llm_traced(
+        home_team, away_team, date, ml_result,
+        home_last_5, away_last_5, h2h_records, odds_info,
+        upset_signals, pre_match_intel_summary, monte_carlo_result,
+    )
+
+
+@traced("llm.predict", service="agent", attributes={"component": "llm"})
+def _predict_with_llm_traced(
+    home_team, away_team, date, ml_result,
+    home_last_5, away_last_5, h2h_records, odds_info,
+    upset_signals, pre_match_intel_summary, monte_carlo_result,
+) -> dict:
+    """predict_with_llm 的实际实现，被 @traced 包裹记录链路 span"""
     prompt = _build_prompt(
         home_team, away_team, date,
         ml_result, home_last_5, away_last_5,
@@ -132,7 +151,9 @@ def predict_with_llm(
         monte_carlo_result,
     )
 
-    print(f"  [LLM] 调用 {os.getenv('LLM_MODEL_DEEPSEEK_PRO', 'deepseek-v4-pro-202606')}...")
+    model_name = os.getenv("LLM_MODEL_DEEPSEEK_PRO", "deepseek-v4-pro-202606")
+    print(f"  [LLM] 调用 {model_name}...")
+    _t0 = time.time()
 
     try:
         from openai import OpenAI
@@ -141,9 +162,6 @@ def predict_with_llm(
             api_key=os.getenv("LLM_API_KEY"),
             base_url=os.getenv("LLM_BASE_URL"),
         )
-
-        # 默认使用 DeepSeek V4 Pro
-        model_name = os.getenv("LLM_MODEL_DEEPSEEK_PRO", "deepseek-v4-pro-202606")
 
         response = client.chat.completions.create(
             model=model_name,
@@ -158,6 +176,14 @@ def predict_with_llm(
         raw_text = response.choices[0].message.content
         print(f"  [LLM] 收到响应 ({len(raw_text)} 字符)")
 
+        usage = getattr(response, "usage", None)
+        _log_call(
+            model_name, home_team, away_team, _t0,
+            prompt_tokens=getattr(usage, "prompt_tokens", None),
+            completion_tokens=getattr(usage, "completion_tokens", None),
+            success=True,
+        )
+
         parsed = _parse_response(raw_text)
         # 归一化：保证 wdl_prediction / key_points 存在（notifier 推送依赖这两项）
         parsed = _normalize_output(parsed, ml_result, monte_carlo_result, pre_match_intel_summary)
@@ -168,10 +194,36 @@ def predict_with_llm(
         print(f"  [LLM] 调用失败: {e}")
         import traceback
         traceback.print_exc()
+        _log_call(model_name, home_team, away_team, _t0,
+                  success=False, error=f"{type(e).__name__}: {e}")
         # 兜底：LLM 不可用时，用 ML 概率 + 蒙特卡洛合成可推送的结果，保证赛前仍能收到预测
         fallback = _fallback_from_models(ml_result, monte_carlo_result, str(e))
         fallback["raw_response"] = ""
         return fallback
+
+
+def _log_call(model: str, home: str, away: str, t0: float,
+              prompt_tokens=None, completion_tokens=None,
+              success: bool = True, error: str = ""):
+    """LLM 调用旁路日志（落 MySQL llm_calls 表）；失败静默，绝不影响预测。"""
+    try:
+        from common.llm_call_log import log_llm_call
+
+        log_llm_call(
+            model=model, home_team=home, away_team=away,
+            latency_ms=int((time.time() - t0) * 1000),
+            prompt_tokens=prompt_tokens, completion_tokens=completion_tokens,
+            success=success, error=error,
+        )
+    except Exception:
+        pass
+
+    # Prometheus 指标记录（旁路，失败静默）
+    try:
+        from common.metrics import record_llm_call
+        record_llm_call(model=model, success=success, duration=time.time() - t0)
+    except Exception:
+        pass
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -378,8 +430,10 @@ def _wdl_from_probs(ml_result: Optional[dict]):
     return primary, secondary, confidence
 
 
-def _synth_key_points(parsed: dict, intel_summary: str = "") -> list:
-    """合成关键依据：优先模型/比分给出的 reason。"""
+def _synth_key_points(parsed: dict, intel_summary: str = "",
+                      ml_result: Optional[dict] = None,
+                      monte_carlo_result: Optional[dict] = None) -> list:
+    """合成关键依据：优先模型/比分给出的 reason，全无时退回模型概率摘要。"""
     points = []
     mlp = parsed.get("ml_prediction") or {}
     mcp = parsed.get("monte_carlo_prediction") or {}
@@ -394,6 +448,17 @@ def _synth_key_points(parsed: dict, intel_summary: str = "") -> list:
         oa = parsed.get("overall_analysis")
         if oa:
             points.append(str(oa)[:80])
+    if not points:
+        # 最后防线: 用原始模型数据合成，保证推送永远有"关键依据"
+        if ml_result and "error" not in ml_result:
+            h = _to_float(ml_result.get("home_win_prob"))
+            d = _to_float(ml_result.get("draw_prob"))
+            a = _to_float(ml_result.get("away_win_prob"))
+            if h or d or a:
+                points.append(f"模型概率: 主胜{h:.0%} / 平{d:.0%} / 客胜{a:.0%}")
+        mc = monte_carlo_result or {}
+        if mc.get("most_likely_score"):
+            points.append(f"蒙特卡洛最可能比分 {mc['most_likely_score']}")
     return points[:3]
 
 
@@ -430,7 +495,9 @@ def _normalize_output(parsed: dict, ml_result: Optional[dict] = None,
 
     kps = parsed.get("key_points")
     if not isinstance(kps, list) or not kps:
-        parsed["key_points"] = _synth_key_points(parsed, intel_summary)
+        parsed["key_points"] = _synth_key_points(
+            parsed, intel_summary, ml_result, monte_carlo_result
+        )
 
     return parsed
 

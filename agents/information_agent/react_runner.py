@@ -24,14 +24,55 @@ from agents.information_agent.prompts import get_react_system_prompt
 from agents.information_agent.planner import _extract_history_text
 from agents.tools.mysql_tools.tool_entry import mysql_query
 from agents.tools.vector_tools.tool_entry import search_knowledge_base
+from agents.tools.neo4j_tools.tool_entry import neo4j_query
+from agents.tools.community_tools import (
+    web_search,
+    wikipedia_search,
+    weather_query,
+    current_datetime,
+    translate,
+)
+from agents.predicted_agent.prediction_store import read_prediction
+from agents.memory_manager.context_manager import spill_to_disk
 from common.llm_select import LLM_MODEL_KIMI_NAME, get_llm
 
 # 与 planner 解耦：仅复用历史抽取
-TOOLS = [mysql_query, search_knowledge_base]
+# 自定义工具（数据库/知识库/图谱）+ 社区常用工具（联网/百科/计算/时间）
+TOOLS = [
+    mysql_query,
+    search_knowledge_base,
+    neo4j_query,
+    read_prediction,
+    web_search,
+    wikipedia_search,
+    weather_query,
+    current_datetime,
+    translate,
+]
 
 _TOOL_MAP = {
     "mysql_query": mysql_query,
     "search_knowledge_base": search_knowledge_base,
+    "neo4j_query": neo4j_query,
+    "read_prediction": read_prediction,
+    "web_search": web_search,
+    "wikipedia_search": wikipedia_search,
+    "weather_query": weather_query,
+    "current_datetime": current_datetime,
+    "translate": translate,
+}
+
+# 工具名 → 聚合报告里的展示名
+_TOOL_DISPLAY = {
+    "mysql_query": "MySQL/Text2SQL",
+    "search_knowledge_base": "向量知识库/RAG",
+    "neo4j_query": "Neo4j/Text2Cypher",
+    "read_prediction": "历史预测",
+    "web_search": "联网搜索",
+    "wikipedia_search": "维基百科",
+    "weather_query": "天气查询",
+    "current_datetime": "日期时间",
+    "translate": "翻译",
 }
 
 # 单轮用户任务内，LLM 推理-行动最大轮次（每轮 = 1 次 invoke，可含多 tool_call）
@@ -64,7 +105,9 @@ def _execute_tool_call(name: str, args: dict) -> str:
     if fn is None:
         return f"[未知工具] {name}"
     try:
-        return fn.invoke(q)
+        result = fn.invoke(q)
+        # L1：大结果存磁盘，留预览+路径，防单条结果撑爆本地 ReAct 上下文
+        return spill_to_disk(result, label=name)
     except Exception as e:
         return f"[工具执行异常] {type(e).__name__}: {e}"
 
@@ -82,7 +125,7 @@ def _aggregate_react_output(
     lines.append(f"[信息查询 · ReAct] 共 {n} 次工具调用")
     lines.append("")
     for i, (tool_name, result_text) in enumerate(tool_traces, 1):
-        display = "MySQL/Text2SQL" if tool_name == "mysql_query" else "向量知识库/RAG"
+        display = _TOOL_DISPLAY.get(tool_name, tool_name)
         lines.append(f"【第 {i} 步 · {display}】({tool_name})")
         lines.append("─" * 40)
         lines.append(result_text)

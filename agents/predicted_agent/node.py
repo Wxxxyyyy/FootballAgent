@@ -15,6 +15,9 @@ from typing import Optional
 
 from agents.states import AgentState
 
+# 对话锁最大续命轮次：槽位填充连续失败达到该次数后强制释放锁（防死锁兜底）
+MAX_LOCK_TURNS = 3
+
 
 # ═══════════════════════════════════════════════════════════════
 #  球队名提取（复用 neo4j_tools 的中英文映射）
@@ -264,8 +267,17 @@ def predicted_agent_node(state: AgentState) -> dict:
     print(f"  \u63d0\u53d6\u7403\u961f: {teams}")
     print(f"  \u63d0\u53d6\u65e5\u671f: {date}")
 
-    # ── 信息不足: 要求用户提供 ──
+    # ── 信息不足: 要求用户提供（带三轮熔断，防止用户放弃后系统死等）──
     if len(teams) < 2:
+        lock_turns = state.get("lock_turn_count", 0) + 1
+        if lock_turns >= MAX_LOCK_TURNS:
+            # 连续多轮无法填满槽位 → 认定用户放弃任务，强制释放对话锁
+            print(f"[predicted_agent] 对话锁熔断: 连续 {lock_turns} 轮槽位未满，强制释放锁")
+            return {
+                "raw_agent_response": "已为您取消当前预测。请问还有什么其他可以帮您的？",
+                "dialog_state": "normal",
+                "lock_turn_count": 0,
+            }
         hint_parts = []
         if len(teams) == 0:
             hint_parts.append("\u8bf7\u63d0\u4f9b\u4e3b\u961f\u548c\u5ba2\u961f\u540d\u79f0")
@@ -284,6 +296,7 @@ def predicted_agent_node(state: AgentState) -> dict:
         return {
             "raw_agent_response": msg,
             "dialog_state": "waiting_prediction_input",
+            "lock_turn_count": lock_turns,
         }
 
     home_team = teams[0]
@@ -294,6 +307,12 @@ def predicted_agent_node(state: AgentState) -> dict:
         from agents.predicted_agent.advance_predictor import get_predictor
         predictor = get_predictor()
         result = predictor.predict(home_team, away_team, date)
+        # 预测成功 → 落库一条精简结论（供 L3 清理后召回，失败不影响主流程）
+        try:
+            from agents.predicted_agent.prediction_store import save_prediction_result
+            save_prediction_result(result)
+        except Exception:
+            pass
         formatted = _format_prediction(result)
     except Exception as e:
         import traceback
@@ -309,4 +328,5 @@ def predicted_agent_node(state: AgentState) -> dict:
     return {
         "raw_agent_response": formatted,
         "dialog_state": "normal",
+        "lock_turn_count": 0,  # 预测完成，熔断计数器清零
     }

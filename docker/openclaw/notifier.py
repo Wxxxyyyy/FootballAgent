@@ -276,11 +276,19 @@ def push_simple(title: str, body: str) -> bool:
 
 
 def push_alert(title: str, body: str) -> bool:
-    """系统告警推送（独立分组 + 警报音，用于链路故障通知）"""
+    """系统告警推送（独立分组 + 警报音，用于链路故障通知）
+
+    内置去重/限流：同一 title 在 5 分钟内只推送一次，防止 MQ 重试导致通知风暴。
+    """
     if not BARK_ENABLED or not BARK_KEY:
         return False
 
-    return _send_with_retry(
+    # ─── 告警去重（5分钟内同 title 只推一次）───
+    if not _alert_should_send(title):
+        logger.info(f"[Bark] 告警限流（5分钟内已推送过）: {title}")
+        return False
+
+    sent = _send_with_retry(
         {
             "title": f"🚨 {title}",
             "body": body,
@@ -290,3 +298,54 @@ def push_alert(title: str, body: str) -> bool:
         },
         desc=f"告警: {title}",
     )
+    if sent:
+        _alert_mark_sent(title)
+    return sent
+
+
+# ─── 告警去重/限流机制 ───
+# 防止 MQ 重试循环导致同一告警短时间内重复推送几十/几百条（用户手机被轰炸）
+# 策略：同一 title 在 ALERT_COOLDOWN_SECONDS 内只推送一次
+
+ALERT_COOLDOWN_SECONDS = 300  # 5 分钟冷却期
+
+# 优先用 Redis（容器环境有 Redis），回退到内存 dict（宿主机环境）
+_alert_mem_cache: dict = {}  # {title: last_sent_timestamp}
+
+
+def _alert_should_send(title: str) -> bool:
+    """检查该告警是否在冷却期外（可以推送）"""
+    import time as _time
+
+    # 尝试 Redis
+    try:
+        r = rc.get_redis()
+        if r:
+            key = f"alert_cooldown:{title}"
+            if r.exists(key):
+                return False
+            return True
+    except Exception:
+        pass
+
+    # 回退到内存
+    last = _alert_mem_cache.get(title, 0)
+    return (_time.time() - last) >= ALERT_COOLDOWN_SECONDS
+
+
+def _alert_mark_sent(title: str):
+    """标记该告警已推送（开始冷却计时）"""
+    import time as _time
+
+    # 尝试 Redis
+    try:
+        r = rc.get_redis()
+        if r:
+            key = f"alert_cooldown:{title}"
+            r.setex(key, ALERT_COOLDOWN_SECONDS, "1")
+            return
+    except Exception:
+        pass
+
+    # 回退到内存
+    _alert_mem_cache[title] = _time.time()

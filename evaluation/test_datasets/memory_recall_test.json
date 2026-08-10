@@ -1,0 +1,96 @@
+[
+  {
+    "conversation_id": "mem_1",
+    "description": "用户引用上次对话的球队",
+    "messages": [
+      {"role": "user", "content": "巴萨最近的战绩怎么样"},
+      {"role": "assistant", "content": "巴萨最近5场比赛3胜1平1负..."},
+      {"role": "user", "content": "那他们的下一场比赛呢"}
+    ],
+    "should_retrieve": true,
+    "trigger_keyword": "他们",
+    "reason": "代词'他们'指代上文球队，需要记忆检索确认"
+  },
+  {
+    "conversation_id": "mem_2",
+    "description": "用户明确提到上次的预测",
+    "messages": [
+      {"role": "user", "content": "皇马和巴萨谁会赢"},
+      {"role": "assistant", "content": "我预测皇马2:1获胜..."},
+      {"role": "user", "content": "你上次预测的对吗"}
+    ],
+    "should_retrieve": true,
+    "trigger_keyword": "上次",
+    "reason": "'上次'触发记忆检索"
+  },
+  {
+    "conversation_id": "mem_3",
+    "description": "用户询问历史信息",
+    "messages": [
+      {"role": "user", "content": "利物浦和曼联的历史交锋记录"},
+      {"role": "assistant", "content": "两队历史交锋50次..."},
+      {"role": "user", "content": "之前你说的数据准吗"}
+    ],
+    "should_retrieve": true,
+    "trigger_keyword": "之前",
+    "reason": "'之前'触发记忆检索"
+  },
+  {
+    "conversation_id": "mem_4",
+    "description": "无回指的正常对话，不应检索",
+    "messages": [
+      {"role": "user", "content": "今天天气不错"},
+      {"role": "assistant", "content": "是的，适合看球"},
+      {"role": "user", "content": "今晚有什么比赛"}
+    ],
+    "should_retrieve": false,
+    "trigger_keyword": "",
+    "reason": "无回指词，无需记忆检索"
+  },
+  {
+    "conversation_id": "mem_5",
+    "description": "首次提问，无需记忆检索",
+    "messages": [
+      {"role": "user", "content": "拜仁下一场比赛什么时候"}
+    ],
+    "should_retrieve": false,
+    "trigger_keyword": "",
+    "reason": "首轮对话，无历史可召回"
+  },
+  {
+    "conversation_id": "mem_6",
+    "description": "明确的回指表达",
+    "messages": [
+      {"role": "user", "content": "切尔西的赛程"},
+      {"role": "assistant", "content": "切尔西未来三场比赛..."},
+      {"role": "user", "content": "还记得我刚才问的那个吗"}
+    ],
+    "should_retrieve": true,
+    "trigger_keyword": "还记得",
+    "reason": "'还记得'触发记忆检索"
+  },
+  {
+    "conversation_id": "mem_7",
+    "description": "代词指代",
+    "messages": [
+      {"role": "user", "content": "皇马最近状态如何"},
+      {"role": "assistant", "content": "皇马近5场4胜1平..."},
+      {"role": "user", "content": "那支球队的教练是谁"}
+    ],
+    "should_retrieve": true,
+    "trigger_keyword": "那支球队",
+    "reason": "代词'那支球队'指代上文"
+  },
+  {
+    "conversation_id": "mem_8",
+    "description": "普通闲聊，无需记忆",
+    "messages": [
+      {"role": "user", "content": "你是谁"},
+      {"role": "assistant", "content": "我是足球助手"},
+      {"role": "user", "content": "你能做什么"}
+    ],
+    "should_retrieve": false,
+    "trigger_keyword": "",
+    "reason": "功能咨询，无历史回指"
+  }
+]

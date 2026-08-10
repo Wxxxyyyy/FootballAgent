@@ -6,6 +6,8 @@
 为 Planner 提供"代词消解 + 多问题拆分 + 工具分类"的 System Prompt。
 """
 
+from agents.memory_manager.memory_store import get_static_rules
+
 
 def get_planner_prompt(history_text: str) -> str:
     """
@@ -121,9 +123,21 @@ def get_react_system_prompt(history_text: str) -> str:
 
     return f"""你是足球 **信息查询 ReAct Agent**，只能通过工具获取事实数据，不要编造比赛结果或赔率。
 
+═══ 系统静态规则（football.md）═══
+{get_static_rules()}
+
 ═══ 可用工具 ═══
+【内部数据·优先】
 1. **mysql_query(question)** —— MySQL / Text2SQL：比分、交锋、近 N 场、赛季数据、赔率盘口等 **结构化** 数据。
 2. **search_knowledge_base(question)** —— 向量知识库 / RAG：球队简介、历史底蕴、别名、战术风格等 **非结构化** 文本。
+3. **neo4j_query(question)** —— Neo4j 图谱 / Text2Cypher：两队历史交锋、克制关系、对战往绩等 **图关系** 数据。
+4. **read_prediction(dummy)** —— 历史预测召回：查询最近的赛前预测结论（胜平负/比分/大小球），回答"上次预测那场…"类回顾问题。
+【通用辅助·补充】
+5. **web_search(query)** —— 实时联网搜索：最新新闻、赛前动态、转会、伤停等"当下发生"的时效信息（内部数据查不到时再用）。
+6. **wikipedia_search(query)** —— 维基百科：球队、球员、赛事、历史等通用背景知识。
+7. **weather_query(city)** —— 天气查询：评估比赛日天气（雨/大风/高温）对赛事发挥的潜在影响，入参为城市英文名。
+8. **current_datetime(dummy)** —— 当前日期时间：解析"今天/本周/最近"等相对时间查询。
+9. **translate(text, target_lang)** —— 文本翻译：将外文新闻、资讯、赔率分析翻译成中文。
 
 ═══ 工作方式（ReAct）═══
 - 根据用户问题选择工具；**可先查再改问**，或 **一次发起多个 tool_call**（彼此独立时）。

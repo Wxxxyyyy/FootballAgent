@@ -19,6 +19,11 @@ langchain-deepseek==0.1.3
 langchain-neo4j==0.4.0
 langchain-ollama==0.3.0
 langchain-text-splitters==0.3.11
+
+# ---- 社区工具（web_search / wikipedia_search / translate） ----
+duckduckgo-search>=6.0.0                  # DuckDuckGo 联网搜索（web_search 工具）
+wikipedia==1.4.0                          # 维基百科检索（wikipedia_search 工具）
+deep-translator>=1.11.0                   # 文本翻译（translate 工具，免 API Key）
 langgraph==0.3.25
 langgraph-checkpoint==2.1.2
 langgraph-checkpoint-sqlite==2.0.6
@@ -40,6 +45,7 @@ neo4j==5.28.2
 neo4j-graphrag==1.5.0
 faiss-cpu==1.13.2
 lancedb==0.17.0
+pymilvus==2.4.6                          # Milvus 向量数据库客户端（RAG 知识库）
 
 # ---- Redis ----
 redis==7.1.0
@@ -89,7 +95,13 @@ pydantic-settings==2.12.0
 python-dotenv==1.2.1
 
 # ---- 可观测性 ----
-langfuse==2.40.0                         # 需额外安装
+# langfuse 已移除（observability/ 模块已删除，改用 common/llm_call_log.py 旁路日志）
+
+# ---- 消息队列 ----
+pika==1.3.2                                # RabbitMQ 客户端（事件驱动核心）
+
+# ---- 监控 ----
+prometheus-client==0.20.0                  # Prometheus 指标采集
 
 # ---- 测试 ----
 pytest==8.3.0                            # 需额外安装

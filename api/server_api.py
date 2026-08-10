@@ -67,6 +67,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Prometheus 指标采集（/metrics 端点 + HTTP 中间件）
+try:
+    from common.metrics import mount_metrics_endpoint, create_middleware
+    mount_metrics_endpoint(app)
+    app.middleware("http")(create_middleware())
+    print("[✓] Prometheus 指标采集已启用 (/metrics)")
+except ImportError:
+    print("[⚠️] prometheus_client 未安装，指标采集未启用")
+
 
 # ==============================================================
 #  正向接口: 接收数据（OpenClaw → 中继 → 服务器）
@@ -456,6 +465,27 @@ async def test_connection_status():
         status["openclaw_task"] = f"disconnected ({type(e).__name__})"
 
     return status
+
+
+# ==============================================================
+#  链路追踪查询接口
+# ==============================================================
+
+@app.get("/traces")
+async def list_traces(limit: int = 20):
+    """列出最近的链路（按 trace_id 聚合）"""
+    from common.tracer import list_recent_traces
+    return {"traces": list_recent_traces(limit=limit)}
+
+
+@app.get("/traces/{trace_id}")
+async def get_trace_detail(trace_id: str):
+    """查询单条链路的完整 span 列表"""
+    from common.tracer import get_trace
+    spans = get_trace(trace_id)
+    if not spans:
+        raise HTTPException(404, f"trace_id {trace_id} 不存在或未记录")
+    return {"trace_id": trace_id, "span_count": len(spans), "spans": spans}
 
 
 # ==============================================================

@@ -336,6 +336,10 @@ def build_report(days: int = 7) -> str:
     if brier_ml and brier_mc:
         lines.append(f"Brier: ML {sum(brier_ml)/len(brier_ml):.3f} | 蒙卡 {sum(brier_mc)/len(brier_mc):.3f}")
 
+    llm_usage = _llm_usage_summary(since)
+    if llm_usage:
+        lines.append(llm_usage)
+
     # 最近战绩明细（最多5场）
     lines.append("")
     recent = sorted(finals, key=lambda r: r.get("prediction_time") or datetime.min, reverse=True)[:5]
@@ -344,6 +348,29 @@ def build_report(days: int = 7) -> str:
         lines.append(f"{mark} {r['home_team']} {r['actual_score']} {r['away_team']} "
                      f"(预测{RESULT_LABEL.get(r['pred_primary'], '?')})")
     return "\n".join(lines)
+
+
+def _llm_usage_summary(since: str) -> str:
+    """近期 LLM 调用统计（llm_calls 表由 llm_predictor 旁路写入）；表不存在返回空。"""
+    try:
+        conn = _db()
+        cursor = conn.cursor()
+        cursor.execute(
+            """SELECT COUNT(*), COALESCE(SUM(success), 0),
+                      COALESCE(AVG(latency_ms), 0),
+                      COALESCE(SUM(prompt_tokens), 0) + COALESCE(SUM(completion_tokens), 0)
+               FROM llm_calls WHERE called_at >= %s""",
+            (since,),
+        )
+        total, ok, avg_ms, tokens = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if not total:
+            return ""
+        return (f"LLM调用: {total}次 成功{ok/total:.0%} "
+                f"均耗时{avg_ms/1000:.1f}s tokens {int(tokens):,}")
+    except Exception:
+        return ""  # 表不存在/连库失败 → 周报少一行，不阻断
 
 
 def push_report(body: str) -> bool:

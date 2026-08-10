@@ -178,10 +178,29 @@ class OddsModel:
             print(f"  可运行 titan007 爬虫生成: python -m agents.predicted_agent.scripts.wc2022_odds_scraper")
 
         # ---------- 保存 ----------
-        os.makedirs(MODEL_DIR, exist_ok=True)
-        joblib.dump(instance.wdl_model, WDL_MODEL_PATH)
+        # 版本化保存：每次训练存到 saved/{version}/ 目录，支持版本回滚
+        from agents.predicted_agent.models.registry import register_version, generate_version, get_model_path
+        version = generate_version()
+        version_dir = register_version(
+            version=version,
+            metrics={
+                "train_samples": int(len(X_train)),
+                "val_samples": int(len(X_val)),
+                "feature_count": len(feature_names),
+                "train_accuracy": round(float(accuracy_score(y_train, train_pred)), 4),
+                "cv_accuracy": round(float(wdl_cv.mean()), 4),
+                "val_accuracy": round(float(val_acc), 4),
+                "val_log_loss": round(float(val_loss), 4),
+            },
+            data_range="五大联赛 2021-2025",
+        )
+
+        # 保存模型权重和元信息到版本目录
+        wdl_path = os.path.join(version_dir, "wdl_model.pkl")
+        joblib.dump(instance.wdl_model, wdl_path)
 
         instance.meta = {
+            "version": version,
             "train_samples": int(len(X_train)),
             "val_samples": int(len(X_val)),
             "feature_count": len(feature_names),
@@ -193,10 +212,18 @@ class OddsModel:
             "mix_weight": 0.4,  # 混合策略: 40%模型 + 60%赔率
             "wc2022_test": wc_metrics,
         }
+        meta_path = os.path.join(version_dir, "model_meta.json")
+        with open(meta_path, "w", encoding="utf-8") as f:
+            json.dump(instance.meta, f, ensure_ascii=False, indent=2)
+
+        # 同时保存一份到旧路径（兼容旧代码直接读 saved/wdl_model.pkl）
+        os.makedirs(MODEL_DIR, exist_ok=True)
+        joblib.dump(instance.wdl_model, WDL_MODEL_PATH)
         with open(META_PATH, "w", encoding="utf-8") as f:
             json.dump(instance.meta, f, ensure_ascii=False, indent=2)
 
-        print(f"\n[保存] 模型已保存到 {MODEL_DIR}")
+        print(f"\n[保存] 模型版本 {version} 已保存到 {version_dir}")
+        print(f"[保存] 兼容路径: {WDL_MODEL_PATH}")
         print("=" * 60)
 
         return instance
@@ -303,20 +330,28 @@ class OddsModel:
     # ═══════════════════════════════════════════════════════════
 
     @classmethod
-    def load(cls) -> "OddsModel":
-        """从磁盘加载已训练的模型"""
-        if not os.path.exists(WDL_MODEL_PATH):
+    def load(cls, version: str = None) -> "OddsModel":
+        """从磁盘加载已训练的模型
+
+        Args:
+            version: 指定版本号；None=当前线上版本（回退到旧路径）
+        """
+        from agents.predicted_agent.models.registry import get_model_path, get_meta_path
+
+        model_path = get_model_path(version)
+        if not os.path.exists(model_path):
             raise FileNotFoundError(
                 f"模型文件不存在，请先执行训练:\n"
                 f"  python -m agents.predicted_agent.models.statistical_model\n"
-                f"  预期路径: {WDL_MODEL_PATH}"
+                f"  预期路径: {model_path}"
             )
 
         instance = cls()
-        instance.wdl_model = joblib.load(WDL_MODEL_PATH)
+        instance.wdl_model = joblib.load(model_path)
 
-        if os.path.exists(META_PATH):
-            with open(META_PATH, "r", encoding="utf-8") as f:
+        meta_path = get_meta_path(version)
+        if os.path.exists(meta_path):
+            with open(meta_path, "r", encoding="utf-8") as f:
                 instance.meta = json.load(f)
 
         return instance

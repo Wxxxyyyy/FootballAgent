@@ -1,0 +1,10 @@
+[Unit]
+Description=FootballAgent MySQL daily backup
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/data/workspace/FootballAgent
+ExecStart=/bin/bash scripts/mysql_backup.sh
+StandardOutput=append:/data/workspace/FootballAgent/logs/backup.log
+StandardError=append:/data/workspace/FootballAgent/logs/backup.log

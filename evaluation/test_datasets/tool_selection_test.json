@@ -1,0 +1,15 @@
+[
+  {"question": "皇马和巴萨上赛季交手几次", "expected_tool": "mysql_query", "reason": "历史交锋数据在MySQL"},
+  {"question": "尤文图斯最近五场战绩", "expected_tool": "mysql_query", "reason": "近期比赛记录在MySQL"},
+  {"question": "利物浦上赛季最终排名第几", "expected_tool": "mysql_query", "reason": "赛季战绩在MySQL"},
+  {"question": "切尔西和阿森纳历史交锋谁赢得多", "expected_tool": "mysql_query", "reason": "交锋统计在MySQL"},
+  {"question": "拜仁和沙尔克04上次比赛比分", "expected_tool": "mysql_query", "reason": "比赛记录在MySQL"},
+  {"question": "球队最近的伤病情况", "expected_tool": "search_knowledge_base", "reason": "伤病情报在向量库"},
+  {"question": "巴萨的最新转会消息", "expected_tool": "search_knowledge_base", "reason": "新闻在向量库"},
+  {"question": "尤文图斯主帅的战术风格", "expected_tool": "search_knowledge_base", "reason": "战术分析在向量库"},
+  {"question": "AC米兰下场比赛的首发阵容", "expected_tool": "search_knowledge_base", "reason": "赛前情报在向量库"},
+  {"question": "英超这赛季的规则变化", "expected_tool": "search_knowledge_base", "reason": "赛事资讯在向量库"},
+  {"question": "你好", "expected_tool": "none", "reason": "闲聊无需工具"},
+  {"query": "谢谢使用", "expected_tool": "none", "reason": "闲聊无需工具"},
+  {"query": "你是谁", "expected_tool": "none", "reason": "闲聊无需工具"}
+]

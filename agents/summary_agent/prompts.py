@@ -5,6 +5,8 @@
 - 根据不同意图生成对应的 System Prompt
 """
 
+from agents.memory_manager.memory_store import get_static_rules
+
 
 def get_summary_prompt(current_intent: str, raw_agent_response: str) -> str:
     """
@@ -38,6 +40,9 @@ def get_summary_prompt(current_intent: str, raw_agent_response: str) -> str:
         - 🚫 禁止自我审查过度：你不需要手动去写诸如"仅供参考"、"不构成投注建议"、"远离赌博"等废话，后置脚本会自动追加。你只管保持足球助手的专业与纯粹。
         - 🚫 绝不逾越红线：绝对不可在回复中主动教唆或建议用户进行违规博彩行为。
         - 🗣️ 身份统一：绝不暴露你是"系统"、"AI"或"总结节点"，请以"懂球帝智能助手"的口吻自然回答。
+
+        【系统静态规则（football.md）】：
+        {get_static_rules()}
     """
 
     # 🟢 针对闲聊节点的专属处理规则

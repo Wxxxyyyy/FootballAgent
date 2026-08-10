@@ -71,3 +71,28 @@ docs1.0.2/
 
 # watchdog 运行时状态（本地生成，不入库）
 data/watchdog_state.json
+
+# MySQL 备份（本地生成，不入库）
+backups/
+
+# ─── 运行时产物（不入库）────────────────────────────
+# 日志（含轮转/压缩的 .log-*.gz）
+logs/
+*.gz
+
+# 预测运行时输出（几百个 JSON，证据性文件按需单独保留）
+data/predictions/
+
+# L1 上下文压缩的磁盘缓存
+data/context_cache/
+
+# 漂移检测基线 / 告警状态（运行生成）
+data/drift_baseline/
+data/alert_state.json
+
+# 评测运行报告（脚本入库，运行结果不入库）
+evaluation/reports/
+
+# 动态记忆文件（运行生成；静态规则 football.md 保留入库）
+data/memory/*.md
+!data/memory/football.md

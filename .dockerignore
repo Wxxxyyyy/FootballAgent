@@ -1,0 +1,21 @@
+# 版本控制与本地产物，避免镜像膨胀
+.git
+.codebuddy
+.pytest_cache
+__pycache__/
+*.pyc
+*.log
+.env
+
+# 运行时产物（容器内通过 volume 挂载 ./data ./logs，镜像里不带）
+logs/
+backups/
+data/predictions/
+data/odds_snapshots/
+data/backups/
+
+# 文档与测试不进镜像
+docs/
+projectReport/
+plan/
+tests/

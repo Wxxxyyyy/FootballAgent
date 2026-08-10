@@ -17,6 +17,7 @@ import sys
 import json
 import hashlib
 import logging
+import time
 from datetime import datetime
 
 from flask import Flask, request, jsonify
@@ -31,7 +32,12 @@ load_dotenv(os.path.join(PROJECT_ROOT, ".env"))
 
 # Redis 预测结果缓存（纯提效层，不可用时降级为每次重算，绝不拖垮预测服务）
 try:
-    from common.redis_cache import cache_get_json, cache_set_json
+    from common.redis_cache import (
+        cache_get_json,
+        cache_set_json,
+        try_acquire_lock,
+        release_lock,
+    )
 except Exception:  # noqa: BLE001
     def cache_get_json(_key):
         return None
@@ -39,8 +45,21 @@ except Exception:  # noqa: BLE001
     def cache_set_json(_key, _value, _ttl):
         return False
 
+    def try_acquire_lock(_key, _ttl):
+        return True  # 无 Redis 时退化为"无锁直算"，不影响主链路
+
+    def release_lock(_key):
+        return False
+
 # 预测结果缓存 TTL（秒）：同一场比赛 + 同一档 + 同一组赔率，30 分钟内直接复用
 PRED_CACHE_TTL = 1800
+
+# 分布式互斥锁 TTL（秒）：需覆盖完整预测流水线耗时（LLM 推理约 10-20s），
+# 持锁者异常退出时锁到期自动释放，避免死锁
+PRED_LOCK_TTL = 60
+# 未抢到锁时的自旋等待参数：每 0.5s 查一次缓存，最多等 30s
+PRED_SPIN_INTERVAL = 0.5
+PRED_SPIN_ROUNDS = 60
 
 
 def _pred_cache_key(match_id: str, tier: int, odds: dict) -> str:
@@ -117,6 +136,26 @@ def predict():
         logger.info(f"[缓存命中] {home_team} vs {away_team} (key={cache_key})，返回缓存预测")
         cached["cache_hit"] = True
         return jsonify(cached)
+
+    # ── 分布式互斥锁（请求折叠 / 防缓存击穿）──
+    # 同一 (match_id, tier, 赔率哈希) 的并发请求只放行一个真实计算，
+    # 其余请求自旋等待持锁者写入缓存后直接返回，避免 LLM/情报采集被并发打爆。
+    lock_key = f"lock:{cache_key}"
+    got_lock = try_acquire_lock(lock_key, PRED_LOCK_TTL)
+    if not got_lock:
+        for _ in range(PRED_SPIN_ROUNDS):
+            time.sleep(PRED_SPIN_INTERVAL)
+            cached = cache_get_json(cache_key)
+            if cached:
+                logger.info(f"[锁等待命中] {home_team} vs {away_team}，返回持锁者写入的缓存")
+                cached["cache_hit"] = True
+                return jsonify(cached)
+        # 等待超时仍无缓存：兜底再抢一次锁（持锁者可能已异常退出，锁到期释放）
+        got_lock = try_acquire_lock(lock_key, PRED_LOCK_TTL)
+        logger.warning(
+            f"[锁等待超时] {home_team} vs {away_team}，"
+            f"{'接管计算' if got_lock else '降级为直接重算'}"
+        )
 
     result = {
         "status": "ok",
@@ -299,6 +338,10 @@ def predict():
     llm_analysis = result.get("llm_analysis")
     if isinstance(llm_analysis, dict) and "error" not in llm_analysis:
         cache_set_json(cache_key, result, PRED_CACHE_TTL)
+
+    # 释放分布式锁（仅本请求持锁时）；自旋超时降级路径未持锁，无需释放
+    if got_lock:
+        release_lock(lock_key)
 
     logger.info(f"预测完成: {home_team} vs {away_team}")
     return jsonify(result)

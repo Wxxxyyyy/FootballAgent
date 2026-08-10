@@ -1,0 +1,17 @@
+[Unit]
+Description=FootballAgent MQ Consumer (RabbitMQ 消费者)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/data/workspace/FootballAgent
+EnvironmentFile=/data/workspace/FootballAgent/.env
+ExecStart=/usr/bin/python3 pipeline/mq_consumer.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/data/workspace/FootballAgent/logs/mq_consumer.log
+StandardError=append:/data/workspace/FootballAgent/logs/mq_consumer.log
+
+[Install]
+WantedBy=multi-user.target

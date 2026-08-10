@@ -41,10 +41,19 @@ class ChatBody(BaseModel):
 async def chat_sync(body: ChatBody):
     """同步整轮对话，返回最后一条助手消息文本。"""
     from langchain_core.messages import HumanMessage
+    from common.tracer import start_trace, record_span
+    import time as _time
+
+    # 链路追踪: 每次对话请求开启一个 trace
+    trace_id = start_trace("chat.request", service="api")
+    t0 = _time.time()
 
     try:
         graph = _get_graph()
     except Exception as e:
+        record_span("chat.load_graph", service="api",
+                    duration_ms=int((_time.time() - t0) * 1000),
+                    status="error", error=str(e))
         raise HTTPException(503, f"图加载失败: {e}") from e
     config = {"configurable": {"thread_id": body.thread_id}}
     result = await graph.ainvoke(
@@ -52,11 +61,23 @@ async def chat_sync(body: ChatBody):
         config,
     )
     msgs = result.get("messages") or []
+
+    # 记录对话链路 span（含输入摘要）
+    record_span(
+        "chat.invoke", service="api",
+        attributes={
+            "thread_id": body.thread_id,
+            "message_len": len(body.message),
+            "reply_msgs": len(msgs),
+        },
+        duration_ms=int((_time.time() - t0) * 1000),
+    )
+
     if not msgs:
-        return {"reply": "", "thread_id": body.thread_id}
+        return {"reply": "", "thread_id": body.thread_id, "trace_id": trace_id}
     final = msgs[-1]
     text = getattr(final, "content", str(final))
-    return {"reply": text, "thread_id": body.thread_id}
+    return {"reply": text, "thread_id": body.thread_id, "trace_id": trace_id}
 
 
 @router.post("/chat/stream")

@@ -108,6 +108,18 @@ def cache_set_json(key: str, value, ttl: int) -> bool:
     return _safe(lambda c: c.set(key, payload, ex=ttl), None) is not None
 
 
+# ─────────────────────────── 分布式互斥锁 ───────────────────────────
+
+def try_acquire_lock(key: str, ttl: int) -> bool:
+    """尝试获取分布式锁（SET NX EX，到期自动释放防死锁）。抢到 True，被占用/降级 False。"""
+    return _safe(lambda c: c.set(key, "1", ex=ttl, nx=True), None) is True
+
+
+def release_lock(key: str) -> bool:
+    """释放分布式锁。成功 True，降级 False。"""
+    return _safe(lambda c: c.delete(key), None) is not None
+
+
 # ─────────────────────────── 去重标记 ───────────────────────────
 
 def mark(key: str, ttl: int) -> bool:
