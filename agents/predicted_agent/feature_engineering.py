@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-赔率特征工程模块（13维 · 仅胜平负）
+赔率特征工程模块（19维 · 仅胜平负）
 
 核心功能:
   1. 从 processed CSV / OpenClaw JSON 中提取 Bet365 初盘 + 终盘赔率
@@ -9,13 +9,15 @@
   4. 构建 WDL（胜平负）标签
   5. 统一的特征列定义，供训练和预测复用
 
-特征列 (3 原始 + 10 衍生 = 13 维):
+特征列 (3 原始 + 16 衍生 = 19 维):
   原始初盘: B365H, B365D, B365A
   衍生:
     prob_h, prob_d, prob_a      —— 初盘隐含概率
     overround                    —— 初盘庄家利润率
     odds_move_h, odds_move_d, odds_move_a —— 赔率变化（终盘 - 初盘）
     prob_h_c, prob_d_c, prob_a_c —— 终盘隐含概率
+    odds_spread, odds_cv, top2_gap        —— 赔率离散度（识别平局）
+    move_x_prob_h, move_x_prob_d, move_x_prob_a —— 交互特征（赔率变化×概率）
 
 说明:
   - 不再使用大小球（OU）特征，专注于胜平负预测
@@ -91,7 +93,7 @@ def odds_to_probs(h_odds: float, d_odds: float, a_odds: float):
 
 def build_features(df: pd.DataFrame) -> pd.DataFrame:
     """
-    从包含初盘 + 终盘赔率列的 DataFrame 构建 13 维特征
+    从包含初盘 + 终盘赔率列的 DataFrame 构建 19 维特征
 
     输入 df 需包含:
       - OPENING_ODDS_COLS: B365H, B365D, B365A（初盘）
@@ -283,7 +285,7 @@ def extract_features_from_odds(
     b365ca: float = None,
 ) -> pd.DataFrame:
     """
-    从单场比赛的初盘 + 终盘赔率构建 13 维模型输入特征
+    从单场比赛的初盘 + 终盘赔率构建 19 维模型输入特征
 
     适用于: titan007 爬取的初盘+即时赔率 / 手动输入
 
@@ -356,7 +358,7 @@ def extract_features_from_odds(
 
 def extract_features_from_openclaw(match_data: dict) -> pd.DataFrame:
     """
-    从 OpenClaw 推送的单场比赛原始字段中提取 13 维特征
+    从 OpenClaw 推送的单场比赛原始字段中提取 19 维特征
 
     match_data 支持的字段:
       - 初盘: B365H, B365D, B365A（必需）
