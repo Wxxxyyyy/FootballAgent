@@ -74,7 +74,7 @@
 - **全容器化**：Docker Compose 编排全部服务（MySQL / Neo4j / Redis / RabbitMQ / Milvus(etcd+minio) / OpenClaw / 预测 API / MQ 消费者 / 统一调度器），端口全绑 127.0.0.1 零公网暴露
 - **高并发治理**：Redis 预测缓存（30min TTL）+ SETNX 分布式互斥锁折叠并发请求，防缓存击穿
 - **LLM 多模型调度 + 熔断降级**：5 个远程模型可切换，失败自动降级本地 Ollama
-- **全链路可观测**：LLM 调用全量旁路落库（模型/延迟/Token/成功率）+ Prometheus 指标 + 5 条阈值告警规则（成功率/延迟/Token/错误数/零调用假死）+ Bark 推送（指数退避重试 + 双写去重）
+- **全链路可观测**：**Langfuse 自托管**（LLM trace 树 / Token 成本 / 延迟分布，compose `langfuse` profile 一键拉起）+ LLM 调用台账旁路落库 + Prometheus 指标 + 5 条阈值告警规则（成功率/延迟/Token/错误数/零调用假死）+ Bark 推送（指数退避重试 + 双写去重）
 - **安全合规**：敏感词拦截 + 赌博风险检测 + 预测免责声明自动注入
 
 ### 🏆 世界杯实战（赛事可插拔验证）
@@ -195,7 +195,7 @@ python -m api.server_api               # 启动 API 服务
 | 缓存 / 消息 | Redis 7 + RabbitMQ |
 | Embedding | bge-m3 (BAAI) |
 | 容器 | Docker Compose 全栈编排 |
-| 可观测性 | 自建链路追踪 + LLM 调用台账 + Prometheus + Bark 告警 |
+| 可观测性 | Langfuse（自托管）+ LLM 调用台账 + Prometheus + Bark 告警 |
 
 ## 数据覆盖
 

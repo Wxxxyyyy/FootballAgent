@@ -286,6 +286,130 @@ services:
       redis:
         condition: service_healthy
 
+  # ═══════════════════════════════════════════════════════════
+  #  Langfuse 自托管（可选）：LLM 链路追踪 / Token 成本 / 评测标注
+  #  启动: docker compose --profile langfuse up -d
+  #  复用现有 football_redis（db 1，与业务缓存 db 0 隔离）和 football_minio
+  #  初始项目密钥见下方 LANGFUSE_INIT_*，与 .env 的 LANGFUSE_PUBLIC_KEY 对应
+  # ═══════════════════════════════════════════════════════════
+  langfuse-postgres:
+    image: postgres:16-alpine
+    container_name: football_langfuse_pg
+    profiles: ["langfuse"]
+    environment:
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: langfuse
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfuse_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - football_net
+
+  langfuse-clickhouse:
+    image: clickhouse/clickhouse-server:24.3-alpine
+    container_name: football_langfuse_ch
+    profiles: ["langfuse"]
+    environment:
+      CLICKHOUSE_DB: langfuse
+      CLICKHOUSE_USER: langfuse
+      CLICKHOUSE_PASSWORD: langfuse
+    volumes:
+      - langfuse_ch_data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - football_net
+
+  # 一次性任务：在 MinIO 创建 langfuse 所需 bucket
+  langfuse-minio-init:
+    image: minio/mc
+    container_name: football_langfuse_mc_init
+    profiles: ["langfuse"]
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "mc alias set local http://football_minio:9000 minioadmin minioadmin
+      && mc mb -p local/langfuse || true"
+    networks:
+      - football_net
+
+  langfuse-worker:
+    image: langfuse/langfuse-worker:3
+    container_name: football_langfuse_worker
+    profiles: ["langfuse"]
+    environment: &langfuse-env
+      DATABASE_URL: postgresql://langfuse:langfuse@langfuse-postgres:5432/langfuse
+      CLICKHOUSE_URL: http://langfuse-clickhouse:8123
+      CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
+      CLICKHOUSE_USER: langfuse
+      CLICKHOUSE_PASSWORD: langfuse
+      CLICKHOUSE_CLUSTER_ENABLED: "false"
+      REDIS_CONNECTION_STRING: redis://football_redis:6379/1
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://football_minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: minioadmin
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: minioadmin
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://football_minio:9000
+      LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_MEDIA_UPLOAD_REGION: auto
+      LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: minioadmin
+      LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: minioadmin
+      LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: change-me-nextauth-secret
+      SALT: change-me-salt
+      # 生产环境务必替换为 64 位十六进制随机串
+      ENCRYPTION_KEY: 0000000000000000000000000000000000000000000000000000000000000000
+      # 首次启动自动初始化的组织/项目/账号（密钥与 .env 对应）
+      LANGFUSE_INIT_ORG_ID: football
+      LANGFUSE_INIT_ORG_NAME: FootballAgent
+      LANGFUSE_INIT_PROJECT_ID: football-agent
+      LANGFUSE_INIT_PROJECT_NAME: FootballAgent
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: lf_pk_football_dev
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: lf_sk_football_dev
+      LANGFUSE_INIT_USER_EMAIL: admin@football.local
+      LANGFUSE_INIT_USER_NAME: admin
+      LANGFUSE_INIT_USER_PASSWORD: admin123456
+    depends_on:
+      langfuse-postgres:
+        condition: service_healthy
+      langfuse-clickhouse:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: always
+    networks:
+      - football_net
+
+  langfuse-web:
+    image: langfuse/langfuse:3
+    container_name: football_langfuse_web
+    profiles: ["langfuse"]
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment: *langfuse-env
+    depends_on:
+      langfuse-worker:
+        condition: service_started
+    restart: always
+    networks:
+      - football_net
+
 networks:
   football_net:
     driver: bridge
@@ -299,4 +423,6 @@ volumes:
   etcd_data:
   minio_data:
   milvus_data:
+  langfuse_pg_data:
+  langfuse_ch_data:
   rabbitmq_data:

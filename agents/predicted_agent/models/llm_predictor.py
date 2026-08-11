@@ -17,8 +17,8 @@ import time
 from typing import Optional
 from dotenv import load_dotenv
 
-# 链路追踪 decorator（轻量，模块级导入；tracer 内部惰性连 MySQL）
-from common.tracer import traced
+# Langfuse 可观测性（未配置密钥时 langfuse_enabled()=False，自动降级为直连）
+from common.langfuse_client import langfuse_enabled
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))
@@ -128,21 +128,19 @@ def predict_with_llm(
         包含 wdl_prediction / score_predictions /
         overall_analysis / upset_alert / raw_response 的字典
     """
-    # 链路追踪: 记录 LLM 调用 span（与上层 trace_id 自动关联）
-    return _predict_with_llm_traced(
+    return _predict_with_llm_impl(
         home_team, away_team, date, ml_result,
         home_last_5, away_last_5, h2h_records, odds_info,
         upset_signals, pre_match_intel_summary, monte_carlo_result,
     )
 
 
-@traced("llm.predict", service="agent", attributes={"component": "llm"})
-def _predict_with_llm_traced(
+def _predict_with_llm_impl(
     home_team, away_team, date, ml_result,
     home_last_5, away_last_5, h2h_records, odds_info,
     upset_signals, pre_match_intel_summary, monte_carlo_result,
 ) -> dict:
-    """predict_with_llm 的实际实现，被 @traced 包裹记录链路 span"""
+    """predict_with_llm 的实际实现（LLM 调用经 Langfuse 自动上报）"""
     prompt = _build_prompt(
         home_team, away_team, date,
         ml_result, home_last_5, away_last_5,
@@ -156,7 +154,11 @@ def _predict_with_llm_traced(
     _t0 = time.time()
 
     try:
-        from openai import OpenAI
+        # 配置了 Langfuse 时走其 drop-in 包装（自动捕获 token/延迟/模型），否则直连
+        if langfuse_enabled():
+            from langfuse.openai import OpenAI
+        else:
+            from openai import OpenAI
 
         client = OpenAI(
             api_key=os.getenv("LLM_API_KEY"),

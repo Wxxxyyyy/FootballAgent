@@ -41,37 +41,38 @@ class ChatBody(BaseModel):
 async def chat_sync(body: ChatBody):
     """同步整轮对话，返回最后一条助手消息文本。"""
     from langchain_core.messages import HumanMessage
-    from common.tracer import start_trace, record_span
-    import time as _time
-
-    # 链路追踪: 每次对话请求开启一个 trace
-    trace_id = start_trace("chat.request", service="api")
-    t0 = _time.time()
+    from common.langfuse_client import get_client as _get_langfuse, get_langchain_handler
 
     try:
         graph = _get_graph()
     except Exception as e:
-        record_span("chat.load_graph", service="api",
-                    duration_ms=int((_time.time() - t0) * 1000),
-                    status="error", error=str(e))
         raise HTTPException(503, f"图加载失败: {e}") from e
-    config = {"configurable": {"thread_id": body.thread_id}}
-    result = await graph.ainvoke(
-        {"messages": [HumanMessage(content=body.message)]},
-        config,
-    )
-    msgs = result.get("messages") or []
 
-    # 记录对话链路 span（含输入摘要）
-    record_span(
-        "chat.invoke", service="api",
-        attributes={
-            "thread_id": body.thread_id,
-            "message_len": len(body.message),
-            "reply_msgs": len(msgs),
-        },
-        duration_ms=int((_time.time() - t0) * 1000),
-    )
+    # Langfuse 链路追踪: 挂 LangChain 回调后，图内所有节点/LLM 调用自动嵌套进一条 trace
+    # （未配置密钥时 handler/client 均为 None，自动跳过，业务不受影响）
+    config = {"configurable": {"thread_id": body.thread_id}}
+    handler = get_langchain_handler()
+    if handler:
+        config["callbacks"] = [handler]
+
+    langfuse = _get_langfuse()
+    trace_id = None
+    if langfuse:
+        with langfuse.start_as_current_trace(name="chat.request"):
+            result = await graph.ainvoke(
+                {"messages": [HumanMessage(content=body.message)]},
+                config,
+            )
+            try:
+                trace_id = langfuse.get_current_trace_id()
+            except Exception:  # noqa: BLE001
+                trace_id = None
+    else:
+        result = await graph.ainvoke(
+            {"messages": [HumanMessage(content=body.message)]},
+            config,
+        )
+    msgs = result.get("messages") or []
 
     if not msgs:
         return {"reply": "", "thread_id": body.thread_id, "trace_id": trace_id}
@@ -86,13 +87,18 @@ async def chat_stream(body: ChatBody):
 
     async def gen():
         from langchain_core.messages import HumanMessage
+        from common.langfuse_client import get_langchain_handler
 
         try:
             graph = _get_graph()
         except Exception as e:
             yield {"data": json.dumps({"error": str(e)}, ensure_ascii=False)}
             return
+        # Langfuse 链路追踪（未配置密钥时 handler 为 None，自动跳过）
         config = {"configurable": {"thread_id": body.thread_id}}
+        handler = get_langchain_handler()
+        if handler:
+            config["callbacks"] = [handler]
         try:
             async for chunk in graph.astream(
                 {"messages": [HumanMessage(content=body.message)]},

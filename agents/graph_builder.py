@@ -234,10 +234,15 @@ if __name__ == "__main__":
         print(f"[用户输入] {user_input}")
         print(f"{'─' * 60}\n")
 
-        # 调用图
+        # 调用图（配置了 Langfuse 密钥时自动挂上链路追踪回调）
+        from common.langfuse_client import get_langchain_handler
+        invoke_config = config
+        _handler = get_langchain_handler()
+        if _handler:
+            invoke_config = {**config, "callbacks": [_handler]}
         result = graph.invoke(
             {"messages": [HumanMessage(content=user_input)]},
-            config=config,
+            config=invoke_config,
         )
 
         # 提取最终回复（messages 列表最后一条 assistant 消息）
